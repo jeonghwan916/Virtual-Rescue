@@ -39,6 +39,10 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private TMP_Text speakerText;
     [SerializeField] private TMP_Text dialogueText;
 
+    [Header("Typing Effect")]
+    [SerializeField] private bool useTypewriterEffect = true;
+    [SerializeField] private float characterInterval = 0.04f;
+
     [Header("Language")]
     private string currentLanguage = "kr"; // 추후 바꿀수 있음
 
@@ -174,15 +178,25 @@ public class DialogueManager : MonoBehaviour
         InvokeCallback(entry.callbackKey);
 
         AudioClip clip = LoadAudioClip(entry.audioPath);
+        float audioDuration = 0f;
         if (clip != null && audioSource != null)
         {
             audioSource.clip = clip;
             audioSource.Play();
-            yield return new WaitForSeconds(clip.length);
+            audioDuration = clip.length;
         }
         else if (!string.IsNullOrWhiteSpace(entry.audioPath))
         {
             Debug.LogWarning($"오디오를 재생할 수 없습니다: {entry.audioPath}");
+        }
+
+        if (ShouldUseTypewriterEffect(subtitle))
+        {
+            yield return PlayTypewriterRoutine(audioDuration);
+        }
+        else if (audioDuration > 0f)
+        {
+            yield return new WaitForSeconds(audioDuration);
         }
 
         if (entry.delayAfterAudio > 0f)
@@ -251,6 +265,7 @@ public class DialogueManager : MonoBehaviour
         if (dialogueText != null)
         {
             dialogueText.text = text;
+            dialogueText.maxVisibleCharacters = ShouldUseTypewriterEffect(text) ? 0 : int.MaxValue;
         }
     }
 
@@ -265,6 +280,7 @@ public class DialogueManager : MonoBehaviour
         if (dialogueText != null)
         {
             dialogueText.text = string.Empty;
+            dialogueText.maxVisibleCharacters = int.MaxValue;
         }
 
         if (subtitleRoot != null)
@@ -288,6 +304,32 @@ public class DialogueManager : MonoBehaviour
         }
 
         Debug.LogWarning($"등록되지 않은 callbackKey입니다: {callbackKey}");
+    }
+
+    private bool ShouldUseTypewriterEffect(string text)
+    {
+        return useTypewriterEffect && characterInterval > 0f && !string.IsNullOrEmpty(text) && dialogueText != null;
+    }
+
+    private IEnumerator PlayTypewriterRoutine(float minimumDuration)
+    {
+        dialogueText.maxVisibleCharacters = 0;
+        dialogueText.ForceMeshUpdate();
+
+        int characterCount = dialogueText.textInfo.characterCount;
+        float elapsed = 0f;
+
+        for (int i = 1; i <= characterCount; i++)
+        {
+            yield return new WaitForSeconds(characterInterval);
+            elapsed += characterInterval;
+            dialogueText.maxVisibleCharacters = i;
+        }
+
+        if (minimumDuration > elapsed)
+        {
+            yield return new WaitForSeconds(minimumDuration - elapsed);
+        }
     }
 
     // Dialogue.csv 문자열을 읽어서 대사 데이터와 그룹 데이터를 구성한다.
