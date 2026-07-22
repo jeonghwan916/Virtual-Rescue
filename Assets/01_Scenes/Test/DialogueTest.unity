@@ -1167,6 +1167,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1605148380}
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
+      propertyPath: _dialogueCsv
+      value: 
+      objectReference: {fileID: 4900000, guid: 52580d102a2d147438623f79e08d085d, type: 3}
+    - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _speakerText
       value: 
       objectReference: {fileID: 2510354951212226424}
@@ -1186,6 +1190,10 @@ PrefabInstance:
       propertyPath: _subtitleRoot
       value: 
       objectReference: {fileID: 8256880262602798579}
+    - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
+      propertyPath: _dialogueTextCsv
+      value: 
+      objectReference: {fileID: 4900000, guid: ee5afe3666fb07a4d98c3b5f886817ee, type: 3}
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: dialogueMethodTest
       value: 
@@ -1311,10 +1319,10 @@ SceneRoots:
   - {fileID: 1124493841}
   - {fileID: 239966441}
   - {fileID: 936823728}
-  - {fileID: 7733407150163098713}
   - {fileID: 8098661446788486711}
   - {fileID: 1877292867}
   - {fileID: 1642406598}
   - {fileID: 328833339}
+  - {fileID: 7733407150163098713}
   - {fileID: 5335430417146206005}
   - {fileID: 1605148379}
