@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace VirtualRescue.DialogueSystem
 {
@@ -17,7 +18,7 @@ namespace VirtualRescue.DialogueSystem
             public string speaker;
             public string audioPath;
             public string callbackKey;
-            public float delayAfterAudio;
+            public float? delayAfterAudio;
         }
 
         [Serializable]
@@ -29,49 +30,59 @@ namespace VirtualRescue.DialogueSystem
         }
 
         [Header("CSV Data")]
-        [SerializeField] private TextAsset dialogueCsv;
-        [SerializeField] private TextAsset dialogueTextCsv;
+        [FormerlySerializedAs("dialogueCsv")]
+        [SerializeField] private TextAsset _dialogueCsv;
+        [FormerlySerializedAs("dialogueTextCsv")]
+        [SerializeField] private TextAsset _dialogueTextCsv;
 
         [Header("Audio")]
-        [SerializeField] private AudioSource audioSource;
-        [SerializeField] private string audioBasePath = "Audio/Dialogue/KR";
+        [FormerlySerializedAs("audioSource")]
+        [SerializeField] private AudioSource _audioSource;
+        [FormerlySerializedAs("audioBasePath")]
+        [SerializeField] private string _audioBasePath = "Audio/Dialogue/KR";
 
         [Header("Subtitle UI")]
-        [SerializeField] private GameObject subtitleRoot;
-        [SerializeField] private TMP_Text speakerText;
-        [SerializeField] private TMP_Text dialogueText;
+        [FormerlySerializedAs("subtitleRoot")]
+        [SerializeField] private GameObject _subtitleRoot;
+        [FormerlySerializedAs("speakerText")]
+        [SerializeField] private TMP_Text _speakerText;
+        [FormerlySerializedAs("dialogueText")]
+        [SerializeField] private TMP_Text _dialogueText;
 
         [Header("Typing Effect")]
-        [SerializeField] private bool useTypewriterEffect = true;
-        [SerializeField] private float characterInterval = 0.04f;
+        [FormerlySerializedAs("useTypewriterEffect")]
+        [SerializeField] private bool _useTypewriterEffect = true;
+        [FormerlySerializedAs("characterInterval")]
+        [SerializeField] private float _characterInterval = 0.04f;
 
         [Header("Language")]
-        private string currentLanguage = "kr"; // 추후 바꿀수 있음
+        private string _currentLanguage = "kr"; // 추후 바꿀수 있음
 
         [Header("Callback Target")]
-        [SerializeField] private DialogueMethodTest dialogueMethodTest;
+        [FormerlySerializedAs("dialogueMethodTest")]
+        [SerializeField] private DialogueMethodTest _dialogueMethodTest;
 
-        private readonly Dictionary<string, DialogueEntry> dialogueById = new();
-        private readonly Dictionary<string, List<DialogueEntry>> dialoguesByGroup = new();
-        private readonly Dictionary<string, string> textById = new();
-        private readonly Dictionary<string, Action> callbackByKey = new();
+        private readonly Dictionary<string, DialogueEntry> _dialogueById = new();
+        private readonly Dictionary<string, List<DialogueEntry>> _dialoguesByGroup = new();
+        private readonly Dictionary<string, string> _textById = new();
+        private readonly Dictionary<string, Action> _callbackByKey = new();
 
-        private Coroutine currentDialogueRoutine;
+        private Coroutine _currentDialogueRoutine;
 
         // 컴포넌트가 초기화될 때 CSV 데이터를 읽고 검색용 Dictionary를 구성한다.
         private void Awake()
         {
             LoadDialogueData();
 
-            if (dialogueMethodTest == null)
+            if (_dialogueMethodTest == null)
             {
-                dialogueMethodTest = FindFirstObjectByType<DialogueMethodTest>();
+                _dialogueMethodTest = FindFirstObjectByType<DialogueMethodTest>();
             }
 
-            if (dialogueMethodTest != null)
+            if (_dialogueMethodTest != null)
             {
-                RegisterCallback("LockDoor", dialogueMethodTest.LockDoor);
-                RegisterCallback("HighLight", dialogueMethodTest.HighLight);
+                RegisterCallback("LockDoor", _dialogueMethodTest.LockDoor);
+                RegisterCallback("HighLight", _dialogueMethodTest.HighLight);
             }
         }
 
@@ -84,14 +95,14 @@ namespace VirtualRescue.DialogueSystem
                 return;
             }
 
-            if (!dialogueById.TryGetValue(dialogueId, out DialogueEntry entry))
+            if (!_dialogueById.TryGetValue(dialogueId, out DialogueEntry entry))
             {
                 Debug.LogWarning($"Dialogue ID를 찾을 수 없습니다: {dialogueId}");
                 return;
             }
 
-            Stop();
-            currentDialogueRoutine = StartCoroutine(PlayDialogueRoutine(entry));
+            StopCurrentDialogue();
+            _currentDialogueRoutine = StartCoroutine(PlayDialogueRoutine(entry));
         }
 
         // 그룹 ID에 속한 대사들을 order 순서대로 재생한다.
@@ -103,31 +114,35 @@ namespace VirtualRescue.DialogueSystem
                 return;
             }
 
-            if (!dialoguesByGroup.TryGetValue(groupId, out List<DialogueEntry> entries))
+            if (!_dialoguesByGroup.TryGetValue(groupId, out List<DialogueEntry> entries))
             {
                 Debug.LogWarning($"Dialogue Group을 찾을 수 없습니다: {groupId}");
                 return;
             }
 
-            Stop();
-            currentDialogueRoutine = StartCoroutine(PlayDialogueGroupRoutine(entries));
+            StopCurrentDialogue();
+            _currentDialogueRoutine = StartCoroutine(PlayDialogueGroupRoutine(entries));
         }
 
         // 현재 재생 중인 대사와 음성을 중단하고 자막을 비활성화한다.
         public void Stop()
         {
-            if (currentDialogueRoutine != null)
-            {
-                StopCoroutine(currentDialogueRoutine);
-                currentDialogueRoutine = null;
-            }
-
-            if (audioSource != null)
-            {
-                audioSource.Stop();
-            }
-
+            StopCurrentDialogue();
             HideSubtitle();
+        }
+
+        private void StopCurrentDialogue()
+        {
+            if (_currentDialogueRoutine != null)
+            {
+                StopCoroutine(_currentDialogueRoutine);
+                _currentDialogueRoutine = null;
+            }
+
+            if (_audioSource != null)
+            {
+                _audioSource.Stop();
+            }
         }
 
         // CSV의 callbackKey와 실제 실행할 메서드를 연결한다.
@@ -138,22 +153,22 @@ namespace VirtualRescue.DialogueSystem
                 return;
             }
 
-            callbackByKey[callbackKey] = callback;
+            _callbackByKey[callbackKey] = callback;
         }
 
         // Dialogue.csv와 Dialogue_Text.csv의 내용을 메모리에 로드한다.
         private void LoadDialogueData()
         {
-            dialogueById.Clear();
-            dialoguesByGroup.Clear();
-            textById.Clear();
+            _dialogueById.Clear();
+            _dialoguesByGroup.Clear();
+            _textById.Clear();
 
-            TextAsset loadedDialogueCsv = dialogueCsv != null
-                ? dialogueCsv
+            TextAsset loadedDialogueCsv = _dialogueCsv != null
+                ? _dialogueCsv
                 : Resources.Load<TextAsset>("Dialogue");
 
-            TextAsset loadedDialogueTextCsv = dialogueTextCsv != null
-                ? dialogueTextCsv
+            TextAsset loadedDialogueTextCsv = _dialogueTextCsv != null
+                ? _dialogueTextCsv
                 : Resources.Load<TextAsset>("Dialogue_Text");
 
             if (loadedDialogueCsv == null)
@@ -175,16 +190,26 @@ namespace VirtualRescue.DialogueSystem
         // 단일 대사 데이터를 받아 자막, 음성, 콜백을 순서대로 처리한다.
         private IEnumerator PlayDialogueRoutine(DialogueEntry entry)
         {
+            yield return PlayDialogueEntryRoutine(entry);
+
+            if (ShouldAutoHideSubtitle(entry))
+            {
+                HideSubtitle();
+            }
+        }
+
+        private IEnumerator PlayDialogueEntryRoutine(DialogueEntry entry)
+        {
             string subtitle = GetDialogueText(entry.id);
             ShowSubtitle(entry.speaker, subtitle);
             InvokeCallback(entry.callbackKey);
 
             AudioClip clip = LoadAudioClip(entry.audioPath);
             float audioDuration = 0f;
-            if (clip != null && audioSource != null)
+            if (clip != null && _audioSource != null)
             {
-                audioSource.clip = clip;
-                audioSource.Play();
+                _audioSource.clip = clip;
+                _audioSource.Play();
                 audioDuration = clip.length;
             }
             else if (!string.IsNullOrWhiteSpace(entry.audioPath))
@@ -201,34 +226,41 @@ namespace VirtualRescue.DialogueSystem
                 yield return new WaitForSeconds(audioDuration);
             }
 
-            if (entry.delayAfterAudio > 0f)
+            if (entry.delayAfterAudio.HasValue && entry.delayAfterAudio.Value > 0f)
             {
-                yield return new WaitForSeconds(entry.delayAfterAudio);
+                yield return new WaitForSeconds(entry.delayAfterAudio.Value);
             }
 
-            HideSubtitle();
         }
 
         // 여러 대사 데이터를 받아 순차적으로 재생한다.
         private IEnumerator PlayDialogueGroupRoutine(List<DialogueEntry> entries)
         {
+            DialogueEntry lastEntry = null;
+
             foreach (DialogueEntry entry in entries)
             {
-                yield return PlayDialogueRoutine(entry);
+                lastEntry = entry;
+                yield return PlayDialogueEntryRoutine(entry);
             }
 
-            currentDialogueRoutine = null;
+            if (lastEntry != null && ShouldAutoHideSubtitle(lastEntry))
+            {
+                HideSubtitle();
+            }
+
+            _currentDialogueRoutine = null;
         }
 
         // 대사 ID와 현재 언어 설정에 맞는 자막 문자열을 반환한다.
         private string GetDialogueText(string dialogueId)
         {
-            if (textById.TryGetValue(dialogueId, out string text))
+            if (_textById.TryGetValue(dialogueId, out string text))
             {
                 return text;
             }
 
-            Debug.LogWarning($"대사 텍스트를 찾을 수 없습니다: {dialogueId}, language: {currentLanguage}");
+            Debug.LogWarning($"대사 텍스트를 찾을 수 없습니다: {dialogueId}, language: {_currentLanguage}");
             return string.Empty;
         }
 
@@ -240,7 +272,7 @@ namespace VirtualRescue.DialogueSystem
                 return null;
             }
 
-            string path = $"{audioBasePath}/{audioPath}";
+            string path = $"{_audioBasePath}/{audioPath}";
             AudioClip clip = Resources.Load<AudioClip>(path);
 
             if (clip == null)
@@ -254,40 +286,52 @@ namespace VirtualRescue.DialogueSystem
         // 화자와 대사 문자열을 UI에 표시하고 자막 오브젝트를 활성화한다.
         private void ShowSubtitle(string speaker, string text)
         {
-            if (subtitleRoot != null)
+            if (_subtitleRoot != null)
             {
-                subtitleRoot.SetActive(true);
+                _subtitleRoot.SetActive(true);
             }
 
-            if (speakerText != null)
+            if (_speakerText != null)
             {
-                speakerText.text = speaker;
+                if (!string.IsNullOrWhiteSpace(speaker))
+                {
+                    if (!_speakerText.transform.parent.gameObject.activeSelf)
+                    {
+                        _speakerText.transform.parent.gameObject.SetActive(true);
+                    }
+                
+                    _speakerText.text = speaker;
+                }
+                else
+                {
+                    _speakerText.transform.parent.gameObject.SetActive(false);
+                }
             }
 
-            if (dialogueText != null)
+            if (_dialogueText != null)
             {
-                dialogueText.text = text;
-                dialogueText.maxVisibleCharacters = ShouldUseTypewriterEffect(text) ? 0 : int.MaxValue;
+                _dialogueText.text = text;
+                _dialogueText.maxVisibleCharacters = ShouldUseTypewriterEffect(text) ? 0 : int.MaxValue;
             }
         }
 
         // 자막 UI를 비활성화하고 표시 중인 문자열을 정리한다.
         private void HideSubtitle()
         {
-            if (speakerText != null)
+            if (_speakerText != null)
             {
-                speakerText.text = string.Empty;
+                _speakerText.text = string.Empty;
             }
 
-            if (dialogueText != null)
+            if (_dialogueText != null)
             {
-                dialogueText.text = string.Empty;
-                dialogueText.maxVisibleCharacters = int.MaxValue;
+                _dialogueText.text = string.Empty;
+                _dialogueText.maxVisibleCharacters = int.MaxValue;
             }
 
-            if (subtitleRoot != null)
+            if (_subtitleRoot != null)
             {
-                subtitleRoot.SetActive(false);
+                _subtitleRoot.SetActive(false);
             }
         }
 
@@ -299,7 +343,7 @@ namespace VirtualRescue.DialogueSystem
                 return;
             }
 
-            if (callbackByKey.TryGetValue(callbackKey, out Action callback))
+            if (_callbackByKey.TryGetValue(callbackKey, out Action callback))
             {
                 callback.Invoke();
                 return;
@@ -310,22 +354,27 @@ namespace VirtualRescue.DialogueSystem
 
         private bool ShouldUseTypewriterEffect(string text)
         {
-            return useTypewriterEffect && characterInterval > 0f && !string.IsNullOrEmpty(text) && dialogueText != null;
+            return _useTypewriterEffect && _characterInterval > 0f && !string.IsNullOrEmpty(text) && _dialogueText != null;
+        }
+
+        private bool ShouldAutoHideSubtitle(DialogueEntry entry)
+        {
+            return entry.delayAfterAudio.HasValue;
         }
 
         private IEnumerator PlayTypewriterRoutine(float minimumDuration)
         {
-            dialogueText.maxVisibleCharacters = 0;
-            dialogueText.ForceMeshUpdate();
+            _dialogueText.maxVisibleCharacters = 0;
+            _dialogueText.ForceMeshUpdate();
 
-            int characterCount = dialogueText.textInfo.characterCount;
+            int characterCount = _dialogueText.textInfo.characterCount;
             float elapsed = 0f;
 
             for (int i = 1; i <= characterCount; i++)
             {
-                yield return new WaitForSeconds(characterInterval);
-                elapsed += characterInterval;
-                dialogueText.maxVisibleCharacters = i;
+                yield return new WaitForSeconds(_characterInterval);
+                elapsed += _characterInterval;
+                _dialogueText.maxVisibleCharacters = i;
             }
 
             if (minimumDuration > elapsed)
@@ -334,7 +383,7 @@ namespace VirtualRescue.DialogueSystem
             }
         }
 
-        // Dialogue.csv 문자열을 읽어서 대사 데이터와 그룹 데이터를 구성한다.
+        // Dialogue.csv 문자열을 읽어 대사 데이터와 그룹 데이터를 구성한다.
         private void LoadDialogueCsv(string csvText)
         {
             List<string[]> rows = ParseCsv(csvText);
@@ -354,30 +403,30 @@ namespace VirtualRescue.DialogueSystem
                     speaker = GetCell(row, 3),
                     audioPath = GetCell(row, 4),
                     callbackKey = GetCell(row, 5),
-                    delayAfterAudio = ParseFloat(GetCell(row, 6))
+                    delayAfterAudio = ParseOptionalFloat(GetCell(row, 6))
                 };
 
-                dialogueById[entry.id] = entry;
+                _dialogueById[entry.id] = entry;
 
                 if (!string.IsNullOrWhiteSpace(entry.group))
                 {
-                    if (!dialoguesByGroup.TryGetValue(entry.group, out List<DialogueEntry> groupEntries))
+                    if (!_dialoguesByGroup.TryGetValue(entry.group, out List<DialogueEntry> groupEntries))
                     {
                         groupEntries = new List<DialogueEntry>();
-                        dialoguesByGroup[entry.group] = groupEntries;
+                        _dialoguesByGroup[entry.group] = groupEntries;
                     }
 
                     groupEntries.Add(entry);
                 }
             }
 
-            foreach (List<DialogueEntry> groupEntries in dialoguesByGroup.Values)
+            foreach (List<DialogueEntry> groupEntries in _dialoguesByGroup.Values)
             {
                 groupEntries.Sort((a, b) => a.order.CompareTo(b.order));
             }
         }
 
-        // Dialogue_Text.csv 문자열을 읽어서 현재 언어에 맞는 자막 데이터를 구성한다.
+        // Dialogue_Text.csv 문자열을 읽어 현재 언어에 맞는 자막 데이터를 구성한다.
         private void LoadDialogueTextCsv(string csvText)
         {
             List<string[]> rows = ParseCsv(csvText);
@@ -388,12 +437,12 @@ namespace VirtualRescue.DialogueSystem
                 string language = GetCell(row, 1);
                 string text = GetCell(row, 2);
 
-                if (string.IsNullOrWhiteSpace(id) || language != currentLanguage)
+                if (string.IsNullOrWhiteSpace(id) || language != _currentLanguage)
                 {
                     continue;
                 }
 
-                textById[id] = text;
+                _textById[id] = text;
             }
         }
 
@@ -470,9 +519,14 @@ namespace VirtualRescue.DialogueSystem
             return int.TryParse(value, out int result) ? result : 0;
         }
 
-        // 문자열을 float으로 변환하고 실패하면 0을 반환한다.
-        private float ParseFloat(string value)
+        // 문자열을 float으로 변환하고 빈 값이면 null, 실패하면 0을 반환한다.
+        private float? ParseOptionalFloat(string value)
         {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return null;
+            }
+
             return float.TryParse(value, out float result) ? result : 0f;
         }
     }
