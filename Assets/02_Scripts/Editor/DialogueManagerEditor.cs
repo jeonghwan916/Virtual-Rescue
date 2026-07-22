@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using VirtualRescue.DialogueSystem;
 
 [CustomEditor(typeof(DialogueManager))]
 public class DialogueManagerEditor : Editor
