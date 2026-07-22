@@ -272,6 +272,15 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.virtualrescue.breakable-partition": {
+      "version": "file:../LocalPackages/com.virtualrescue.breakable-partition-0.1.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.render-pipelines.universal": "17.3.0"
+      }
+    },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,
