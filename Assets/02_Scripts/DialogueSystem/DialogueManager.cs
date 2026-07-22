@@ -30,29 +30,29 @@ namespace VirtualRescue.DialogueSystem
         }
 
         [Header("CSV Data")]
-        [FormerlySerializedAs("dialogueCsv")]
+        [Tooltip("로딩할 Dialogue.csv 파일 연결")]
         [SerializeField] private TextAsset _dialogueCsv;
-        [FormerlySerializedAs("dialogueTextCsv")]
+        [Tooltip("로딩할 Dialogue_Text 파일 연결")]
         [SerializeField] private TextAsset _dialogueTextCsv;
 
         [Header("Audio")]
-        [FormerlySerializedAs("audioSource")]
+        [Tooltip("대사 음성 파일 실행할 AudioSource. XR Origin의 AudioSource 컴포넌트 연결")]
         [SerializeField] private AudioSource _audioSource;
-        [FormerlySerializedAs("audioBasePath")]
+        [Tooltip("실행할 대사 음성 파일이 저장되어있는 경로. Resources 폴더의 하위 경로임")]
         [SerializeField] private string _audioBasePath = "Audio/Dialogue/KR";
 
         [Header("Subtitle UI")]
-        [FormerlySerializedAs("subtitleRoot")]
+        [Tooltip("자막 파일 자체 GameObject. SubtitleFollwer 프리팹 그대로 연결하면 됨")]
         [SerializeField] private GameObject _subtitleRoot;
-        [FormerlySerializedAs("speakerText")]
+        [Tooltip("화자 표현 다이얼로그 텍스트 컴포넌트")]
         [SerializeField] private TMP_Text _speakerText;
-        [FormerlySerializedAs("dialogueText")]
+        [Tooltip("대사 표현 다이얼로그 텍스트 컴포넌트")]
         [SerializeField] private TMP_Text _dialogueText;
 
         [Header("Typing Effect")]
-        [FormerlySerializedAs("useTypewriterEffect")]
+        [Tooltip("자막 타이핑 효과 On/Off 결정 플래그")]
         [SerializeField] private bool _useTypewriterEffect = true;
-        [FormerlySerializedAs("characterInterval")]
+        [Tooltip("자막이 타이핑되는 간격")]
         [SerializeField] private float _characterInterval = 0.04f;
 
         [Header("Language")]
@@ -73,12 +73,7 @@ namespace VirtualRescue.DialogueSystem
         private void Awake()
         {
             LoadDialogueData();
-
-            if (_dialogueMethodTest == null)
-            {
-                _dialogueMethodTest = FindFirstObjectByType<DialogueMethodTest>();
-            }
-
+            
             if (_dialogueMethodTest != null)
             {
                 RegisterCallback("LockDoor", _dialogueMethodTest.LockDoor);

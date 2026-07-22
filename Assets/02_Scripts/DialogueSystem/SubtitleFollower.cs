@@ -14,45 +14,34 @@ namespace VirtualRescue.DialogueSystem
 
         [Header("Target")]
         [Tooltip("자막이 따라갈 기준 카메라. 비워둬도 Main Camera를 자동으로 찾음")]
-        [FormerlySerializedAs("targetCamera")]
         [SerializeField] private Transform _targetCamera;
 
         [Header("Placement")]
         [Tooltip("카메라로부터 자막을 얼마나 앞에 배치할지 정함")]
-        [FormerlySerializedAs("distance")]
         [SerializeField] private float _distance = 2.0f;
         [Tooltip("카메라 기준 자막의 위아래 위치를 조절\n음수면 아래로 내려감")]
-        [FormerlySerializedAs("verticalOffset")]
         [SerializeField] private float _verticalOffset = -0.35f;
 
         [Header("Smoothing")]
         [Tooltip("자막 위치가 목표 방향을 따라가는 방식을 정함\nSmoothDamp는 부드럽게 감속\nMoveTowards는 일정 속도로 따라감")]
-        [FormerlySerializedAs("positionFollowMode")]
         [SerializeField] private PositionFollowMode _positionFollowMode = PositionFollowMode.SmoothDamp;
         [Tooltip("SmoothDamp 모드에서 자막 위치가 목표 방향에 부드럽게 도달하는 데 걸리는 시간\n값이 작을수록 빠르게 따라감")]
-        [FormerlySerializedAs("positionSmoothTime")]
         [SerializeField] private float _positionSmoothTime = 0.5f;
         [Tooltip("MoveTowards 모드에서 자막 위치가 목표 방향을 따라가는 이동 속도\n값이 클수록 빠르게 따라감")]
-        [FormerlySerializedAs("moveSpeed")]
         [SerializeField] private float _moveSpeed = 6f;
         [Tooltip("자막이 카메라를 바라보도록 회전할 때의 부드러움\n값이 클수록 빠르게 회전")]
-        [FormerlySerializedAs("rotationSmoothSpeed")]
         [SerializeField] private float _rotationSmoothSpeed = 12f;
 
         [Header("Rotation")]
         [Tooltip("카메라가 이 각도 이상 회전했을 때만 자막의 목표 방향을 갱신\n작은 시점 흔들림을 무시하기 위해 사용")]
-        [FormerlySerializedAs("minCameraRotationAngle")]
         [SerializeField] private float _minCameraRotationAngle = 27.5f;
         [Tooltip("자막이 현재 카메라 방향에 이 각도 이내로 가까워지면 추적을 멈추고 다시 작은 흔들림을 무시")]
-        [FormerlySerializedAs("stopTrackingAngle")]
         [SerializeField] private float _stopTrackingAngle = 1f;
     
         [Header("Camera Follow")]
         [Tooltip("켜져 있으면 카메라의 좌우 회전만 따라감\n위아래 회전은 자막 위치 계산에서 무시")]
-        [FormerlySerializedAs("followYawOnly")]
         [SerializeField] private bool _followYawOnly = true;
         [Tooltip("켜져 있으면 자막이 항상 카메라를 바라보도록 회전")]
-        [FormerlySerializedAs("faceCamera")]
         [SerializeField] private bool _faceCamera = true;
 
         private Vector3 _followDirection;
