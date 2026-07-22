@@ -37,5 +37,14 @@ public class DialogueManagerEditor : Editor
                 dialogueManager.PlayGroup("testing2");
             }
         }
+        
+        if (GUILayout.Button("Play test_007"))
+        {
+            foreach (Object selectedTarget in targets)
+            {
+                DialogueManager dialogueManager = (DialogueManager)selectedTarget;
+                dialogueManager.Play("test_007");
+            }
+        }
     }
 }
