@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using VirtualRescue.DialogueSystem;
 
 [CustomEditor(typeof(DialogueManager))]
 public class DialogueManagerEditor : Editor
@@ -34,6 +35,15 @@ public class DialogueManagerEditor : Editor
             {
                 DialogueManager dialogueManager = (DialogueManager)selectedTarget;
                 dialogueManager.PlayGroup("testing2");
+            }
+        }
+        
+        if (GUILayout.Button("Play test_007"))
+        {
+            foreach (Object selectedTarget in targets)
+            {
+                DialogueManager dialogueManager = (DialogueManager)selectedTarget;
+                dialogueManager.Play("test_007");
             }
         }
     }
