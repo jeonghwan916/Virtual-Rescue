@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VirtualRescue.Effects;
+using VirtualRescue.Loading;
 
 namespace VirtualRescue.Lobby
 {
@@ -11,6 +12,17 @@ namespace VirtualRescue.Lobby
         [SerializeField] private int _selectedSceneBuildIndex = -1;
         [SerializeField] private ScreenFader _screenFader;
         [SerializeField] private float _fadeDuration = 1f;
+        [SerializeField] private string _loadingSceneName = "LoadingScene";
+
+        private static readonly string[] AdditiveSceneKeys =
+        {
+            "BedRoom",
+            "BedRoom2",
+            "Hallway&Stair",
+            "Kitchen&LivingRoom",
+            "VestibuleRoom",
+            "S_Env"
+        };
 
         private Coroutine _loadRoutine;
 
@@ -32,34 +44,36 @@ namespace VirtualRescue.Lobby
 
         private IEnumerator LoadSelectedSceneRoutine()
         {
-            if (!string.IsNullOrWhiteSpace(_selectedSceneKey))
-            {
-                yield return FadeOut();
-
-                Debug.Log("Loading... " + _selectedSceneKey);
-                SceneManager.LoadScene(_selectedSceneKey, LoadSceneMode.Single);
-
-                Debug.Log($"[{name}] Loading additive build test scenes.");
-                SceneManager.LoadScene("BedRoom", LoadSceneMode.Additive);
-                SceneManager.LoadScene("BedRoom2", LoadSceneMode.Additive);
-                SceneManager.LoadScene("Hallway&Stair", LoadSceneMode.Additive);
-                SceneManager.LoadScene("Kitchen&LivingRoom", LoadSceneMode.Additive);
-                SceneManager.LoadScene("VestibuleRoom", LoadSceneMode.Additive);
-                SceneManager.LoadScene("S_Env", LoadSceneMode.Additive);
-                yield break;
-            }
-
-            if (_selectedSceneBuildIndex < 0)
+            if (string.IsNullOrWhiteSpace(_selectedSceneKey) && _selectedSceneBuildIndex < 0)
             {
                 Debug.LogWarning("Selected scene key is empty and selected scene build index is invalid.");
                 _loadRoutine = null;
                 yield break;
             }
 
+            if (string.IsNullOrWhiteSpace(_loadingSceneName))
+            {
+                Debug.LogWarning("Loading scene name is empty.");
+                _loadRoutine = null;
+                yield break;
+            }
+
+            string[] additiveSceneKeys = string.IsNullOrWhiteSpace(_selectedSceneKey) ? null : AdditiveSceneKeys;
+            LoadingRequest.Set(_selectedSceneKey, _selectedSceneBuildIndex, additiveSceneKeys);
+
             yield return FadeOut();
 
-            Debug.Log("Loading... BuildIndex " + _selectedSceneBuildIndex);
-            SceneManager.LoadScene(_selectedSceneBuildIndex, LoadSceneMode.Single);
+            Debug.Log("Loading scene... " + _loadingSceneName);
+            AsyncOperation loadingOperation = SceneManager.LoadSceneAsync(_loadingSceneName, LoadSceneMode.Single);
+            if (loadingOperation == null)
+            {
+                Debug.LogWarning($"Failed to load loading scene: {_loadingSceneName}");
+                LoadingRequest.Clear();
+                _loadRoutine = null;
+                yield break;
+            }
+
+            yield return loadingOperation;
         }
 
         private IEnumerator FadeOut()
