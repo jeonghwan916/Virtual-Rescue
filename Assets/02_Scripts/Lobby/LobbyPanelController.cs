@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -43,6 +44,17 @@ namespace VirtualRescue.Lobby
         {
             RegisterStageSelectButtons();
             RegisterProgressButton();
+            
+            _startButton.onClick.AddListener(() => SwitchPanel(_mainPanel, _stageSelectPanel));
+            for (int i = 0; i < _stageSelectButtons.Length; i++)
+            {
+                _stageSelectButtons[i].onClick.AddListener(() => SwitchPanel(_stageSelectPanel, _stagePanel));
+            }
+            // todo : 나중에 세팅 버튼 리스너도 따로 넣기
+            // todo : 나중에 종료 버튼 리스너도 따로 넣기
+            
+            _backButton.onClick.AddListener(() => SwitchPanel(_stagePanel, _stageSelectPanel));
+            _returnToMainPanelButton.onClick.AddListener(() => SwitchPanel(_stageSelectPanel, _mainPanel));
         }
 
         private void RegisterStageSelectButtons()
@@ -113,13 +125,19 @@ namespace VirtualRescue.Lobby
 
             if (_sceneController != null)
             {
-                _sceneController.SetSelectedSceneKey(data.SceneKey);
+                _sceneController.SetSelectedScene(data.SceneKey, data.SceneBuildIndex);
             }
 
             if (_stagePanel != null)
             {
                 _stagePanel.SetActive(true);
             }
+        }
+
+        public void SwitchPanel(GameObject currentPanel, GameObject nextPanel)
+        {
+            currentPanel.SetActive(false);
+            nextPanel.SetActive(true);
         }
     }
 }
