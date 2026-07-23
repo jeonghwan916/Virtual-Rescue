@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
@@ -13,6 +14,10 @@ namespace VirtualRescue.Missions
 
         private ParticleFadeOut _particleFadeOut;
         private bool _isSealed;
+
+        public event Action Sealed;
+
+        public bool IsSealed => _isSealed;
 
         private void Awake()
         {
@@ -85,6 +90,7 @@ namespace VirtualRescue.Missions
 
             _isSealed = true;
             StartSealEffect();
+            Sealed?.Invoke();
         }
 
         private bool AreAllSocketsFilled()
