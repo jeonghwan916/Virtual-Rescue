@@ -33,7 +33,7 @@ namespace VirtualRescue.Editor
                 return;
             }
 
-            Scene scene = SceneManager.GetActiveScene();
+            Scene scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
             if (scene.path != ScenePath)
             {
                 Debug.LogError($"Open '{ScenePath}' before running the setup.");
@@ -69,7 +69,7 @@ namespace VirtualRescue.Editor
                 return;
             }
 
-            Scene scene = SceneManager.GetActiveScene();
+            Scene scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
             if (scene.path != ScenePath)
             {
                 Debug.LogError($"Open '{ScenePath}' before setting up the bat grip.");
@@ -102,7 +102,7 @@ namespace VirtualRescue.Editor
                 return;
             }
 
-            Scene scene = SceneManager.GetActiveScene();
+            Scene scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
             if (scene.path != ScenePath || FindSceneObject(scene, "PartitionFragments") != null)
             {
                 return;
@@ -121,7 +121,7 @@ namespace VirtualRescue.Editor
                 return;
             }
 
-            Scene scene = SceneManager.GetActiveScene();
+            Scene scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
             GameObject bat = FindSceneObject(scene, "bat");
             if (scene.path != ScenePath || bat == null ||
                 bat.transform.Find(BatGrabAttachName) != null)
