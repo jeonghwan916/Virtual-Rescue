@@ -1,86 +1,117 @@
-git using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
 namespace VirtualRescue.Interaction
 {
     public class HandleHeatDetector : MonoBehaviour
     {
+        [Header("References")]
         [SerializeField] private DoorHandleTemperature _handleTemperature;
-        [SerializeField] private ParticleSystem _heatHazeParticle;
+        [SerializeField] private Renderer _handleRenderer;
+
+        [Header("Color Feedback")]
+        [SerializeField] private Color _dangerColor = new Color(1f, 0.3f, 0f);
+
+        [Header("Haptic Feedback")]
         [SerializeField, Range(0f, 1f)] private float _hapticAmplitude = 0.7f;
         [SerializeField, Min(0f)] private float _hapticDuration = 0.3f;
 
+        private Material _handleMaterial;
+        private Color _originalColor;
+
+        private void Awake()
+        {
+            InitializeHandleMaterial();
+        }
+
         private void OnTriggerEnter(Collider other)
         {
-            XRBaseController controller = other.GetComponentInParent<XRBaseController>();
+            HapticImpulsePlayer hapticPlayer =
+                other.GetComponentInParent<HapticImpulsePlayer>();
 
-            // XR 컨트롤러가 아닌 오브젝트에 반응하지 않도록 한다.
-            if (controller == null)
+            // XR 햅틱 장치가 없는 오브젝트에는 반응하지 않도록 한다.
+            if (hapticPlayer == null)
             {
                 return;
             }
 
-            // Inspector 참조 누락으로 잘못 판정되는 것을 방지한다.
+            // 온도 참조가 없으면 위험 여부를 판단할 수 없다.
             if (_handleTemperature == null)
             {
-                Debug.LogWarning("손잡이 온도 컴포넌트가 연결되지 않았습니다.");
+                Debug.LogWarning(
+                    $"{gameObject.name}: 손잡이 온도 컴포넌트가 연결되지 않았습니다."
+                );
+
                 return;
             }
 
             if (_handleTemperature.IsDangerous == false)
             {
-                Debug.Log("안전한 온도의 문손잡이입니다.");
+                Debug.Log($"{gameObject.name}: 안전한 온도의 문손잡이입니다.");
                 return;
             }
 
-            PlayHeatParticle();
-            SendHapticFeedback(controller);
+            ShowDangerColor();
+            SendHapticFeedback(hapticPlayer);
         }
 
         private void OnTriggerExit(Collider other)
         {
-            XRBaseController controller = other.GetComponentInParent<XRBaseController>();
+            HapticImpulsePlayer hapticPlayer =
+                other.GetComponentInParent<HapticImpulsePlayer>();
 
-            // 다른 오브젝트가 나갔을 때 위험 효과가 종료되는 것을 방지한다.
-            if (controller == null)
+            // 다른 오브젝트가 나갔을 때 색상이 복원되는 것을 방지한다.
+            if (hapticPlayer == null)
             {
                 return;
             }
 
-            StopHeatParticle();
+            RestoreOriginalColor();
         }
 
-        private void PlayHeatParticle()
+        private void InitializeHandleMaterial()
         {
-            // 파티클이 없어도 햅틱 판정은 계속 동작하도록 한다.
-            if (_heatHazeParticle == null)
+            // 색상 변경 대상이 없으면 색상 기능만 건너뛰도록 한다.
+            if (_handleRenderer == null)
+            {
+                Debug.LogWarning(
+                    $"{gameObject.name}: 손잡이 Renderer가 연결되지 않았습니다."
+                );
+
+                return;
+            }
+
+            // 에셋의 공유 Material이 직접 변경되는 것을 방지한다.
+            _handleMaterial = _handleRenderer.material;
+            _originalColor = _handleMaterial.color;
+        }
+
+        private void ShowDangerColor()
+        {
+            if (_handleMaterial == null)
             {
                 return;
             }
 
-            // 반복 진입으로 파티클이 계속 초기화되는 것을 방지한다.
-            if (_heatHazeParticle.isPlaying == false)
-            {
-                _heatHazeParticle.Play();
-            }
+            _handleMaterial.color = _dangerColor;
         }
 
-        private void StopHeatParticle()
+        private void RestoreOriginalColor()
         {
-            if (_heatHazeParticle == null)
+            if (_handleMaterial == null)
             {
                 return;
             }
 
-            if (_heatHazeParticle.isPlaying)
-            {
-                _heatHazeParticle.Stop();
-            }
+            _handleMaterial.color = _originalColor;
         }
 
-        private void SendHapticFeedback(XRBaseController controller)
+        private void SendHapticFeedback(HapticImpulsePlayer hapticPlayer)
         {
-            controller.SendHapticImpulse(_hapticAmplitude, _hapticDuration);
+            hapticPlayer.SendHapticImpulse(
+                _hapticAmplitude,
+                _hapticDuration
+            );
         }
     }
 }
