@@ -1,4 +1,4 @@
-git using UnityEngine;
+using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
 namespace VirtualRescue.Interaction
