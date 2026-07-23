@@ -20,7 +20,7 @@ namespace VirtualRescue.Interaction
                 return;
             }
 
-            // Inspector 참조 누락으로 잘git 못 판정되는 것을 방지한다.
+            // Inspector 참조 누락으로 잘못 판정되는 것을 방지한다.
             if (_handleTemperature == null)
             {
                 Debug.LogWarning("손잡이 온도 컴포넌트가 연결되지 않았습니다.");
