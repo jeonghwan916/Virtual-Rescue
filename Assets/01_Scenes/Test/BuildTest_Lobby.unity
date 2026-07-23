@@ -4733,6 +4733,7 @@ GameObject:
   - component: {fileID: 1565416468}
   - component: {fileID: 1565416467}
   - component: {fileID: 1565416471}
+  - component: {fileID: 1565416472}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -4871,6 +4872,25 @@ MonoBehaviour:
   _backButton: {fileID: 388910371}
   _progressButton: {fileID: 439131560}
   _returnToMainPanelButton: {fileID: 754671776}
+--- !u!114 &1565416472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1565416466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7951c64acb0fa62458bf30a60089fe2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.XR.Interaction.Toolkit::UnityEngine.XR.Interaction.Toolkit.UI.TrackedDeviceGraphicRaycaster
+  m_IgnoreReversedGraphics: 0
+  m_CheckFor2DOcclusion: 0
+  m_CheckFor3DOcclusion: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RaycastTriggerInteraction: 1
 --- !u!1 &1935686374
 GameObject:
   m_ObjectHideFlags: 0
