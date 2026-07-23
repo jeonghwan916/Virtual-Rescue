@@ -9,14 +9,29 @@ namespace VirtualRescue.Loading
 {
     public class LoadingSceneController : MonoBehaviour
     {
+        [Tooltip("로딩 진행도를 표시할 UI Slider")]
         [SerializeField] private Slider _progressSlider;
+
+        [Tooltip("로딩 UI가 너무 빨리 사라지지 않도록 보장할 최소 표시 시간")]
         [SerializeField] private float _minimumLoadingSeconds = 0.5f;
+
+        [Tooltip("모든 씬 로딩 완료 후 쉐이더 컴파일과 초기 렌더링 안정화를 위해 기다릴 시간")]
+        [SerializeField] private float _postLoadWarmupSeconds = 1.75f;
+
+        [Tooltip("Prewarm 완료 후 검은 Overlay가 서서히 사라지는 시간")]
+        [SerializeField] private float _overlayFadeOutSeconds = 1f;
+
+        [Tooltip("로딩 요청이 유효하지 않을 때 되돌아갈 로비 씬 이름")]
         [SerializeField] private string _fallbackLobbySceneName = "BuildTest_Lobby";
 
         public float LoadingProgress { get; private set; }
 
+        private Canvas _loadingCanvas;
+        private Image _blockingOverlayImage;
+
         private void Start()
         {
+            PrepareLoadingCanvas();
             DontDestroyOnLoad(gameObject);
             StartCoroutine(LoadRequestedScenesRoutine());
         }
@@ -57,6 +72,8 @@ namespace VirtualRescue.Loading
                 Debug.LogWarning("Loaded main scene could not be found for SetActiveScene.");
             }
 
+            HideProgressSlider();
+            AttachLoadingCanvasToMainCamera();
             List<AsyncOperation> additiveOperations = StartAdditiveSceneLoads();
 
             while (!AreAllOperationsDone(additiveOperations))
@@ -69,8 +86,14 @@ namespace VirtualRescue.Loading
             {
                 yield return null;
             }
-
             SetProgress(1f);
+
+            if (_postLoadWarmupSeconds > 0f)
+            {
+                yield return new WaitForSecondsRealtime(_postLoadWarmupSeconds);
+            }
+
+            yield return FadeBlockingOverlayOut();
 
             LoadingRequest.Clear();
             Destroy(gameObject);
@@ -159,6 +182,132 @@ namespace VirtualRescue.Loading
             {
                 _progressSlider.value = LoadingProgress;
             }
+        }
+
+        private void PrepareLoadingCanvas()
+        {
+            _loadingCanvas = GetComponentInChildren<Canvas>(true);
+            if (_loadingCanvas == null)
+            {
+                return;
+            }
+
+            _loadingCanvas.overrideSorting = true;
+            _loadingCanvas.sortingOrder = short.MaxValue;
+            _blockingOverlayImage = EnsureBlockingOverlay(_loadingCanvas.transform);
+        }
+
+        private void AttachLoadingCanvasToMainCamera()
+        {
+            if (_loadingCanvas == null)
+            {
+                return;
+            }
+
+            Camera mainCamera = Camera.main;
+            if (mainCamera == null)
+            {
+                mainCamera = FindAnyObjectByType<Camera>();
+            }
+
+            if (mainCamera == null)
+            {
+                Debug.LogWarning("Main camera could not be found for loading overlay.");
+                return;
+            }
+
+            Transform loadingTransform = _loadingCanvas.transform;
+            loadingTransform.SetParent(mainCamera.transform, false);
+            loadingTransform.localPosition = new Vector3(0f, 0f, 0.5f);
+            loadingTransform.localRotation = Quaternion.identity;
+            loadingTransform.localScale = Vector3.one * 0.01f;
+
+            _loadingCanvas.renderMode = RenderMode.WorldSpace;
+            _loadingCanvas.worldCamera = mainCamera;
+            _loadingCanvas.overrideSorting = true;
+            _loadingCanvas.sortingOrder = short.MaxValue;
+
+            RectTransform rectTransform = _loadingCanvas.GetComponent<RectTransform>();
+            if (rectTransform != null)
+            {
+                rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+                rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+                rectTransform.anchoredPosition = Vector2.zero;
+                rectTransform.sizeDelta = new Vector2(1000f, 1000f);
+            }
+        }
+
+        private static Image EnsureBlockingOverlay(Transform canvasTransform)
+        {
+            Transform existingOverlay = canvasTransform.Find("Loading Blocking Overlay");
+            if (existingOverlay != null)
+            {
+                existingOverlay.SetAsFirstSibling();
+                Image existingImage = existingOverlay.GetComponent<Image>();
+                if (existingImage != null)
+                {
+                    existingImage.color = Color.black;
+                }
+
+                return existingImage;
+            }
+
+            GameObject overlayObject = new GameObject("Loading Blocking Overlay", typeof(RectTransform), typeof(Image));
+            overlayObject.transform.SetParent(canvasTransform, false);
+            overlayObject.transform.SetAsFirstSibling();
+
+            RectTransform overlayTransform = overlayObject.GetComponent<RectTransform>();
+            overlayTransform.anchorMin = Vector2.zero;
+            overlayTransform.anchorMax = Vector2.one;
+            overlayTransform.offsetMin = Vector2.zero;
+            overlayTransform.offsetMax = Vector2.zero;
+
+            Image overlayImage = overlayObject.GetComponent<Image>();
+            overlayImage.color = Color.black;
+            return overlayImage;
+        }
+
+        private void HideProgressSlider()
+        {
+            if (_progressSlider == null)
+            {
+                return;
+            }
+
+            _progressSlider.gameObject.SetActive(false);
+        }
+
+        private IEnumerator FadeBlockingOverlayOut()
+        {
+            if (_blockingOverlayImage == null)
+            {
+                yield break;
+            }
+
+            if (_overlayFadeOutSeconds <= 0f)
+            {
+                SetBlockingOverlayAlpha(0f);
+                yield break;
+            }
+
+            float elapsed = 0f;
+
+            while (elapsed < _overlayFadeOutSeconds)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / _overlayFadeOutSeconds);
+                SetBlockingOverlayAlpha(1f - t);
+                yield return null;
+            }
+
+            SetBlockingOverlayAlpha(0f);
+        }
+
+        private void SetBlockingOverlayAlpha(float alpha)
+        {
+            Color color = _blockingOverlayImage.color;
+            color.a = Mathf.Clamp01(alpha);
+            _blockingOverlayImage.color = color;
         }
 
         private IEnumerator LoadFallbackLobbyRoutine()
