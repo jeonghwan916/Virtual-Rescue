@@ -307,7 +307,7 @@ Transform:
   m_GameObject: {fileID: 18525337}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -50, y: -0.13, z: -2.5}
+  m_LocalPosition: {x: -50, y: 0, z: -2.5}
   m_LocalScale: {x: 10, y: 0.25, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -964,11 +964,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 45444572}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2a93f5b6e1c4a74a9f7c8b350d124ee, type: 3}
+  m_Script: {fileID: 11500000, guid: 7c44e0d4829d455bb06f8d82b3b79f0e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions08.LightweightPartitionQuestTrigger
-  _questManager: {fileID: 1767393426}
-  _questStep: 0
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions09.RefugeAreaQuestTrigger
+  _questManager: {fileID: 2075850044}
+  _triggerType: 0
 --- !u!65 &45444575
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2898,6 +2898,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5483804995878953647, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
   m_PrefabInstance: {fileID: 340714626}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &340714628 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2483867232326413644, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+  m_PrefabInstance: {fileID: 340714626}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d6df3066bb7445fa2375a75b730d602, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions09.FireExitDoorController
 --- !u!1 &350753121
 GameObject:
   m_ObjectHideFlags: 0
@@ -2926,7 +2937,7 @@ Transform:
   m_GameObject: {fileID: 350753121}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -40, y: -0.13, z: -2.5}
+  m_LocalPosition: {x: -40, y: 0, z: -2.5}
   m_LocalScale: {x: 10, y: 0.25, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4737,7 +4748,7 @@ Transform:
   m_GameObject: {fileID: 545984978}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -20, y: -0.13, z: -2.5}
+  m_LocalPosition: {x: -20, y: 0, z: -2.5}
   m_LocalScale: {x: 10, y: 0.25, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4865,6 +4876,74 @@ Transform:
   - {fileID: 1767393425}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &593688202
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 593688203}
+  - component: {fileID: 593688205}
+  - component: {fileID: 593688204}
+  m_Layer: 0
+  m_Name: Dialogue Triger_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &593688203
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593688202}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1726117463}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &593688204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593688202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c44e0d4829d455bb06f8d82b3b79f0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions09.RefugeAreaQuestTrigger
+  _questManager: {fileID: 2075850044}
+  _triggerType: 1
+--- !u!65 &593688205
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593688202}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 9.9, y: 2, z: 1}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &597569156
 GameObject:
   m_ObjectHideFlags: 0
@@ -6342,7 +6421,7 @@ Transform:
   m_GameObject: {fileID: 737661441}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -80, y: -0.13, z: -2.5}
+  m_LocalPosition: {x: -80, y: 0, z: -2.5}
   m_LocalScale: {x: 10, y: 0.25, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6680,7 +6759,7 @@ Transform:
   m_GameObject: {fileID: 753156947}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -60, y: -0.13, z: -2.5}
+  m_LocalPosition: {x: -60, y: 0, z: -2.5}
   m_LocalScale: {x: 10, y: 0.25, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6905,7 +6984,7 @@ Transform:
   m_GameObject: {fileID: 787651442}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -70, y: -0.13, z: -2.5}
+  m_LocalPosition: {x: -70, y: 0, z: -2.5}
   m_LocalScale: {x: 10, y: 0.25, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7017,7 +7096,7 @@ Transform:
   m_GameObject: {fileID: 788210053}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -30, y: -0.175, z: -2.5}
+  m_LocalPosition: {x: -30, y: 0, z: -2.5}
   m_LocalScale: {x: 10, y: 0.25, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10423,7 +10502,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2455711654808853570, guid: beb4e2871579447497fe41dfb108e2cd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.13
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2455711654808853570, guid: beb4e2871579447497fe41dfb108e2cd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10475,7 +10554,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4266640295717640281, guid: beb4e2871579447497fe41dfb108e2cd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.125
       objectReference: {fileID: 0}
     - target: {fileID: 4266640295717640281, guid: beb4e2871579447497fe41dfb108e2cd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -13646,7 +13725,7 @@ PrefabInstance:
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _dialogueCsv
       value: 
-      objectReference: {fileID: 4900000, guid: de5b4d59732493b4b9987f215f98884c, type: 3}
+      objectReference: {fileID: 4900000, guid: b4c224af2ecdad543a07757070a952da, type: 3}
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _speakerText
       value: 
@@ -13662,7 +13741,7 @@ PrefabInstance:
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _dialogueTextCsv
       value: 
-      objectReference: {fileID: 4900000, guid: 02a36167fd83b3149a9d1a27f66227c6, type: 3}
+      objectReference: {fileID: 4900000, guid: ebd69072c2f6b2341995837a282f61db, type: 3}
     - target: {fileID: 7167137039038344234, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -15012,7 +15091,6 @@ Transform:
   - {fileID: 1955905658}
   - {fileID: 2081601192}
   - {fileID: 41492105}
-  - {fileID: 1844755046}
   - {fileID: 1712218683}
   - {fileID: 154615734}
   - {fileID: 1369492016}
@@ -15025,6 +15103,7 @@ Transform:
   - {fileID: 340714627}
   - {fileID: 45444573}
   - {fileID: 2075850043}
+  - {fileID: 593688203}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1738590333
@@ -16654,11 +16733,11 @@ Transform:
   m_GameObject: {fileID: 1844755045}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: -80, y: 3, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1726117463}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!114 &1844755047
 MonoBehaviour:
@@ -17540,7 +17619,7 @@ Transform:
   m_GameObject: {fileID: 1948323646}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10, y: -0.13, z: -2.5}
+  m_LocalPosition: {x: -10, y: 0, z: -2.5}
   m_LocalScale: {x: 10, y: 0.25, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -19178,6 +19257,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2075850043}
+  - component: {fileID: 2075850044}
   m_Layer: 0
   m_Name: QuestManager
   m_TagString: Untagged
@@ -19200,6 +19280,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1726117463}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2075850044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2075850042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8d5fb19ce814e5da4fb2e9d37d9a621, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions09.RefugeAreaQuestManager
+  _dialogueManager: {fileID: 851843028}
+  _doorController: {fileID: 340714628}
+  _windowSeal: {fileID: 1805301818}
+  _startDialogueGroup: quest09_start
+  _entryDialogueGroup: quest09_door
+  _callDialogueGroup: quest09_call
+  _finishDialogueGroup: quest09_finish
 --- !u!1 &2081601186
 GameObject:
   m_ObjectHideFlags: 0
@@ -20045,6 +20144,7 @@ SceneRoots:
   - {fileID: 1830585928}
   - {fileID: 1625867221}
   - {fileID: 635276158}
+  - {fileID: 1844755046}
   - {fileID: 1726117463}
   - {fileID: 588366294}
   - {fileID: 1919067354}
