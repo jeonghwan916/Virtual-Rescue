@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class HandkerChiefWet : MonoBehaviour
@@ -9,6 +10,7 @@ public class HandkerChiefWet : MonoBehaviour
     private bool _isCompletelyWet;
 
     public bool IsCompletelyWet => _isCompletelyWet;
+    public event Action CompletelyWet;
 
     private void Awake()
     {
@@ -40,6 +42,7 @@ public class HandkerChiefWet : MonoBehaviour
         if (Mathf.Approximately(color.b, 1f))
         {
             _isCompletelyWet = true;
+            CompletelyWet?.Invoke();
             CompletlyWet();
         }
     }

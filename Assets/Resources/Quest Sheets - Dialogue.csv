@@ -7,8 +7,14 @@ quest09_001,quest09_start,1,,quest09_001,,1
 quest09_002,quest09_door,1,,quest09_002,,1
 quest09_003,quest09_call,1,,quest09_003,,1
 quest09_004,quest09_call,2,119 상황실,quest09_004,,0.25
-quest09_005,quest09_call,3,신고자,quest09_005,,0.5
-quest09_006,quest09_call,4,119 상황실,quest09_006,,0.5
+quest09_005,quest09_call,3,신고자,quest09_005,,0.25
+quest09_006,quest09_call,4,119 상황실,quest09_006,,0.25
 quest09_007,quest09_call,5,119 상황실,quest09_007,Quest09BeginSealing,1
 quest09_008,quest09_finish,1,,,,0.5
-quest09_009,quest09_finish,2,안내,quest09_009,,1
+quest09_009,quest09_finish,2,안내,quest09_009,,2
+quest03_001,quest03_start,1,,quest03_001,,2
+quest03_002,quest03_start,2,,quest03_002,,2
+quest03_003,quest03_pin,1,,quest03_003,,2
+quest03_004,quest03_spray,1,,quest03_004,,2
+quest03_005,quest03_spray,2,,quest03_005,,2
+quest03_006,quest03_finish,1,,quest03_006,,2
