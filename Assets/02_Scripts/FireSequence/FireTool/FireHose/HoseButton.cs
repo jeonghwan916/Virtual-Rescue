@@ -8,12 +8,6 @@ public class HoseButton : MonoBehaviour
     public event Action OnButtonPressed;
     public event Action OnButtonUnPressed;
 
-    // todo : Temporary - Init
-    private void Start()
-    {
-        LeverEnabled();
-    }
-
     public void LeverEnabled()
     {
         Debug.Log($"{nameof(HoseButton)} enabled.", this);
