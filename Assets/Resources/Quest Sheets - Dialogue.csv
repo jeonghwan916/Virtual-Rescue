@@ -1,0 +1,14 @@
+id,group,order,speaker,audioPath,callbackKey,delayAfterAudio
+quest08_001,quest08_start,1,,quest08_001,,1
+quest08_002,quest08_bat,1,,quest08_002,,1
+quest08_003,quest08_finish,1,,quest08_003,,0.25
+quest08_004,quest08_finish,2,,quest08_004,,1
+quest09_001,quest09_start,1,,quest09_001,,1
+quest09_002,quest09_door,1,,quest09_002,,1
+quest09_003,quest09_call,1,,quest09_003,,1
+quest09_004,quest09_call,2,119 상황실,quest09_004,,0.25
+quest09_005,quest09_call,3,신고자,quest09_005,,0.5
+quest09_006,quest09_call,4,119 상황실,quest09_006,,0.5
+quest09_007,quest09_call,5,119 상황실,quest09_007,Quest09BeginSealing,1
+quest09_008,quest09_finish,1,,,,0.5
+quest09_009,quest09_finish,2,안내,quest09_009,,1
