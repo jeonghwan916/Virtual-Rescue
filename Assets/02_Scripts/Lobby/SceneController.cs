@@ -10,11 +10,12 @@ namespace VirtualRescue.Lobby
     {
         [SerializeField] private string _selectedSceneKey;
         [SerializeField] private int _selectedSceneBuildIndex = -1;
+        [SerializeField] private bool _loadMainGameAdditiveScenes = true;
         [SerializeField] private ScreenFader _screenFader;
         [SerializeField] private float _fadeDuration = 1f;
         [SerializeField] private string _loadingSceneName = "LoadingScene";
 
-        private static readonly string[] AdditiveSceneKeys =
+        private static readonly string[] MainGameAdditiveSceneKeys =
         {
             "BedRoom",
             "BedRoom2",
@@ -28,8 +29,14 @@ namespace VirtualRescue.Lobby
 
         public void SetSelectedScene(string sceneKey, int sceneBuildIndex)
         {
+            SetSelectedScene(sceneKey, sceneBuildIndex, true);
+        }
+
+        public void SetSelectedScene(string sceneKey, int sceneBuildIndex, bool loadMainGameAdditiveScenes)
+        {
             _selectedSceneKey = sceneKey;
             _selectedSceneBuildIndex = sceneBuildIndex;
+            _loadMainGameAdditiveScenes = loadMainGameAdditiveScenes;
         }
 
         public void LoadSelectedScene()
@@ -58,7 +65,9 @@ namespace VirtualRescue.Lobby
                 yield break;
             }
 
-            string[] additiveSceneKeys = string.IsNullOrWhiteSpace(_selectedSceneKey) ? null : AdditiveSceneKeys;
+            string[] additiveSceneKeys = !string.IsNullOrWhiteSpace(_selectedSceneKey) && _loadMainGameAdditiveScenes
+                ? MainGameAdditiveSceneKeys
+                : null;
             LoadingRequest.Set(_selectedSceneKey, _selectedSceneBuildIndex, additiveSceneKeys);
 
             yield return FadeOut();

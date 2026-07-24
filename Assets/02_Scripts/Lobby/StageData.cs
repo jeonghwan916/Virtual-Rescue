@@ -13,11 +13,13 @@ namespace VirtualRescue.Lobby
         [Header("Scene")]
         [SerializeField] private string _sceneKey;
         [SerializeField] private int _sceneBuildIndex = -1;
+        [SerializeField] private bool _loadMainGameAdditiveScenes = true;
 
         public Sprite Image => _image;
         public string PrimaryText => _primaryText;
         public string SecondaryText => _secondaryText;
         public string SceneKey => _sceneKey;
         public int SceneBuildIndex => _sceneBuildIndex;
+        public bool LoadMainGameAdditiveScenes => _loadMainGameAdditiveScenes;
     }
 }
