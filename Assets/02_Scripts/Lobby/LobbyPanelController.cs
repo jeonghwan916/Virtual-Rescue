@@ -125,7 +125,7 @@ namespace VirtualRescue.Lobby
 
             if (_sceneController != null)
             {
-                _sceneController.SetSelectedScene(data.SceneKey, data.SceneBuildIndex);
+                _sceneController.SetSelectedScene(data.SceneKey, data.SceneBuildIndex, data.LoadMainGameAdditiveScenes);
             }
 
             if (_stagePanel != null)
