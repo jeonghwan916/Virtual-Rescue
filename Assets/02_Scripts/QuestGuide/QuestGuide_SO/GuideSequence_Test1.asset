@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b58ee67f757b472d8b2728b355de1b88, type: 3}
+  m_Name: GuideSequence_Test1
+  m_EditorClassIdentifier: VirtualRescue.QuestGuide::VirtualRescue.QuestGuide.GuideSequence
+  _pages:
+  - _title: Page 1_1
+    _image: {fileID: 21300000, guid: 2f8349570a152884fb6cf7ebdc8c18b3, type: 3}
+    _explain: dfdfd
+    _options: []
+  - _title: Page 2_1
+    _image: {fileID: 21300000, guid: 17d565bb4a7744b41b7e4dc7e3a09e35, type: 3}
+    _explain: qwewe
+    _options:
+    - _label: 1223
+      _actionId: test
+    - _label: 111
+      _actionId: 
+  - _title: Page 3_1
+    _image: {fileID: 0}
+    _explain: 
+    _options:
+    - _label: 1112
+      _actionId: 
+    - _label: 322
+      _actionId: 
+    - _label: 222
+      _actionId: 
+  - _title: Page 4_1
+    _image: {fileID: 21300000, guid: db3e7b7c8db355e499429545071a0321, type: 3}
+    _explain: 
+    _options: []

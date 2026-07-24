@@ -664,13 +664,15 @@ GameObject:
   m_Component:
   - component: {fileID: 9200956445336249094}
   - component: {fileID: 4087068097882618385}
+  - component: {fileID: 425228167626104512}
+  - component: {fileID: 6661923239755803001}
   m_Layer: 0
   m_Name: QuestGuideFollower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9200956445336249094
 Transform:
   m_ObjectHideFlags: 0
@@ -710,6 +712,48 @@ MonoBehaviour:
   _stopTrackingAngle: 1
   _followYawOnly: 1
   _faceCamera: 1
+--- !u!114 &425228167626104512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3071046472557911918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f5522660bb34c4685e3afc17fe13b57, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.QuestGuide.QuestGuideController
+  _titleText: {fileID: 1431465892809918814}
+  _guideImage: {fileID: 6342001470085304790}
+  _explainText: {fileID: 2281671329906081747}
+  _optionsPanel: {fileID: 3382388979350873115}
+  _optionButtons:
+  - {fileID: 3333621208999515101}
+  - {fileID: 4057448711185377244}
+  - {fileID: 2536287436964151389}
+  _optionTexts:
+  - {fileID: 708576306685915514}
+  - {fileID: 5985350017230539105}
+  - {fileID: 8498055001832615183}
+  _waysPanel: {fileID: 4653375225495018905}
+  _backButton: {fileID: 2461461794685394381}
+  _forwardButton: {fileID: 8799341789497565475}
+  _forwardText: {fileID: 8423890638108393293}
+  _actionHandler: {fileID: 6661923239755803001}
+--- !u!114 &6661923239755803001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3071046472557911918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b93258c330a304344905d6e0f8e3bfb2, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.QuestGuide.QuestButtonOnClickEventAdder
+  _dialogueManager: {fileID: 0}
 --- !u!1 &3382388979350873115
 GameObject:
   m_ObjectHideFlags: 0

@@ -715,6 +715,68 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!1 &1317642606
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1317642608}
+  - component: {fileID: 1317642607}
+  - component: {fileID: 1317642609}
+  m_Layer: 0
+  m_Name: QuestGuideManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1317642607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1317642606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1108f262bcff41b4c9ed91edc59ec5cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: VirtualRescue.QuestGuide::VirtualRescue.QuestGuide.QuestGuideManager
+  _questGuideController: {fileID: 2609769252343436033}
+  _guideSequences:
+  - {fileID: 11400000, guid: 53b2c9db3ebdc3b4dafc9ef14cbf5369, type: 2}
+  - {fileID: 11400000, guid: b784bd1d96586ca44a4ca7256f545cc2, type: 2}
+--- !u!4 &1317642608
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1317642606}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1317642609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1317642606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b93258c330a304344905d6e0f8e3bfb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.QuestGuide.QuestButtonOnClickEventAdder
+  _dialogueManager: {fileID: 7733407150163098714}
 --- !u!114 &1533211012 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6485629708579249309, guid: 763874ca91e5df945abd8cbbb68062fa, type: 3}
@@ -1220,10 +1282,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2449004556539235587, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_Name
-      value: Button-Back
-      objectReference: {fileID: 0}
     - target: {fileID: 2905751253210559924, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1276,98 +1334,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5414783637125105413, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_Name
-      value: Button-Option3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5766904097065682142, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5766904097065682142, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5766904097065682142, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5766904097065682142, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6318425223567361234, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_Name
-      value: Button-Forward
-      objectReference: {fileID: 0}
-    - target: {fileID: 7229280669015727857, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_Name
-      value: Button-Option1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7379095205115316392, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7379095205115316392, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7379095205115316392, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7379095205115316392, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7601243655026892815, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7601243655026892815, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7601243655026892815, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7601243655026892815, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7964584825007087399, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7964584825007087399, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7964584825007087399, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7964584825007087399, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7976151513412086187, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7976151513412086187, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7976151513412086187, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7976151513412086187, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8078013437676775843, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1383,10 +1349,6 @@ PrefabInstance:
     - target: {fileID: 8078013437676775843, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9186772945781237203, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
-      propertyPath: m_Name
-      value: Button-Option2
       objectReference: {fileID: 0}
     - target: {fileID: 9200956445336249094, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1433,6 +1395,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
+--- !u!114 &2609769252343436033 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 425228167626104512, guid: 2295e5380e684e04199d87ab147d89ed, type: 3}
+  m_PrefabInstance: {fileID: 2609769252343436032}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f5522660bb34c4685e3afc17fe13b57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.QuestGuide.QuestGuideController
 --- !u!1001 &5335430417146206005
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2139,6 +2112,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33fe149c883993241a493776b391e046, type: 3}
+--- !u!114 &7733407150163098714 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
+  m_PrefabInstance: {fileID: 7733407150163098713}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77e7e6d42b62dda4d89ccd89d5506c2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
 --- !u!1001 &8098661446788486711
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2220,3 +2204,4 @@ SceneRoots:
   - {fileID: 2609769252343436032}
   - {fileID: 1605148379}
   - {fileID: 5901442590261596790}
+  - {fileID: 1317642608}
