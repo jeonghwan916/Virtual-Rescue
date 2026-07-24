@@ -41,11 +41,11 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3199283261846579216}
   m_Enabled: 1
-  serializedVersion: 13
+  serializedVersion: 12
   m_Type: 2
   m_Color: {r: 0.99607843, g: 0.6039216, b: 0.3764706, a: 1}
-  m_Intensity: 14.782041
-  m_Range: 8.159996
+  m_Intensity: 10.3897085
+  m_Range: 8.733986
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 10, y: 10}
@@ -93,7 +93,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShapeRadius: 0
+  m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -9658,7 +9658,7 @@ GameObject:
   - component: {fileID: 2248263024600412006}
   - component: {fileID: 5990565638101293122}
   - component: {fileID: 8098264039075628072}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: Fire1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
