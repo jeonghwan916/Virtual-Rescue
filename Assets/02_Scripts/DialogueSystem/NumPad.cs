@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,11 +19,10 @@ public class NumPad : MonoBehaviour
     [SerializeField] private Button _deleteButton;
     [SerializeField] private Button _callButton;
 
-    [Header("Events")]
-    [SerializeField] private UnityEvent _onCorrectNumber;
-    [SerializeField] private UnityEvent _onWrongNumber;
-
     private UnityAction[] _numberButtonActions;
+
+    public event Action OnCorrectNumber;
+    public event Action OnWrongNumber;
 
     private void Awake()
     {
@@ -86,17 +86,17 @@ public class NumPad : MonoBehaviour
         if (_inputField == null)
         {
             Debug.LogWarning($"{nameof(NumPad)} needs an input field before calling.", this);
-            _onWrongNumber?.Invoke();
+            IsNumberIsCorrect(true);
             return;
         }
 
         if (_inputField.text == _correctNumber)
         {
-            _onCorrectNumber?.Invoke();
+            IsNumberIsCorrect(true);
             return;
         }
 
-        _onWrongNumber?.Invoke();
+        IsNumberIsCorrect(false);
     }
 
     private void ConfigureInputField()
@@ -222,4 +222,19 @@ public class NumPad : MonoBehaviour
 
         _inputField.text += key;
     }
+
+    public void IsNumberIsCorrect(bool flag)
+    {
+        if (flag)
+        {
+            Debug.Log("OnCorrectNumber");
+            OnCorrectNumber?.Invoke();
+        }
+        else
+        {
+            Debug.Log("OnWrongNumber");
+            OnWrongNumber?.Invoke();
+        }
+    }
+    
 }
