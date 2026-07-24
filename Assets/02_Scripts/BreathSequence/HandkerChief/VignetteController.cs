@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 
@@ -19,7 +20,7 @@ public class VignetteController : MonoBehaviour
             vignetteRenderer = GetComponent<MeshRenderer>();
 
         propertyBlock = new MaterialPropertyBlock();
-        SetApertureSize(startApertureSize);
+        //SetApertureSize(startApertureSize);
     }
 
     public void WipeOut()
@@ -56,7 +57,7 @@ public class VignetteController : MonoBehaviour
         wipeOutRoutine = null;
     }
 
-    void SetApertureSize(float apertureSize)
+    public void SetApertureSize(float apertureSize)
     {
         currentApertureSize = Mathf.Clamp01(apertureSize);
 
