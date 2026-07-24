@@ -29,7 +29,7 @@ namespace VirtualRescue.QuestGuide
         [SerializeField] private TMP_Text _forwardText;
 
         [Header("Actions")]
-        [SerializeField] private QuestButtonOnClickEventAdder _actionHandler;
+        [SerializeField] private QuestGuideActionRouter _actionRouter;
 
         private readonly GuideOption[] _visibleOptions = new GuideOption[MaxOptionCount];
         private UnityAction[] _optionButtonActions;
@@ -222,13 +222,13 @@ namespace VirtualRescue.QuestGuide
             GuideOption option = _visibleOptions[slotIndex];
             if (option != null)
             {
-                if (_actionHandler == null)
+                if (_actionRouter == null)
                 {
-                    Debug.LogWarning("Quest guide action handler is not assigned.", this);
+                    Debug.LogWarning("Quest guide action router is not assigned.", this);
                     return;
                 }
 
-                _actionHandler.HandleGuideAction(option.ActionId);
+                _actionRouter.HandleGuideAction(option.ActionId);
             }
         }
 

@@ -722,7 +722,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f5522660bb34c4685e3afc17fe13b57, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.QuestGuide.QuestGuideController
   _titleText: {fileID: 1431465892809918814}
   _guideImage: {fileID: 6342001470085304790}
@@ -740,7 +740,7 @@ MonoBehaviour:
   _backButton: {fileID: 2461461794685394381}
   _forwardButton: {fileID: 8799341789497565475}
   _forwardText: {fileID: 8423890638108393293}
-  _actionHandler: {fileID: 6661923239755803001}
+  _actionRouter: {fileID: 6661923239755803001}
 --- !u!114 &6661923239755803001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -751,9 +751,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b93258c330a304344905d6e0f8e3bfb2, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.QuestGuide.QuestButtonOnClickEventAdder
-  _dialogueManager: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.QuestGuide.QuestGuideActionRouter
+  _handlers:
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &3382388979350873115
 GameObject:
   m_ObjectHideFlags: 0
