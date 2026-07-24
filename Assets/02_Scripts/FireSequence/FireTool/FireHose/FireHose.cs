@@ -15,7 +15,10 @@ public class FireHose : FireTool
         base.OnEnable();
 
         if (_hoseButton != null)
+        {
             _hoseButton.OnButtonPressed += OnHoseButtonPressed;
+            _hoseButton.OnButtonUnPressed += OnHoseButtonUnPressed;
+        }
 
         if (_hoseConnectionState != null)
             _hoseConnectionState.ConnectionChanged += OnHoseConnectionChanged;
@@ -24,7 +27,10 @@ public class FireHose : FireTool
     protected override void OnDisable()
     {
         if (_hoseButton != null)
+        {
             _hoseButton.OnButtonPressed -= OnHoseButtonPressed;
+            _hoseButton.OnButtonUnPressed -= OnHoseButtonUnPressed;
+        }
 
         if (_hoseConnectionState != null)
             _hoseConnectionState.ConnectionChanged -= OnHoseConnectionChanged;
@@ -51,6 +57,12 @@ public class FireHose : FireTool
     {
         _hasButtonPressSignal = true;
         TryStartFiring();
+    }
+
+    private void OnHoseButtonUnPressed()
+    {
+        _hasButtonPressSignal = false;
+        StopFiring();
     }
 
     private void OnHoseConnectionChanged(bool connected)
