@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
@@ -11,26 +12,52 @@ public class FireExtinguisher : FireTool
     
     [Header("Nozzle")]
     [SerializeField] private XRGrabInteractable _nozzleGrabInteractable;
-    Rigidbody _nozzleRigidBody;
+    private Rigidbody _nozzleRigidBody;
+
+    public event Action Grabbed;
+    public event Action SafetyPinPulled;
 
     protected override void OnEnable()
     {
         base.OnEnable();
-        
-        _nozzleRigidBody = _nozzleGrabInteractable.transform.GetComponent<Rigidbody>();
-        
-        _safetyPinSocket.selectExited.AddListener(PulledOffSafetyPin);
-        _nozzleGrabInteractable.selectEntered.AddListener(GrabbedNozzle);
-        _nozzleGrabInteractable.selectExited.AddListener(ReleaseNozzle);
+
+        if (GrabInteractable != null)
+        {
+            GrabInteractable.selectEntered.AddListener(HandleGrabbed);
+        }
+
+        if (_safetyPinSocket != null)
+        {
+            _safetyPinSocket.selectExited.AddListener(PulledOffSafetyPin);
+        }
+
+        if (_nozzleGrabInteractable != null)
+        {
+            _nozzleRigidBody = _nozzleGrabInteractable.GetComponent<Rigidbody>();
+            _nozzleGrabInteractable.selectEntered.AddListener(GrabbedNozzle);
+            _nozzleGrabInteractable.selectExited.AddListener(ReleaseNozzle);
+        }
     }
 
     protected override void OnDisable()
     {
+        if (GrabInteractable != null)
+        {
+            GrabInteractable.selectEntered.RemoveListener(HandleGrabbed);
+        }
+
+        if (_safetyPinSocket != null)
+        {
+            _safetyPinSocket.selectExited.RemoveListener(PulledOffSafetyPin);
+        }
+
+        if (_nozzleGrabInteractable != null)
+        {
+            _nozzleGrabInteractable.selectEntered.RemoveListener(GrabbedNozzle);
+            _nozzleGrabInteractable.selectExited.RemoveListener(ReleaseNozzle);
+        }
+
         base.OnDisable();
-        
-        _safetyPinSocket.selectExited.RemoveAllListeners();
-        _nozzleGrabInteractable.selectExited.RemoveAllListeners();
-        _nozzleGrabInteractable.selectExited.RemoveAllListeners();
     }
 
     protected override bool CanStartFiring()
@@ -40,18 +67,38 @@ public class FireExtinguisher : FireTool
 
     private void PulledOffSafetyPin(SelectExitEventArgs args)
     {
-        _isSafetyPinHasPulledOff = true;
+        if (_isSafetyPinHasPulledOff)
+        {
+            return;
+        }
 
-        if (_safetyPinSocket != null) _safetyPinSocket.gameObject.SetActive(false);
+        _isSafetyPinHasPulledOff = true;
+        SafetyPinPulled?.Invoke();
+
+        if (_safetyPinSocket != null)
+        {
+            _safetyPinSocket.gameObject.SetActive(false);
+        }
+    }
+
+    private void HandleGrabbed(SelectEnterEventArgs args)
+    {
+        Grabbed?.Invoke();
     }
 
     private void GrabbedNozzle(SelectEnterEventArgs args)
     {
-        _nozzleRigidBody.isKinematic = false;
+        if (_nozzleRigidBody != null)
+        {
+            _nozzleRigidBody.isKinematic = false;
+        }
     }
     
     private void ReleaseNozzle(SelectExitEventArgs args)
     {
-        _nozzleRigidBody.isKinematic = false;
+        if (_nozzleRigidBody != null)
+        {
+            _nozzleRigidBody.isKinematic = false;
+        }
     }
 }
