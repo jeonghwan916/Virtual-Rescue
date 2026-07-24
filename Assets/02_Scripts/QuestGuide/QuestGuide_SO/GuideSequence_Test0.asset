@@ -24,17 +24,17 @@ MonoBehaviour:
     - _label: 1223
       _actionId: dialogue:test_004
     - _label: 111
-      _actionId: dialogue-group:testing1
+      _actionId: dialogue-group:testing
   - _title: Page 3
     _image: {fileID: 0}
     _explain: choose option
     _options:
     - _label: 1112
-      _actionId: open_door
+      _actionId: door:open_main
     - _label: 322
-      _actionId: complete
+      _actionId: door:close_main
     - _label: 222
-      _actionId: give_extinguisher
+      _actionId: door:lock_main
   - _title: Page 4
     _image: {fileID: 21300000, guid: db3e7b7c8db355e499429545071a0321, type: 3}
     _explain: end

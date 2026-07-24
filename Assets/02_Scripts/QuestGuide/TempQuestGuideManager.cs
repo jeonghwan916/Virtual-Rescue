@@ -4,7 +4,7 @@ using VirtualRescue.DialogueSystem;
 
 namespace VirtualRescue.QuestGuide
 {
-    public class QuestGuideManager : MonoBehaviour
+    public class TempQuestGuideManager : MonoBehaviour
     {
         [SerializeField] private QuestGuideController _questGuideController;
         [SerializeField] private GuideSequence[] _guideSequences;
