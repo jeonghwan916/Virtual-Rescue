@@ -15801,6 +15801,63 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1738590333}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &1746456173
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5483804995878953647, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -60.07662
+      objectReference: {fileID: 0}
+    - target: {fileID: 5483804995878953647, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00000006335381
+      objectReference: {fileID: 0}
+    - target: {fileID: 5483804995878953647, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -10.228471
+      objectReference: {fileID: 0}
+    - target: {fileID: 5483804995878953647, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5483804995878953647, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5483804995878953647, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5483804995878953647, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5483804995878953647, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5483804995878953647, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5483804995878953647, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9188917043531288440, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_Name
+      value: Fire_Exit_Door_Interactive
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
 --- !u!1 &1748286652
 GameObject:
   m_ObjectHideFlags: 0
@@ -20856,6 +20913,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 813847643}
     m_Modifications:
+    - target: {fileID: 372602593490504194, guid: 32e5bde2462d31444b7f8a87a5c4ea68, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2075807017906804905, guid: 32e5bde2462d31444b7f8a87a5c4ea68, type: 3}
       propertyPath: m_Name
       value: FireHydrantCabinet_withHose
@@ -20927,3 +20988,4 @@ SceneRoots:
   - {fileID: 1361141877}
   - {fileID: 78153387}
   - {fileID: 1171531000}
+  - {fileID: 1746456173}
