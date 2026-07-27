@@ -72,7 +72,6 @@ namespace VirtualRescue.Loading
             {
                 SceneManager.SetActiveScene(mainScene);
                 ApplyMainScenePlayerSpawn(mainScene);
-                ApplyPlayerSceneOptions();
             }
             else
             {
@@ -165,17 +164,6 @@ namespace VirtualRescue.Loading
             }
 
             PersistentPlayerRoot.Instance.ApplySpawn(spawnPoint);
-        }
-
-        private static void ApplyPlayerSceneOptions()
-        {
-            if (PersistentPlayerRoot.Instance == null)
-            {
-                return;
-            }
-
-            PersistentPlayerRoot.Instance.SetLeftNearFarInteractorActive(
-                !LoadingRequest.DisableLeftNearFarInteractor);
         }
 
         private static Transform FindSceneTransform(Scene scene, string transformName)

@@ -62,7 +62,7 @@ public class MenuFollowerController : MonoBehaviour
 
     private IEnumerator ReturnToLobbyRoutine()
     {
-        LoadingRequest.Set(_lobbySceneName, -1, null, false);
+        LoadingRequest.Set(_lobbySceneName, -1, null);
 
         ScreenFader screenFader = FindScreenFader();
         if (screenFader != null)
