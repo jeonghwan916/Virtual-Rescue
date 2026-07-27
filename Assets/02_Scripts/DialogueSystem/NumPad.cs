@@ -2,8 +2,6 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
-using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class NumPad : MonoBehaviour
 {
@@ -19,9 +17,11 @@ public class NumPad : MonoBehaviour
     [Serializable]
     private sealed class KeyBinding
     {
-        public XRSimpleInteractable Interactable;
+        public BoxCollider TouchArea;
         public KeyType Type;
         public int Digit;
+        [NonSerialized] public bool WasTouched;
+        [NonSerialized] public float NextTouchTime;
     }
 
     [Header("Input")]
@@ -31,11 +31,15 @@ public class NumPad : MonoBehaviour
 
     [Header("Keys")]
     [SerializeField] private KeyBinding[] _keyBindings;
+    [SerializeField] private LayerMask _touchLayerMask = 1 << 12;
+    [SerializeField] private float _touchDebounceTime = 0.15f;
 
     [Header("Haptics")]
     [SerializeField] private HapticImpulsePlayer _hapticPlayer;
     [SerializeField] private float _hapticAmplitude = 0.3f;
     [SerializeField] private float _hapticDuration = 0.05f;
+
+    private readonly Collider[] _touchHits = new Collider[8];
 
     public event Action OnCorrectNumber;
     public event Action OnWrongNumber;
@@ -45,19 +49,15 @@ public class NumPad : MonoBehaviour
         ConfigureInputField();
     }
 
-    private void OnEnable()
+    private void Update()
     {
-        RegisterKeyListeners();
-    }
-
-    private void OnDisable()
-    {
-        UnregisterKeyListeners();
+        UpdateTouchKeys();
     }
 
     private void OnValidate()
     {
         _maxLength = Mathf.Max(0, _maxLength);
+        _touchDebounceTime = Mathf.Max(0f, _touchDebounceTime);
 
         if (_inputField != null)
         {
@@ -135,7 +135,7 @@ public class NumPad : MonoBehaviour
         _inputField.readOnly = true;
     }
 
-    private void RegisterKeyListeners()
+    private void UpdateTouchKeys()
     {
         if (_keyBindings == null)
         {
@@ -144,46 +144,44 @@ public class NumPad : MonoBehaviour
 
         foreach (KeyBinding binding in _keyBindings)
         {
-            if (binding?.Interactable != null)
-            {
-                binding.Interactable.selectEntered.AddListener(HandleKeySelected);
-            }
-        }
-    }
-
-    private void UnregisterKeyListeners()
-    {
-        if (_keyBindings == null)
-        {
-            return;
-        }
-
-        foreach (KeyBinding binding in _keyBindings)
-        {
-            if (binding?.Interactable != null)
-            {
-                binding.Interactable.selectEntered.RemoveListener(HandleKeySelected);
-            }
-        }
-    }
-
-    private void HandleKeySelected(SelectEnterEventArgs args)
-    {
-        if (_keyBindings == null || args.interactableObject == null)
-        {
-            return;
-        }
-
-        foreach (KeyBinding binding in _keyBindings)
-        {
-            if (binding?.Interactable == null || !ReferenceEquals(binding.Interactable, args.interactableObject))
+            if (binding?.TouchArea == null)
             {
                 continue;
             }
 
-            ExecuteKey(binding);
-            return;
+            bool isTouched = IsTouching(binding.TouchArea);
+            if (isTouched && !binding.WasTouched && Time.time >= binding.NextTouchTime)
+            {
+                ExecuteKey(binding);
+                binding.NextTouchTime = Time.time + _touchDebounceTime;
+            }
+
+            binding.WasTouched = isTouched;
         }
+    }
+
+    private bool IsTouching(BoxCollider touchArea)
+    {
+        Transform touchTransform = touchArea.transform;
+        Vector3 center = touchTransform.TransformPoint(touchArea.center);
+        Vector3 halfExtents = Vector3.Scale(touchArea.size * 0.5f, Abs(touchTransform.lossyScale));
+        int hitCount = Physics.OverlapBoxNonAlloc(
+            center,
+            halfExtents,
+            _touchHits,
+            touchTransform.rotation,
+            _touchLayerMask,
+            QueryTriggerInteraction.Collide);
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            if (_touchHits[i] != touchArea)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void ExecuteKey(KeyBinding binding)
@@ -209,6 +207,11 @@ public class NumPad : MonoBehaviour
                 Debug.LogWarning($"{nameof(NumPad)} received an unsupported key type.", this);
                 break;
         }
+    }
+
+    private static Vector3 Abs(Vector3 value)
+    {
+        return new Vector3(Mathf.Abs(value.x), Mathf.Abs(value.y), Mathf.Abs(value.z));
     }
 
     private void AppendKey(string key)
