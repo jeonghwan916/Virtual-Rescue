@@ -19,10 +19,14 @@ namespace VirtualRescue.Interaction
         [SerializeField]
         private FireExitDoorController _doorController;
 
+        private FireExitDoorHandle[] _handleMotions;
         private bool _previousDangerState;
 
         private void Awake()
         {
+            _handleMotions =
+                GetComponentsInChildren<FireExitDoorHandle>(true);
+
             if (!ValidateReferences())
             {
                 enabled = false;
@@ -59,8 +63,10 @@ namespace VirtualRescue.Interaction
                 !isDangerous;
 
             // 손잡이 피봇 회전 차단
-            _handleMotion.enabled =
-                canOperate;
+            foreach (FireExitDoorHandle handleMotion in _handleMotions)
+            {
+                handleMotion.enabled = canOperate;
+            }
 
             // 문 패널 직접 조작 차단
             _doorInteractable.enabled =

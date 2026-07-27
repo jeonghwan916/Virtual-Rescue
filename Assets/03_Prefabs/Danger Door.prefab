@@ -32,6 +32,7 @@ Transform:
   m_Children:
   - {fileID: 4241479565386238576}
   - {fileID: 6880887928334774845}
+  - {fileID: 5050505011}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &4648669325755462750
@@ -50,6 +51,75 @@ MonoBehaviour:
   _handleMotion: {fileID: 4419373612601527792}
   _doorInteractable: {fileID: 331330574425556229}
   _doorController: {fileID: 6235312678251228206}
+--- !u!1 &5050505010
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5050505011}
+  - component: {fileID: 5050505012}
+  - component: {fileID: 5050505014}
+  m_Layer: 0
+  m_Name: Fire Audio Zone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5050505011
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5050505010}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3672364034395526458}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &5050505012
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5050505010}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 3
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5050505014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5050505010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35353535d4e54f608122334455667788, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Interaction.ProximityFireAudioZone
+  _fireClip: {fileID: 8300000, guid: 365295353dc582d42a26a6fcda6092c1, type: 3}
+  _minimumDistance: 0.5
+  _maximumDistance: 3
 --- !u!1 &470424304568909092
 GameObject:
   m_ObjectHideFlags: 0
@@ -64,6 +134,7 @@ GameObject:
   - component: {fileID: 6804341699276235583}
   - component: {fileID: 6194396240328694635}
   - component: {fileID: 2240485991560147941}
+  - component: {fileID: 5050505013}
   m_Layer: 0
   m_Name: HeatCheckZone
   m_TagString: Untagged
@@ -123,12 +194,31 @@ MonoBehaviour:
   _hapticAmplitude: 1
   _hapticDuration: 0.15
   _hapticInterval: 0.3
+  _enableFireAudio: 0
   _fireAudio: {fileID: 0}
   _audioDelay: 3
   _handleRenderer: {fileID: 0}
   _dangerBaseColor: {r: 1, g: 0.18, b: 0.02, a: 1}
   _dangerEmissionColor: {r: 4, g: 0.6, b: 0, a: 1}
   _colorFadeDuration: 1.5
+--- !u!114 &5050505013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 470424304568909092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da23ee4b3570ce141bc330ac20669880, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Interaction.DoorHandleHeatVisual
+  _handleTemperature: {fileID: 6804341699276235583}
+  _handleInteractable: {fileID: 166381454849479618}
+  _handleRenderer: {fileID: 3141385829966615020}
+  _dangerBaseColor: {r: 1, g: 0.18, b: 0.02, a: 1}
+  _dangerEmissionColor: {r: 4, g: 0.6, b: 0, a: 1}
+  _fadeDuration: 1.5
 --- !u!114 &6804341699276235583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -947,6 +1037,7 @@ MonoBehaviour:
   _hapticAmplitude: 1
   _hapticDuration: 0.15
   _hapticInterval: 0.3
+  _enableFireAudio: 0
   _fireAudio: {fileID: 0}
   _audioDelay: 3
   _handleRenderer: {fileID: 0}
