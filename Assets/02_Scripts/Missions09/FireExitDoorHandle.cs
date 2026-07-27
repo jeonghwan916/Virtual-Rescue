@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
@@ -8,6 +9,8 @@ namespace VirtualRescue.Missions09
     [RequireComponent(typeof(XRSimpleInteractable))]
     public sealed class FireExitDoorHandle : MonoBehaviour
     {
+        public event Action<FireExitDoorHandle> HoverStarted;
+
         private enum RotationAxis
         {
             X,
@@ -44,6 +47,10 @@ namespace VirtualRescue.Missions09
 
         public bool IsNeutral => _isNeutral;
         public float CurrentAngle => _currentAngle;
+        public bool CanOperate =>
+            enabled &&
+            _doorController != null &&
+            _doorController.enabled;
 
         private void Reset()
         {
@@ -80,6 +87,7 @@ namespace VirtualRescue.Missions09
 
             _interactable.selectEntered.AddListener(HandleSelected);
             _interactable.selectExited.AddListener(HandleDeselected);
+            _interactable.hoverEntered.AddListener(HandleHoverEntered);
         }
 
         private void OnDisable()
@@ -88,6 +96,7 @@ namespace VirtualRescue.Missions09
             {
                 _interactable.selectEntered.RemoveListener(HandleSelected);
                 _interactable.selectExited.RemoveListener(HandleDeselected);
+                _interactable.hoverEntered.RemoveListener(HandleHoverEntered);
             }
 
             if (_activeInteractor != null && _doorController != null)
@@ -134,6 +143,11 @@ namespace VirtualRescue.Missions09
             _previousInteractorPosition = _activeInteractorTransform.position;
             _hasPreviousInteractorPosition = true;
             _doorController?.BeginHandleInteraction(this, _activeInteractorTransform);
+        }
+
+        private void HandleHoverEntered(HoverEnterEventArgs args)
+        {
+            HoverStarted?.Invoke(this);
         }
 
         private void HandleDeselected(SelectExitEventArgs args)
