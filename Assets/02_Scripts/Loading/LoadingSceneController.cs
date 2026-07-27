@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using VirtualRescue.Effects;
 using VirtualRescue.Loading;
+using VirtualRescue.Player;
 
 namespace VirtualRescue.Loading
 {
@@ -23,6 +25,7 @@ namespace VirtualRescue.Loading
 
         [Tooltip("로딩 요청이 유효하지 않을 때 되돌아갈 로비 씬 이름")]
         [SerializeField] private string _fallbackLobbySceneName = "BuildTest_Lobby";
+        [SerializeField] private string _playerSpawnPointName = "PlayerSpawnPoint";
 
         public float LoadingProgress { get; private set; }
 
@@ -45,6 +48,8 @@ namespace VirtualRescue.Loading
                 yield break;
             }
 
+            ClearPersistentPlayerFade();
+
             float startedAt = Time.unscaledTime;
             string mainSceneKey = LoadingRequest.MainSceneKey;
 
@@ -66,6 +71,8 @@ namespace VirtualRescue.Loading
             if (mainScene.IsValid() && mainScene.isLoaded)
             {
                 SceneManager.SetActiveScene(mainScene);
+                ApplyMainScenePlayerSpawn(mainScene);
+                ApplyPlayerSceneOptions();
             }
             else
             {
@@ -142,6 +149,71 @@ namespace VirtualRescue.Loading
             }
 
             return SceneManager.GetSceneByBuildIndex(LoadingRequest.MainSceneBuildIndex);
+        }
+
+        private void ApplyMainScenePlayerSpawn(Scene mainScene)
+        {
+            if (PersistentPlayerRoot.Instance == null || string.IsNullOrWhiteSpace(_playerSpawnPointName))
+            {
+                return;
+            }
+
+            Transform spawnPoint = FindSceneTransform(mainScene, _playerSpawnPointName);
+            if (spawnPoint == null)
+            {
+                return;
+            }
+
+            PersistentPlayerRoot.Instance.ApplySpawn(spawnPoint);
+        }
+
+        private static void ApplyPlayerSceneOptions()
+        {
+            if (PersistentPlayerRoot.Instance == null)
+            {
+                return;
+            }
+
+            PersistentPlayerRoot.Instance.SetLeftNearFarInteractorActive(
+                !LoadingRequest.DisableLeftNearFarInteractor);
+        }
+
+        private static Transform FindSceneTransform(Scene scene, string transformName)
+        {
+            if (!scene.IsValid() || !scene.isLoaded)
+            {
+                return null;
+            }
+
+            foreach (GameObject rootObject in scene.GetRootGameObjects())
+            {
+                Transform found = FindChildTransform(rootObject.transform, transformName);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
+        private static Transform FindChildTransform(Transform root, string transformName)
+        {
+            if (root.name == transformName)
+            {
+                return root;
+            }
+
+            foreach (Transform child in root)
+            {
+                Transform found = FindChildTransform(child, transformName);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
         }
 
         private static bool AreAllOperationsDone(List<AsyncOperation> operations)
@@ -308,6 +380,22 @@ namespace VirtualRescue.Loading
             Color color = _blockingOverlayImage.color;
             color.a = Mathf.Clamp01(alpha);
             _blockingOverlayImage.color = color;
+        }
+
+        private void ClearPersistentPlayerFade()
+        {
+            if (PersistentPlayerRoot.Instance == null)
+            {
+                return;
+            }
+
+            ScreenFader screenFader = PersistentPlayerRoot.Instance.GetComponentInChildren<ScreenFader>(true);
+            if (screenFader == null)
+            {
+                return;
+            }
+
+            screenFader.Clear();
         }
 
         private IEnumerator LoadFallbackLobbyRoutine()

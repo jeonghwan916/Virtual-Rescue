@@ -4737,6 +4737,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6085909147132242292}
+  - component: {fileID: 7383174844094132801}
+  - component: {fileID: 7383174844094132802}
   m_Layer: 0
   m_Name: PlayerPrefabs
   m_TagString: Untagged
@@ -4762,6 +4764,35 @@ Transform:
   - {fileID: 8850231737663102105}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7383174844094132801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5040499814158158394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b1df10a3c6d48f3b92589a9076e4d31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Player.PersistentPlayerRoot
+  _sceneNamesIgnoredForSpawn:
+  - LoadingScene
+--- !u!114 &7383174844094132802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5040499814158158394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f50ae7755e5c447cae255bf30f8bd5e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Player.PlayerSceneSpawn
+  _spawnPoint: {fileID: 0}
+  _applyAsSpawnPoint: 1
+  _onlyApplyWhenSceneIsActive: 1
 --- !u!1 &5078464982010922456
 GameObject:
   m_ObjectHideFlags: 0

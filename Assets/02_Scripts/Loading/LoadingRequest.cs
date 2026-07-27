@@ -5,15 +5,21 @@ namespace VirtualRescue.Loading
         public static string MainSceneKey { get; private set; }
         public static int MainSceneBuildIndex { get; private set; } = -1;
         public static string[] AdditiveSceneKeys { get; private set; } = new string[0];
+        public static bool DisableLeftNearFarInteractor { get; private set; }
 
         public static bool HasValidMainScene =>
             !string.IsNullOrWhiteSpace(MainSceneKey) || MainSceneBuildIndex >= 0;
 
-        public static void Set(string mainSceneKey, int mainSceneBuildIndex, string[] additiveSceneKeys)
+        public static void Set(
+            string mainSceneKey,
+            int mainSceneBuildIndex,
+            string[] additiveSceneKeys,
+            bool disableLeftNearFarInteractor)
         {
             MainSceneKey = mainSceneKey;
             MainSceneBuildIndex = mainSceneBuildIndex;
             AdditiveSceneKeys = additiveSceneKeys ?? new string[0];
+            DisableLeftNearFarInteractor = disableLeftNearFarInteractor;
         }
 
         public static void Clear()
@@ -21,6 +27,7 @@ namespace VirtualRescue.Loading
             MainSceneKey = null;
             MainSceneBuildIndex = -1;
             AdditiveSceneKeys = new string[0];
+            DisableLeftNearFarInteractor = false;
         }
     }
 }

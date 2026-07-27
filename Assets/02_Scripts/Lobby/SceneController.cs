@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VirtualRescue.Effects;
 using VirtualRescue.Loading;
+using VirtualRescue.Player;
 
 namespace VirtualRescue.Lobby
 {
@@ -11,6 +12,7 @@ namespace VirtualRescue.Lobby
         [SerializeField] private string _selectedSceneKey;
         [SerializeField] private int _selectedSceneBuildIndex = -1;
         [SerializeField] private bool _loadMainGameAdditiveScenes = true;
+        [SerializeField] private bool _disableLeftNearFarInteractor;
         [SerializeField] private ScreenFader _screenFader;
         [SerializeField] private float _fadeDuration = 1f;
         [SerializeField] private string _loadingSceneName = "LoadingScene";
@@ -29,14 +31,24 @@ namespace VirtualRescue.Lobby
 
         public void SetSelectedScene(string sceneKey, int sceneBuildIndex)
         {
-            SetSelectedScene(sceneKey, sceneBuildIndex, true);
+            SetSelectedScene(sceneKey, sceneBuildIndex, true, false);
         }
 
         public void SetSelectedScene(string sceneKey, int sceneBuildIndex, bool loadMainGameAdditiveScenes)
         {
+            SetSelectedScene(sceneKey, sceneBuildIndex, loadMainGameAdditiveScenes, false);
+        }
+
+        public void SetSelectedScene(
+            string sceneKey,
+            int sceneBuildIndex,
+            bool loadMainGameAdditiveScenes,
+            bool disableLeftNearFarInteractor)
+        {
             _selectedSceneKey = sceneKey;
             _selectedSceneBuildIndex = sceneBuildIndex;
             _loadMainGameAdditiveScenes = loadMainGameAdditiveScenes;
+            _disableLeftNearFarInteractor = disableLeftNearFarInteractor;
         }
 
         public void LoadSelectedScene()
@@ -68,7 +80,11 @@ namespace VirtualRescue.Lobby
             string[] additiveSceneKeys = !string.IsNullOrWhiteSpace(_selectedSceneKey) && _loadMainGameAdditiveScenes
                 ? MainGameAdditiveSceneKeys
                 : null;
-            LoadingRequest.Set(_selectedSceneKey, _selectedSceneBuildIndex, additiveSceneKeys);
+            LoadingRequest.Set(
+                _selectedSceneKey,
+                _selectedSceneBuildIndex,
+                additiveSceneKeys,
+                _disableLeftNearFarInteractor);
 
             yield return FadeOut();
 
@@ -89,10 +105,29 @@ namespace VirtualRescue.Lobby
         {
             if (_screenFader == null)
             {
+                _screenFader = FindScreenFader();
+            }
+
+            if (_screenFader == null)
+            {
                 yield break;
             }
 
             yield return _screenFader.FadeOut(_fadeDuration);
+        }
+
+        private static ScreenFader FindScreenFader()
+        {
+            if (PersistentPlayerRoot.Instance != null)
+            {
+                ScreenFader playerFader = PersistentPlayerRoot.Instance.GetComponentInChildren<ScreenFader>(true);
+                if (playerFader != null)
+                {
+                    return playerFader;
+                }
+            }
+
+            return FindFirstObjectByType<ScreenFader>(FindObjectsInactive.Include);
         }
     }
 }

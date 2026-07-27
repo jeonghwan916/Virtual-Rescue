@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
 public class NumPad : MonoBehaviour
 {
@@ -18,6 +19,11 @@ public class NumPad : MonoBehaviour
     [SerializeField] private Button _hashButton;
     [SerializeField] private Button _deleteButton;
     [SerializeField] private Button _callButton;
+
+    [Header("Haptics")]
+    [SerializeField] private HapticImpulsePlayer _hapticPlayer;
+    [SerializeField] private float _hapticAmplitude = 0.3f;
+    [SerializeField] private float _hapticDuration = 0.05f;
 
     private UnityAction[] _numberButtonActions;
 
@@ -52,6 +58,8 @@ public class NumPad : MonoBehaviour
 
     public void AppendNumber(int number)
     {
+        PlayHaptic();
+
         if (number < 0 || number > 9)
         {
             Debug.LogWarning($"{nameof(NumPad)} only accepts single digit numbers.", this);
@@ -63,16 +71,22 @@ public class NumPad : MonoBehaviour
 
     public void AppendStar()
     {
+        PlayHaptic();
+
         AppendKey("*");
     }
 
     public void AppendHash()
     {
+        PlayHaptic();
+
         AppendKey("#");
     }
 
     public void DeleteLastDigit()
     {
+        PlayHaptic();
+
         if (_inputField == null || string.IsNullOrEmpty(_inputField.text))
         {
             return;
@@ -83,6 +97,8 @@ public class NumPad : MonoBehaviour
 
     public void Call()
     {
+        PlayHaptic();
+
         if (_inputField == null)
         {
             Debug.LogWarning($"{nameof(NumPad)} needs an input field before calling.", this);
@@ -223,11 +239,27 @@ public class NumPad : MonoBehaviour
         _inputField.text += key;
     }
 
+    private void PlayHaptic()
+    {
+        if (_hapticPlayer == null)
+        {
+            return;
+        }
+
+        _hapticPlayer.SendHapticImpulse(_hapticAmplitude, _hapticDuration);
+    }
+
     public void IsNumberIsCorrect(bool flag)
     {
         if (flag)
         {
             Debug.Log("OnCorrectNumber");
+
+            if (_inputField != null && _inputField.textComponent != null)
+            {
+                _inputField.textComponent.color = Color.green;
+            }
+            // todo : 인풋필드 내 숫자 초록색으로 변경
             OnCorrectNumber?.Invoke();
         }
         else
