@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1afdd92f85d62f42bf9786159d01064, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HandkerChiefWet
-  _handkerChiefMaterial: {fileID: 2100000, guid: 94f2548d692e6c04b8f95e04d8fba4b2, type: 2}
+  _handkerChiefMaterial: {fileID: 2100000, guid: bc2a953f426692940bb69c9cbfb41dcd, type: 2}
   _handkerChiefRenderer: {fileID: 7272440638566197941}
 --- !u!114 &3107427435040505108
 MonoBehaviour:
@@ -425,7 +425,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 94f2548d692e6c04b8f95e04d8fba4b2, type: 2}
+  - {fileID: 2100000, guid: bc2a953f426692940bb69c9cbfb41dcd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -465,7 +465,7 @@ MonoBehaviour:
   rows: 16
   spacing: 0.025
   gravityScale: 1
-  constraintIterations: 12
+  constraintIterations: 2
   enableBendingConstraints: 1
   enableCollision: 1
   collisionMask:
