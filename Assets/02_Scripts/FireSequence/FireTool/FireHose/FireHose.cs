@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -10,9 +11,17 @@ public class FireHose : FireTool
     private bool _isActivateHeld;
     private bool _hasButtonPressSignal;
 
+    public event Action Grabbed;
+    public event Action FiringStarted;
+
     protected override void OnEnable()
     {
         base.OnEnable();
+
+        if (GrabInteractable != null)
+        {
+            GrabInteractable.selectEntered.AddListener(HandleGrabbed);
+        }
 
         if (_hoseButton != null)
         {
@@ -26,6 +35,11 @@ public class FireHose : FireTool
 
     protected override void OnDisable()
     {
+        if (GrabInteractable != null)
+        {
+            GrabInteractable.selectEntered.RemoveListener(HandleGrabbed);
+        }
+
         if (_hoseButton != null)
         {
             _hoseButton.OnButtonPressed -= OnHoseButtonPressed;
@@ -39,6 +53,11 @@ public class FireHose : FireTool
         _hasButtonPressSignal = false;
 
         base.OnDisable();
+    }
+
+    private void HandleGrabbed(SelectEnterEventArgs args)
+    {
+        Grabbed?.Invoke();
     }
 
     protected override void OnFireStart(ActivateEventArgs args)
@@ -79,5 +98,10 @@ public class FireHose : FireTool
             && _hasButtonPressSignal
             && _hoseConnectionState != null
             && _hoseConnectionState.IsConnected;
+    }
+
+    protected override void OnFiringStarted()
+    {
+        FiringStarted?.Invoke();
     }
 }
