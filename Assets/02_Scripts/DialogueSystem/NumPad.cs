@@ -20,8 +20,6 @@ public class NumPad : MonoBehaviour
         public BoxCollider TouchArea;
         public KeyType Type;
         public int Digit;
-        [NonSerialized] public bool WasTouched;
-        [NonSerialized] public float NextTouchTime;
     }
 
     [Header("Input")]
@@ -41,6 +39,8 @@ public class NumPad : MonoBehaviour
 
     private readonly Collider[] _touchHits = new Collider[8];
     private bool _isInputLocked;
+    private bool _isTouchActive;
+    private float _nextTouchTime;
 
     public event Action OnCorrectNumber;
     public event Action OnWrongNumber;
@@ -168,6 +168,8 @@ public class NumPad : MonoBehaviour
             return;
         }
 
+        KeyBinding touchedBinding = null;
+
         foreach (KeyBinding binding in _keyBindings)
         {
             if (binding?.TouchArea == null)
@@ -175,15 +177,27 @@ public class NumPad : MonoBehaviour
                 continue;
             }
 
-            bool isTouched = IsTouching(binding.TouchArea);
-            if (isTouched && !binding.WasTouched && Time.time >= binding.NextTouchTime)
+            if (IsTouching(binding.TouchArea) && touchedBinding == null)
             {
-                ExecuteKey(binding);
-                binding.NextTouchTime = Time.time + _touchDebounceTime;
+                touchedBinding = binding;
             }
-
-            binding.WasTouched = isTouched;
         }
+
+        if (touchedBinding == null)
+        {
+            _isTouchActive = false;
+            return;
+        }
+
+        if (_isTouchActive || Time.time < _nextTouchTime)
+        {
+            _isTouchActive = true;
+            return;
+        }
+
+        ExecuteKey(touchedBinding);
+        _isTouchActive = true;
+        _nextTouchTime = Time.time + _touchDebounceTime;
     }
 
     private bool IsTouching(BoxCollider touchArea)
