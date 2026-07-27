@@ -8,17 +8,26 @@ using VirtualRescue.Effects;
 
 namespace VirtualRescue.Missions
 {
-    [RequireComponent(typeof(ParticleFadeOut))]
     public sealed class WindowSeal : MonoBehaviour
     {
-        [Tooltip("창문을 막기 위해 모두 채워져야 하는 소켓 목록입니다.")]
-        [SerializeField] private XRSocketInteractor[] _socketPoints = new XRSocketInteractor[0];
+        [Serializable]
+        private sealed class SealPoint
+        {
+            [SerializeField] private XRSocketInteractor _socket;
+            [SerializeField] private ParticleFadeOut _particle;
+
+            public XRSocketInteractor Socket => _socket;
+            public ParticleFadeOut Particle => _particle;
+        }
+
+        [Tooltip("각 소켓과 해당 위치에 미리 배치한 파티클을 연결합니다.")]
+        [SerializeField] private SealPoint[] _sealPoints = Array.Empty<SealPoint>();
 
         [Tooltip("활성화하면 완전히 젖은 손수건만 막기 완료로 인정합니다.")]
         [SerializeField] private bool _requireWetHandkerchief;
 
         private readonly HashSet<HandkerChiefWet> _observedHandkerchiefs = new();
-        private ParticleFadeOut _particleFadeOut;
+        private bool[] _sealedPoints;
         private bool _isSealed;
 
         public event Action Sealed;
@@ -27,7 +36,7 @@ namespace VirtualRescue.Missions
 
         private void Awake()
         {
-            _particleFadeOut = GetComponent<ParticleFadeOut>();
+            _sealedPoints = new bool[_sealPoints != null ? _sealPoints.Length : 0];
         }
 
         private void OnEnable()
@@ -44,43 +53,44 @@ namespace VirtualRescue.Missions
 
         private void SubscribeSocketEvents()
         {
-            if (_socketPoints == null)
+            if (_sealPoints == null)
             {
                 return;
             }
 
-            foreach (XRSocketInteractor socketPoint in _socketPoints)
+            foreach (SealPoint sealPoint in _sealPoints)
             {
-                if (socketPoint == null)
+                if (sealPoint == null || sealPoint.Socket == null)
                 {
                     continue;
                 }
 
-                socketPoint.selectEntered.AddListener(HandleSocketSelectionChanged);
+                sealPoint.Socket.selectEntered.AddListener(HandleSocketSelectionChanged);
             }
         }
 
         private void UnsubscribeSocketEvents()
         {
-            if (_socketPoints == null)
+            if (_sealPoints == null)
             {
                 return;
             }
 
-            foreach (XRSocketInteractor socketPoint in _socketPoints)
+            foreach (SealPoint sealPoint in _sealPoints)
             {
-                if (socketPoint == null)
+                if (sealPoint == null || sealPoint.Socket == null)
                 {
                     continue;
                 }
 
-                socketPoint.selectEntered.RemoveListener(HandleSocketSelectionChanged);
+                sealPoint.Socket.selectEntered.RemoveListener(HandleSocketSelectionChanged);
             }
         }
 
         private void HandleSocketSelectionChanged(SelectEnterEventArgs args)
         {
             ObserveHandkerchief(args.interactableObject.transform);
+            UpdateSealPointEffects();
             CheckSealState();
         }
 
@@ -106,6 +116,7 @@ namespace VirtualRescue.Missions
 
         private void HandleHandkerchiefWet()
         {
+            UpdateSealPointEffects();
             CheckSealState();
         }
 
@@ -129,32 +140,31 @@ namespace VirtualRescue.Missions
                 return;
             }
 
-            if (!AreAllSocketsFilled())
+            if (!AreAllSealPointsFilled())
             {
                 return;
             }
 
             _isSealed = true;
-            StartSealEffect();
             Sealed?.Invoke();
         }
 
-        private bool AreAllSocketsFilled()
+        private bool AreAllSealPointsFilled()
         {
-            if (_socketPoints == null || _socketPoints.Length == 0)
+            if (_sealPoints == null || _sealPoints.Length == 0)
             {
                 return false;
             }
 
-            foreach (XRSocketInteractor socketPoint in _socketPoints)
+            foreach (SealPoint sealPoint in _sealPoints)
             {
-                if (socketPoint == null)
+                if (sealPoint == null || sealPoint.Socket == null)
                 {
-                    Debug.LogWarning("WindowSeal에 비어 있는 소켓 참조가 있습니다.", this);
+                    Debug.LogWarning("WindowSeal에 비어 있는 막기 지점 또는 소켓 참조가 있습니다.", this);
                     return false;
                 }
 
-                if (!IsSocketValid(socketPoint))
+                if (!IsSocketValid(sealPoint.Socket))
                 {
                     return false;
                 }
@@ -165,7 +175,7 @@ namespace VirtualRescue.Missions
 
         private bool IsSocketValid(XRSocketInteractor socketPoint)
         {
-            if (!socketPoint.hasSelection)
+            if (socketPoint == null || !socketPoint.hasSelection)
             {
                 return false;
             }
@@ -192,15 +202,31 @@ namespace VirtualRescue.Missions
             return false;
         }
 
-        private void StartSealEffect()
+        private void UpdateSealPointEffects()
         {
-            if (_particleFadeOut == null)
+            if (_sealPoints == null || _sealedPoints == null)
             {
-                Debug.LogWarning("WindowSeal과 같은 오브젝트에 ParticleFadeOut이 없습니다.", this);
                 return;
             }
 
-            _particleFadeOut.FadeOut();
+            int sealPointCount = Mathf.Min(_sealPoints.Length, _sealedPoints.Length);
+
+            for (int i = 0; i < sealPointCount; i++)
+            {
+                SealPoint sealPoint = _sealPoints[i];
+                if (_sealedPoints[i] ||
+                    sealPoint == null ||
+                    !IsSocketValid(sealPoint.Socket))
+                {
+                    continue;
+                }
+
+                _sealedPoints[i] = true;
+                if (sealPoint.Particle != null)
+                {
+                    sealPoint.Particle.StopImmediately();
+                }
+            }
         }
     }
 }
