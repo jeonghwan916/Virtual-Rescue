@@ -11,6 +11,7 @@ namespace VirtualRescue.Missions05
         WaitingForDangerHandle,
         WaitingForSafeHandle,
         WaitingForSafeDoor,
+        WaitingForPassage,
         WaitingForFinishDialogue,
         Completed
     }
@@ -167,15 +168,28 @@ namespace VirtualRescue.Missions05
         private void HandleDoorOpened()
         {
             if (_currentStep !=
-                    DoorSafetyCheckQuestStep.WaitingForSafeDoor ||
-                _dialogueManager == null)
+                    DoorSafetyCheckQuestStep.WaitingForSafeDoor)
             {
                 return;
+            }
+
+            _currentStep =
+                DoorSafetyCheckQuestStep.WaitingForPassage;
+        }
+
+        public bool TryCompletePassage()
+        {
+            if (_currentStep !=
+                    DoorSafetyCheckQuestStep.WaitingForPassage ||
+                _dialogueManager == null)
+            {
+                return false;
             }
 
             _dialogueManager.PlayGroup(_finishDialogueGroup);
             _currentStep =
                 DoorSafetyCheckQuestStep.WaitingForFinishDialogue;
+            return true;
         }
 
         private void HandleDialogueGroupCompleted(string groupId)
