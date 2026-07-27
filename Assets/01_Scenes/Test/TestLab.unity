@@ -8559,6 +8559,37 @@ MonoBehaviour:
   _valveDialogueGroup: quest04_valve
   _hoseDialogueGroup: quest04_hose
   _finishDialogueGroup: quest04_finish
+--- !u!1 &820895262
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 820895263}
+  m_Layer: 0
+  m_Name: PlayerSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &820895263
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 820895262}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &824357744
 GameObject:
   m_ObjectHideFlags: 0
@@ -18872,6 +18903,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7383174844094132802, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
+      propertyPath: _spawnPoint
+      value: 
+      objectReference: {fileID: 820895263}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -23621,6 +23656,8 @@ SceneRoots:
   - {fileID: 1830585928}
   - {fileID: 1625867221}
   - {fileID: 635276158}
+  - {fileID: 1014323815}
+  - {fileID: 820895263}
   - {fileID: 1844755046}
   - {fileID: 1726117463}
   - {fileID: 588366294}
@@ -23632,4 +23669,3 @@ SceneRoots:
   - {fileID: 1361141877}
   - {fileID: 78153387}
   - {fileID: 1171531000}
-  - {fileID: 1014323815}
