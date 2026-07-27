@@ -19191,6 +19191,7 @@ GameObject:
   - component: {fileID: 2086026405}
   - component: {fileID: 2086026406}
   - component: {fileID: 2086026407}
+  - component: {fileID: 2086026408}
   m_Layer: 0
   m_Name: PartitionFragments
   m_TagString: Untagged
@@ -19296,6 +19297,23 @@ MonoBehaviour:
   _serializedGraphVersion: 1
   _anchorCount: 21
   _connectionCount: 52
+--- !u!114 &2086026408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2086026404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fa65f6d8a6c4a4ca67c5f1e2713284e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions08.FractureDebrisCollisionController
+  _playerController: {fileID: 0}
+  _landingLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _minimumUpwardNormal: 0.5
 --- !u!1 &2099446133
 GameObject:
   m_ObjectHideFlags: 0
@@ -20819,6 +20837,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Interaction.XRSocketSelectionLock
   _lockOnlyOnce: 1
   _requireWetHandkerchief: 1
+  _hapticAmplitude: 0.35
+  _hapticDuration: 0.08
 --- !u!1001 &1657124691867740357
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20917,6 +20937,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Interaction.XRSocketSelectionLock
   _lockOnlyOnce: 1
   _requireWetHandkerchief: 1
+  _hapticAmplitude: 0.35
+  _hapticDuration: 0.08
 --- !u!114 &1836842141494163519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38251,6 +38273,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Interaction.XRSocketSelectionLock
   _lockOnlyOnce: 1
   _requireWetHandkerchief: 1
+  _hapticAmplitude: 0.35
+  _hapticDuration: 0.08
 --- !u!4 &7763155733201062708
 Transform:
   m_ObjectHideFlags: 0
