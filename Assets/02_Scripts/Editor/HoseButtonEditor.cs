@@ -15,7 +15,7 @@ public class HoseButtonEditor : Editor
             foreach (Object selectedTarget in targets)
             {
                 HoseButton hoseButton = (HoseButton)selectedTarget;
-                hoseButton.Press();
+                hoseButton.LeverEnabled();
             }
         }
     }
