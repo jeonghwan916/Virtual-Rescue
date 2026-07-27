@@ -262,7 +262,7 @@ GameObject:
   - component: {fileID: 5001851576664386624}
   - component: {fileID: 304945464815304597}
   m_Layer: 5
-  m_Name: Button (9)
+  m_Name: Btn-Star
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -504,7 +504,7 @@ GameObject:
   - component: {fileID: 3100886771585167718}
   - component: {fileID: 3737379117899108015}
   m_Layer: 5
-  m_Name: Button (11)
+  m_Name: Btn-Hash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -762,7 +762,7 @@ GameObject:
   - component: {fileID: 8819218894393681750}
   - component: {fileID: 2515454849449374955}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: Btn-2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -883,7 +883,7 @@ GameObject:
   - component: {fileID: 5677039627911052351}
   - component: {fileID: 8520956853662701315}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: Btn-3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1004,7 +1004,7 @@ GameObject:
   - component: {fileID: 2073857688823389703}
   - component: {fileID: 3882848005934493379}
   m_Layer: 5
-  m_Name: Button (4)
+  m_Name: Btn-5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1125,7 +1125,7 @@ GameObject:
   - component: {fileID: 8881433380631101386}
   - component: {fileID: 2189056874405887608}
   m_Layer: 5
-  m_Name: Button (3)
+  m_Name: Btn-4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1246,7 +1246,7 @@ GameObject:
   - component: {fileID: 9223267861263260071}
   - component: {fileID: 2605789126815026169}
   m_Layer: 5
-  m_Name: Button (8)
+  m_Name: Btn-9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1558,7 +1558,7 @@ GameObject:
   - component: {fileID: 4165548437863945542}
   - component: {fileID: 6672271828737211308}
   m_Layer: 5
-  m_Name: Button (7)
+  m_Name: Btn-8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1679,7 +1679,7 @@ GameObject:
   - component: {fileID: 3562346371667860185}
   - component: {fileID: 6082583233069054352}
   m_Layer: 5
-  m_Name: Button (6)
+  m_Name: Btn-7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1978,7 +1978,7 @@ GameObject:
   - component: {fileID: 5279070875035340243}
   - component: {fileID: 3944085841439369957}
   m_Layer: 5
-  m_Name: Button (5)
+  m_Name: Btn-6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2886,7 +2886,7 @@ GameObject:
   - component: {fileID: 3942378031422104522}
   - component: {fileID: 6485629708579249309}
   m_Layer: 5
-  m_Name: Button (10)
+  m_Name: Btn-0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3144,7 +3144,7 @@ GameObject:
   - component: {fileID: 675247980662062155}
   - component: {fileID: 4992949455725202727}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Btn-1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4698,6 +4698,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1494977917335998277, guid: 50d88c93032701246b45f52f3ad0959b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.15
+      objectReference: {fileID: 0}
     - target: {fileID: 3135739553061756317, guid: 50d88c93032701246b45f52f3ad0959b, type: 3}
       propertyPath: m_AdditionalShaderChannelsFlag
       value: 25
@@ -4898,6 +4902,7 @@ MonoBehaviour:
   _maxLength: 10
   _correctNumber: 119
   _numberButtons:
+  - {fileID: 6485629708579249309}
   - {fileID: 4992949455725202727}
   - {fileID: 2515454849449374955}
   - {fileID: 8520956853662701315}
@@ -4907,17 +4912,10 @@ MonoBehaviour:
   - {fileID: 6082583233069054352}
   - {fileID: 6672271828737211308}
   - {fileID: 2605789126815026169}
-  - {fileID: 6485629708579249309}
   _starButton: {fileID: 304945464815304597}
   _hashButton: {fileID: 3737379117899108015}
   _deleteButton: {fileID: 8529791885552382027}
   _callButton: {fileID: 5684501337001501398}
-  _onCorrectNumber:
-    m_PersistentCalls:
-      m_Calls: []
-  _onWrongNumber:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &8081949368880489731
 MonoBehaviour:
   m_ObjectHideFlags: 0
