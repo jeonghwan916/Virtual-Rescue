@@ -22,8 +22,7 @@ public class VignetteController : MonoBehaviour
             vignetteRenderer = GetComponent<MeshRenderer>();
 
         propertyBlock = new MaterialPropertyBlock();
-        WipeIn();
-        //SetApertureSize(startApertureSize);
+        //WipeIn();
     }
 
     public void WipeOut()

@@ -32,6 +32,12 @@ namespace VirtualRescue.Effects
             yield return Fade(0f, 1f, duration);
         }
 
+        public void Clear()
+        {
+            SetAlpha(0f);
+            SetFadeObjectActive(false);
+        }
+
         private IEnumerator Fade(float from, float to, float duration)
         {
             SetAlpha(from);

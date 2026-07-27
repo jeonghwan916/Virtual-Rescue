@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VirtualRescue.Effects;
 using VirtualRescue.Loading;
+using VirtualRescue.Player;
 
 namespace VirtualRescue.Lobby
 {
@@ -89,10 +90,29 @@ namespace VirtualRescue.Lobby
         {
             if (_screenFader == null)
             {
+                _screenFader = FindScreenFader();
+            }
+
+            if (_screenFader == null)
+            {
                 yield break;
             }
 
             yield return _screenFader.FadeOut(_fadeDuration);
+        }
+
+        private static ScreenFader FindScreenFader()
+        {
+            if (PersistentPlayerRoot.Instance != null)
+            {
+                ScreenFader playerFader = PersistentPlayerRoot.Instance.GetComponentInChildren<ScreenFader>(true);
+                if (playerFader != null)
+                {
+                    return playerFader;
+                }
+            }
+
+            return FindFirstObjectByType<ScreenFader>(FindObjectsInactive.Include);
         }
     }
 }

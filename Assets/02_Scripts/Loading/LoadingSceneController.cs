@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using VirtualRescue.Effects;
 using VirtualRescue.Loading;
+using VirtualRescue.Player;
 
 namespace VirtualRescue.Loading
 {
@@ -44,6 +46,8 @@ namespace VirtualRescue.Loading
                 yield return LoadFallbackLobbyRoutine();
                 yield break;
             }
+
+            ClearPersistentPlayerFade();
 
             float startedAt = Time.unscaledTime;
             string mainSceneKey = LoadingRequest.MainSceneKey;
@@ -308,6 +312,22 @@ namespace VirtualRescue.Loading
             Color color = _blockingOverlayImage.color;
             color.a = Mathf.Clamp01(alpha);
             _blockingOverlayImage.color = color;
+        }
+
+        private void ClearPersistentPlayerFade()
+        {
+            if (PersistentPlayerRoot.Instance == null)
+            {
+                return;
+            }
+
+            ScreenFader screenFader = PersistentPlayerRoot.Instance.GetComponentInChildren<ScreenFader>(true);
+            if (screenFader == null)
+            {
+                return;
+            }
+
+            screenFader.Clear();
         }
 
         private IEnumerator LoadFallbackLobbyRoutine()
