@@ -28,18 +28,27 @@ namespace VirtualRescue.Interaction
 
         private void OnEnable()
         {
+            if (_socketInteractor == null)
+            {
+                _socketInteractor = GetComponent<XRSocketInteractor>();
+            }
+
+            _socketInteractor.selectFilters.Add(this);
             _socketInteractor.selectEntered.AddListener(HandleSelectEntered);
         }
 
         private void OnDisable()
         {
             _socketInteractor.selectEntered.RemoveListener(HandleSelectEntered);
+            _socketInteractor.selectFilters.Remove(this);
 
             if (_lockedInteractable != null)
             {
                 _lockedInteractable.selectFilters.Remove(this);
                 _lockedInteractable = null;
             }
+
+            _isLocked = false;
         }
 
         private void HandleSelectEntered(SelectEnterEventArgs args)
@@ -82,20 +91,41 @@ namespace VirtualRescue.Interaction
 
         public bool Process(IXRSelectInteractor interactor, IXRSelectInteractable interactable)
         {
-            // 잠기기 전에는 기존 XRI 선택 규칙을 그대로 따릅니다.
-            if (!_isLocked)
+            if (ReferenceEquals(interactor, _socketInteractor))
+            {
+                if (_lockOnlyOnce &&
+                    _isLocked &&
+                    !ReferenceEquals(interactable, _lockedInteractable))
+                {
+                    return false;
+                }
+
+                if (_requireWetHandkerchief &&
+                    !IsCompletelyWetHandkerchief(interactable))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            if (!_isLocked ||
+                !ReferenceEquals(interactable, _lockedInteractable))
             {
                 return true;
             }
 
-            // 이 필터가 잠근 오브젝트가 아니면 다른 상호작용에 영향을 주지 않습니다.
-            if (!ReferenceEquals(interactable, _lockedInteractable))
-            {
-                return true;
-            }
+            return false;
+        }
 
-            // 잠긴 오브젝트는 현재 소켓만 계속 선택할 수 있고, 손/레이는 다시 선택할 수 없습니다.
-            return ReferenceEquals(interactor, _socketInteractor);
+        private static bool IsCompletelyWetHandkerchief(
+            IXRSelectInteractable interactable)
+        {
+            HandkerChiefWet handkerchief =
+                interactable.transform.GetComponentInParent<HandkerChiefWet>();
+
+            return handkerchief != null &&
+                   handkerchief.IsCompletelyWet;
         }
     }
 }
