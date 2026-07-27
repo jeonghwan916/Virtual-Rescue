@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
@@ -31,6 +32,8 @@ public sealed class FireHoseValveLever : MonoBehaviour
 
     public float CurrentAngle => currentAngle;
     public bool IsLeverEnabled => isLeverEnabled;
+    public event Action Opened;
+    public event Action Closed;
 
     private void Reset()
     {
@@ -166,9 +169,15 @@ public sealed class FireHoseValveLever : MonoBehaviour
         isLeverEnabled = shouldBeEnabled;
 
         if (isLeverEnabled)
+        {
             hoseButton?.LeverEnabled();
+            Opened?.Invoke();
+        }
         else
+        {
             hoseButton?.LeverDisabled();
+            Closed?.Invoke();
+        }
     }
 
     private void OnValidate()
