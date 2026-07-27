@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
@@ -6,6 +7,12 @@ namespace VirtualRescue.Interaction
 {
     public sealed class DoorHandleHeatVisual : MonoBehaviour
     {
+        public event Action<DoorHandleHeatVisual> HoverStarted;
+
+        public bool IsDangerous =>
+            _handleTemperature != null &&
+            _handleTemperature.IsDangerous;
+
         [SerializeField]
         private DoorHandleTemperature _handleTemperature;
 
@@ -114,6 +121,7 @@ namespace VirtualRescue.Interaction
             HoverEnterEventArgs args)
         {
             _hoverCount++;
+            HoverStarted?.Invoke(this);
 
             Debug.Log(
                 $"[{name}] 손잡이 Hover 시작 | " +
