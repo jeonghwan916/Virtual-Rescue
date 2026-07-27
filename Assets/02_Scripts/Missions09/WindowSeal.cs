@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using VirtualRescue.Effects;
 
@@ -12,6 +14,10 @@ namespace VirtualRescue.Missions
         [Tooltip("창문을 막기 위해 모두 채워져야 하는 소켓 목록입니다.")]
         [SerializeField] private XRSocketInteractor[] _socketPoints = new XRSocketInteractor[0];
 
+        [Tooltip("활성화하면 완전히 젖은 손수건만 막기 완료로 인정합니다.")]
+        [SerializeField] private bool _requireWetHandkerchief;
+
+        private readonly HashSet<HandkerChiefWet> _observedHandkerchiefs = new();
         private ParticleFadeOut _particleFadeOut;
         private bool _isSealed;
 
@@ -33,6 +39,7 @@ namespace VirtualRescue.Missions
         private void OnDisable()
         {
             UnsubscribeSocketEvents();
+            UnsubscribeHandkerchiefEvents();
         }
 
         private void SubscribeSocketEvents()
@@ -73,7 +80,46 @@ namespace VirtualRescue.Missions
 
         private void HandleSocketSelectionChanged(SelectEnterEventArgs args)
         {
+            ObserveHandkerchief(args.interactableObject.transform);
             CheckSealState();
+        }
+
+        private void ObserveHandkerchief(Transform selectedTransform)
+        {
+            if (!_requireWetHandkerchief ||
+                selectedTransform == null)
+            {
+                return;
+            }
+
+            HandkerChiefWet handkerchief =
+                selectedTransform.GetComponentInParent<HandkerChiefWet>();
+
+            if (handkerchief == null ||
+                !_observedHandkerchiefs.Add(handkerchief))
+            {
+                return;
+            }
+
+            handkerchief.CompletelyWet += HandleHandkerchiefWet;
+        }
+
+        private void HandleHandkerchiefWet()
+        {
+            CheckSealState();
+        }
+
+        private void UnsubscribeHandkerchiefEvents()
+        {
+            foreach (HandkerChiefWet handkerchief in _observedHandkerchiefs)
+            {
+                if (handkerchief != null)
+                {
+                    handkerchief.CompletelyWet -= HandleHandkerchiefWet;
+                }
+            }
+
+            _observedHandkerchiefs.Clear();
         }
 
         private void CheckSealState()
@@ -108,13 +154,42 @@ namespace VirtualRescue.Missions
                     return false;
                 }
 
-                if (!socketPoint.hasSelection)
+                if (!IsSocketValid(socketPoint))
                 {
                     return false;
                 }
             }
 
             return true;
+        }
+
+        private bool IsSocketValid(XRSocketInteractor socketPoint)
+        {
+            if (!socketPoint.hasSelection)
+            {
+                return false;
+            }
+
+            if (!_requireWetHandkerchief)
+            {
+                return true;
+            }
+
+            foreach (IXRSelectInteractable selectedInteractable
+                     in socketPoint.interactablesSelected)
+            {
+                HandkerChiefWet handkerchief =
+                    selectedInteractable.transform
+                        .GetComponentInParent<HandkerChiefWet>();
+
+                if (handkerchief != null &&
+                    handkerchief.IsCompletelyWet)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void StartSealEffect()
