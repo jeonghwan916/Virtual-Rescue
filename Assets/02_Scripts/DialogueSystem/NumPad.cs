@@ -1,31 +1,41 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class NumPad : MonoBehaviour
 {
+    private enum KeyType
+    {
+        Digit,
+        Star,
+        Hash,
+        Delete,
+        Call
+    }
+
+    [Serializable]
+    private sealed class KeyBinding
+    {
+        public XRSimpleInteractable Interactable;
+        public KeyType Type;
+        public int Digit;
+    }
+
     [Header("Input")]
     [SerializeField] private TMP_InputField _inputField;
     [SerializeField] private int _maxLength = 10;
     [SerializeField] private string _correctNumber = "119";
 
-    [Header("Buttons")]
-    [Tooltip("Assign buttons in digit order: 0, 1, 2, ... 9.")]
-    [SerializeField] private Button[] _numberButtons = new Button[10];
-    [SerializeField] private Button _starButton;
-    [SerializeField] private Button _hashButton;
-    [SerializeField] private Button _deleteButton;
-    [SerializeField] private Button _callButton;
+    [Header("Keys")]
+    [SerializeField] private KeyBinding[] _keyBindings;
 
     [Header("Haptics")]
     [SerializeField] private HapticImpulsePlayer _hapticPlayer;
     [SerializeField] private float _hapticAmplitude = 0.3f;
     [SerializeField] private float _hapticDuration = 0.05f;
-
-    private UnityAction[] _numberButtonActions;
 
     public event Action OnCorrectNumber;
     public event Action OnWrongNumber;
@@ -33,17 +43,16 @@ public class NumPad : MonoBehaviour
     private void Awake()
     {
         ConfigureInputField();
-        CreateNumberButtonActions();
     }
 
     private void OnEnable()
     {
-        RegisterButtonListeners();
+        RegisterKeyListeners();
     }
 
     private void OnDisable()
     {
-        UnregisterButtonListeners();
+        UnregisterKeyListeners();
     }
 
     private void OnValidate()
@@ -126,100 +135,79 @@ public class NumPad : MonoBehaviour
         _inputField.readOnly = true;
     }
 
-    private void CreateNumberButtonActions()
+    private void RegisterKeyListeners()
     {
-        if (_numberButtons == null)
+        if (_keyBindings == null)
         {
-            _numberButtons = new Button[10];
-        }
-
-        _numberButtonActions = new UnityAction[_numberButtons.Length];
-
-        for (int i = 0; i < _numberButtons.Length; i++)
-        {
-            int digit = i;
-            _numberButtonActions[i] = () => AppendNumber(digit);
-        }
-    }
-
-    private void RegisterButtonListeners()
-    {
-        if (_numberButtons == null)
-        {
-            Debug.LogWarning($"{nameof(NumPad)} needs number buttons assigned in 0-9 order.", this);
             return;
         }
 
-        if (_numberButtonActions == null || _numberButtonActions.Length != _numberButtons.Length)
+        foreach (KeyBinding binding in _keyBindings)
         {
-            CreateNumberButtonActions();
-        }
-
-        if (_numberButtons.Length != 10)
-        {
-            Debug.LogWarning($"{nameof(NumPad)} expects exactly 10 number buttons assigned in 0-9 order.", this);
-        }
-
-        for (int i = 0; i < _numberButtons.Length && i < _numberButtonActions.Length; i++)
-        {
-            if (_numberButtons[i] != null)
+            if (binding?.Interactable != null)
             {
-                _numberButtons[i].onClick.AddListener(_numberButtonActions[i]);
+                binding.Interactable.selectEntered.AddListener(HandleKeySelected);
             }
-        }
-
-        if (_deleteButton != null)
-        {
-            _deleteButton.onClick.AddListener(DeleteLastDigit);
-        }
-
-        if (_starButton != null)
-        {
-            _starButton.onClick.AddListener(AppendStar);
-        }
-
-        if (_hashButton != null)
-        {
-            _hashButton.onClick.AddListener(AppendHash);
-        }
-
-        if (_callButton != null)
-        {
-            _callButton.onClick.AddListener(Call);
         }
     }
 
-    private void UnregisterButtonListeners()
+    private void UnregisterKeyListeners()
     {
-        if (_numberButtons != null && _numberButtonActions != null)
+        if (_keyBindings == null)
         {
-            for (int i = 0; i < _numberButtons.Length && i < _numberButtonActions.Length; i++)
+            return;
+        }
+
+        foreach (KeyBinding binding in _keyBindings)
+        {
+            if (binding?.Interactable != null)
             {
-                if (_numberButtons[i] != null)
-                {
-                    _numberButtons[i].onClick.RemoveListener(_numberButtonActions[i]);
-                }
+                binding.Interactable.selectEntered.RemoveListener(HandleKeySelected);
             }
         }
+    }
 
-        if (_deleteButton != null)
+    private void HandleKeySelected(SelectEnterEventArgs args)
+    {
+        if (_keyBindings == null || args.interactableObject == null)
         {
-            _deleteButton.onClick.RemoveListener(DeleteLastDigit);
+            return;
         }
 
-        if (_starButton != null)
+        foreach (KeyBinding binding in _keyBindings)
         {
-            _starButton.onClick.RemoveListener(AppendStar);
-        }
+            if (binding?.Interactable == null || !ReferenceEquals(binding.Interactable, args.interactableObject))
+            {
+                continue;
+            }
 
-        if (_hashButton != null)
-        {
-            _hashButton.onClick.RemoveListener(AppendHash);
+            ExecuteKey(binding);
+            return;
         }
+    }
 
-        if (_callButton != null)
+    private void ExecuteKey(KeyBinding binding)
+    {
+        switch (binding.Type)
         {
-            _callButton.onClick.RemoveListener(Call);
+            case KeyType.Digit:
+                AppendNumber(binding.Digit);
+                break;
+            case KeyType.Star:
+                AppendStar();
+                break;
+            case KeyType.Hash:
+                AppendHash();
+                break;
+            case KeyType.Delete:
+                DeleteLastDigit();
+                break;
+            case KeyType.Call:
+                Call();
+                break;
+            default:
+                Debug.LogWarning($"{nameof(NumPad)} received an unsupported key type.", this);
+                break;
         }
     }
 
