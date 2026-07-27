@@ -13,7 +13,7 @@ namespace VirtualRescue.Player
 
         public bool ShouldApplySpawn(string[] ignoredSceneNames)
         {
-            if (!_applyAsSpawnPoint || !gameObject.activeInHierarchy)
+            if (!_applyAsSpawnPoint || _spawnPoint == null || !gameObject.activeInHierarchy)
             {
                 return false;
             }

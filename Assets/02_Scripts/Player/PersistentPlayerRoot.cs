@@ -8,6 +8,7 @@ namespace VirtualRescue.Player
         {
             "LoadingScene"
         };
+        [SerializeField] private string _xrOriginName = "XR Origin (XR Rig)";
 
         public static PersistentPlayerRoot Instance { get; private set; }
 
@@ -18,6 +19,11 @@ namespace VirtualRescue.Player
             if (Instance == null)
             {
                 Instance = this;
+                if (spawn != null && spawn.ShouldApplySpawn(_sceneNamesIgnoredForSpawn))
+                {
+                    ApplySpawn(spawn.SpawnPoint);
+                }
+
                 DontDestroyOnLoad(gameObject);
                 return;
             }
@@ -44,9 +50,59 @@ namespace VirtualRescue.Player
             }
         }
 
-        private void ApplySpawn(Transform spawnTransform)
+        public void ApplySpawn(Transform spawnTransform)
         {
-            transform.SetPositionAndRotation(spawnTransform.position, spawnTransform.rotation);
+            if (spawnTransform == null)
+            {
+                return;
+            }
+
+            Transform xrOrigin = FindChildTransform(transform, _xrOriginName);
+            if (xrOrigin == null)
+            {
+                transform.SetPositionAndRotation(spawnTransform.position, spawnTransform.rotation);
+                return;
+            }
+
+            Quaternion rootRotation = spawnTransform.rotation * Quaternion.Inverse(xrOrigin.localRotation);
+            Vector3 rootPosition = spawnTransform.position - rootRotation * xrOrigin.localPosition;
+            transform.SetPositionAndRotation(rootPosition, rootRotation);
+        }
+
+        public void SetLeftNearFarInteractorActive(bool isActive)
+        {
+            Transform leftController = FindChildTransform(transform, "Left Controller");
+            if (leftController == null)
+            {
+                return;
+            }
+
+            Transform nearFarInteractor = FindChildTransform(leftController, "Near-Far Interactor");
+            if (nearFarInteractor == null)
+            {
+                return;
+            }
+
+            nearFarInteractor.gameObject.SetActive(isActive);
+        }
+
+        private static Transform FindChildTransform(Transform root, string transformName)
+        {
+            if (root.name == transformName)
+            {
+                return root;
+            }
+
+            foreach (Transform child in root)
+            {
+                Transform found = FindChildTransform(child, transformName);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
         }
     }
 }

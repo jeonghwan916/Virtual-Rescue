@@ -125,7 +125,11 @@ namespace VirtualRescue.Lobby
 
             if (_sceneController != null)
             {
-                _sceneController.SetSelectedScene(data.SceneKey, data.SceneBuildIndex, data.LoadMainGameAdditiveScenes);
+                _sceneController.SetSelectedScene(
+                    data.SceneKey,
+                    data.SceneBuildIndex,
+                    data.LoadMainGameAdditiveScenes,
+                    data.DisableLeftNearFarInteractor);
             }
 
             if (_stagePanel != null)
