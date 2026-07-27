@@ -69,23 +69,6 @@ namespace VirtualRescue.Player
             transform.SetPositionAndRotation(rootPosition, rootRotation);
         }
 
-        public void SetLeftNearFarInteractorActive(bool isActive)
-        {
-            Transform leftController = FindChildTransform(transform, "Left Controller");
-            if (leftController == null)
-            {
-                return;
-            }
-
-            Transform nearFarInteractor = FindChildTransform(leftController, "Near-Far Interactor");
-            if (nearFarInteractor == null)
-            {
-                return;
-            }
-
-            nearFarInteractor.gameObject.SetActive(isActive);
-        }
-
         private static Transform FindChildTransform(Transform root, string transformName)
         {
             if (root.name == transformName)
