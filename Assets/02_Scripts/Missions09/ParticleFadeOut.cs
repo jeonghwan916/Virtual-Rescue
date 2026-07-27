@@ -62,6 +62,28 @@ namespace VirtualRescue.Effects
             _fadeRoutine = StartCoroutine(FadeOutRoutine());
         }
 
+        public void StopImmediately()
+        {
+            if (_particle == null)
+            {
+                Debug.LogWarning("ParticleFadeOut에 ParticleSystem이 연결되어 있지 않습니다.", this);
+                return;
+            }
+
+            if (_fadeRoutine != null)
+            {
+                StopCoroutine(_fadeRoutine);
+                _fadeRoutine = null;
+            }
+
+            _particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+            if (_disableParticleObjectOnComplete)
+            {
+                _particle.gameObject.SetActive(false);
+            }
+        }
+
         private void CacheInitialParticleValues()
         {
             if (_particle == null)
