@@ -61,7 +61,11 @@ namespace VirtualRescue.Interactions
             }
 
             _isPressed = true;
-            StartBell();
+
+            if (_emergencyBell != null)
+            {
+                _emergencyBell.Play();
+            }
 
             if (_emergencyLight != null)
             {
@@ -70,16 +74,6 @@ namespace VirtualRescue.Interactions
 
             Pressed?.Invoke();
             StartCoroutine(LockButtonAfterPress());
-        }
-
-        public void StartBell()
-        {
-            if (_emergencyBell == null || _emergencyBell.isPlaying)
-            {
-                return;
-            }
-
-            _emergencyBell.Play();
         }
 
         public void StopBell()
