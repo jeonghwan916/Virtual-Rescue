@@ -1,5 +1,6 @@
 using UnityEngine;
 using VirtualRescue.DialogueSystem;
+using VirtualRescue.Interactions;
 
 namespace VirtualRescue.Missions03
 {
@@ -18,6 +19,7 @@ namespace VirtualRescue.Missions03
         [SerializeField] private DialogueManager _dialogueManager;
         [SerializeField] private FireExtinguisher _fireExtinguisher;
         [SerializeField] private FireObject _fireObject;
+        [SerializeField] private FireBellButton _fireBellButton;
 
         [Header("Dialogue Groups")]
         [SerializeField] private string _startDialogueGroup = "quest03_start";
@@ -44,6 +46,11 @@ namespace VirtualRescue.Missions03
             if (_fireObject == null)
             {
                 _fireObject = GetComponentInChildren<FireObject>(true);
+            }
+
+            if (_fireBellButton == null)
+            {
+                _fireBellButton = FindFirstObjectByType<FireBellButton>();
             }
 
             ValidateReferences();
@@ -86,6 +93,7 @@ namespace VirtualRescue.Missions03
 
             _dialogueManager.Stop();
             _dialogueManager.PlayGroup(_startDialogueGroup);
+            _fireBellButton?.StartBell();
             _currentStep = FireExtinguisherQuestStep.WaitingForExtinguisherGrab;
             return true;
         }

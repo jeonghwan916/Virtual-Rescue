@@ -15,6 +15,10 @@ namespace VirtualRescue.Interaction
         [Tooltip("완전히 젖은 손수건만 소켓에 고정합니다.")]
         [SerializeField] private bool _requireWetHandkerchief;
 
+        [Header("Valid Hover Haptic")]
+        [SerializeField, Range(0f, 1f)] private float _hapticAmplitude = 0.35f;
+        [SerializeField, Min(0.01f)] private float _hapticDuration = 0.08f;
+
         private XRSocketInteractor _socketInteractor;
         private XRGrabInteractable _lockedInteractable;
         private bool _isLocked;
@@ -35,11 +39,13 @@ namespace VirtualRescue.Interaction
 
             _socketInteractor.selectFilters.Add(this);
             _socketInteractor.selectEntered.AddListener(HandleSelectEntered);
+            _socketInteractor.hoverEntered.AddListener(HandleHoverEntered);
         }
 
         private void OnDisable()
         {
             _socketInteractor.selectEntered.RemoveListener(HandleSelectEntered);
+            _socketInteractor.hoverEntered.RemoveListener(HandleHoverEntered);
             _socketInteractor.selectFilters.Remove(this);
 
             if (_lockedInteractable != null)
@@ -77,6 +83,32 @@ namespace VirtualRescue.Interaction
 
             _lockedInteractable = grabInteractable;
             _isLocked = true;
+        }
+
+        private void HandleHoverEntered(HoverEnterEventArgs args)
+        {
+            if (_isLocked ||
+                args.interactableObject is not IXRSelectInteractable interactable ||
+                !IsCompletelyWetHandkerchief(interactable))
+            {
+                return;
+            }
+
+            foreach (IXRSelectInteractor selectingInteractor in interactable.interactorsSelecting)
+            {
+                if (ReferenceEquals(selectingInteractor, _socketInteractor))
+                {
+                    continue;
+                }
+
+                if (selectingInteractor is XRBaseInputInteractor inputInteractor)
+                {
+                    inputInteractor.SendHapticImpulse(
+                        _hapticAmplitude,
+                        _hapticDuration);
+                    return;
+                }
+            }
         }
 
         private static bool IsCompletelyWetHandkerchief(
@@ -126,6 +158,12 @@ namespace VirtualRescue.Interaction
 
             return handkerchief != null &&
                    handkerchief.IsCompletelyWet;
+        }
+
+        private void OnValidate()
+        {
+            _hapticAmplitude = Mathf.Clamp01(_hapticAmplitude);
+            _hapticDuration = Mathf.Max(0.01f, _hapticDuration);
         }
     }
 }
