@@ -860,6 +860,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 926435234479407833, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2096956549201376652, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.027
@@ -1108,6 +1112,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &1859482577 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8538869592405150521, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
+  m_PrefabInstance: {fileID: 1605148379}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b734f2bd29eeddd4d85afb0c266228c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1864450663
 GameObject:
   m_ObjectHideFlags: 0
@@ -1683,6 +1698,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4214951256103944001, guid: 763874ca91e5df945abd8cbbb68062fa, type: 3}
+      propertyPath: _hapticPlayer
+      value: 
+      objectReference: {fileID: 1859482577}
     - target: {fileID: 4214951256103944001, guid: 763874ca91e5df945abd8cbbb68062fa, type: 3}
       propertyPath: '_numberButtons.Array.data[0]'
       value: 
