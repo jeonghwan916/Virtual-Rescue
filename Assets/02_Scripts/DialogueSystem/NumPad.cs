@@ -40,6 +40,7 @@ public class NumPad : MonoBehaviour
     [SerializeField] private float _hapticDuration = 0.05f;
 
     private readonly Collider[] _touchHits = new Collider[8];
+    private bool _isInputLocked;
 
     public event Action OnCorrectNumber;
     public event Action OnWrongNumber;
@@ -67,6 +68,11 @@ public class NumPad : MonoBehaviour
 
     public void AppendNumber(int number)
     {
+        if (_isInputLocked)
+        {
+            return;
+        }
+
         PlayHaptic();
 
         if (number < 0 || number > 9)
@@ -80,6 +86,11 @@ public class NumPad : MonoBehaviour
 
     public void AppendStar()
     {
+        if (_isInputLocked)
+        {
+            return;
+        }
+
         PlayHaptic();
 
         AppendKey("*");
@@ -87,6 +98,11 @@ public class NumPad : MonoBehaviour
 
     public void AppendHash()
     {
+        if (_isInputLocked)
+        {
+            return;
+        }
+
         PlayHaptic();
 
         AppendKey("#");
@@ -94,6 +110,11 @@ public class NumPad : MonoBehaviour
 
     public void DeleteLastDigit()
     {
+        if (_isInputLocked)
+        {
+            return;
+        }
+
         PlayHaptic();
 
         if (_inputField == null || string.IsNullOrEmpty(_inputField.text))
@@ -106,6 +127,11 @@ public class NumPad : MonoBehaviour
 
     public void Call()
     {
+        if (_isInputLocked)
+        {
+            return;
+        }
+
         PlayHaptic();
 
         if (_inputField == null)
@@ -137,7 +163,7 @@ public class NumPad : MonoBehaviour
 
     private void UpdateTouchKeys()
     {
-        if (_keyBindings == null)
+        if (_isInputLocked || _keyBindings == null)
         {
             return;
         }
@@ -244,6 +270,7 @@ public class NumPad : MonoBehaviour
     {
         if (flag)
         {
+            _isInputLocked = true;
             Debug.Log("OnCorrectNumber");
 
             if (_inputField != null && _inputField.textComponent != null)
