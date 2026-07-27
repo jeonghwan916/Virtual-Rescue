@@ -864,7 +864,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_InteractionManager: {fileID: 0}
   m_InteractionLayers:
-    m_Bits: 7
+    m_Bits: 15
   m_Handedness: 1
   m_AttachTransform: {fileID: 0}
   m_KeepSelectedTargetValid: 1
@@ -1112,7 +1112,7 @@ MonoBehaviour:
   m_AimTargetObject: {fileID: 0}
   m_PhysicsLayerMask:
     serializedVersion: 2
-    m_Bits: 1281
+    m_Bits: 1313
   m_PhysicsTriggerInteraction: 1
   m_CastRadius: 0.1
 --- !u!114 &3545033306638052869
@@ -8630,7 +8630,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_InteractionManager: {fileID: 0}
   m_InteractionLayers:
-    m_Bits: 7
+    m_Bits: 15
   m_Handedness: 2
   m_AttachTransform: {fileID: 0}
   m_KeepSelectedTargetValid: 1
@@ -8878,7 +8878,7 @@ MonoBehaviour:
   m_AimTargetObject: {fileID: 0}
   m_PhysicsLayerMask:
     serializedVersion: 2
-    m_Bits: 1281
+    m_Bits: 1313
   m_PhysicsTriggerInteraction: 1
   m_CastRadius: 0.1
 --- !u!114 &6556813226777699951
