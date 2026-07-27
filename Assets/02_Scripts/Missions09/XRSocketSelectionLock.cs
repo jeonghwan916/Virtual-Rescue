@@ -12,6 +12,9 @@ namespace VirtualRescue.Interaction
         [Tooltip("한 번 잠긴 뒤에는 추가 선택 이벤트를 무시합니다.")]
         [SerializeField] private bool _lockOnlyOnce = true;
 
+        [Tooltip("완전히 젖은 손수건만 소켓에 고정합니다.")]
+        [SerializeField] private bool _requireWetHandkerchief;
+
         private XRSocketInteractor _socketInteractor;
         private XRGrabInteractable _lockedInteractable;
         private bool _isLocked;
@@ -51,6 +54,12 @@ namespace VirtualRescue.Interaction
                 return;
             }
 
+            if (_requireWetHandkerchief &&
+                !IsCompletelyWetHandkerchief(grabInteractable))
+            {
+                return;
+            }
+
             // XRGrabInteractable을 비활성화하면 현재 소켓 선택까지 해제될 수 있습니다.
             // 컴포넌트는 유지하고 SelectFilter로 다른 손/레이 인터랙터의 재선택만 막습니다.
             grabInteractable.throwOnDetach = false;
@@ -59,6 +68,16 @@ namespace VirtualRescue.Interaction
 
             _lockedInteractable = grabInteractable;
             _isLocked = true;
+        }
+
+        private static bool IsCompletelyWetHandkerchief(
+            XRGrabInteractable grabInteractable)
+        {
+            HandkerChiefWet handkerchief =
+                grabInteractable.GetComponentInParent<HandkerChiefWet>();
+
+            return handkerchief != null &&
+                   handkerchief.IsCompletelyWet;
         }
 
         public bool Process(IXRSelectInteractor interactor, IXRSelectInteractable interactable)
