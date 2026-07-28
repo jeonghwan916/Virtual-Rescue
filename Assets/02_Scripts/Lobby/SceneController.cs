@@ -23,7 +23,11 @@ namespace VirtualRescue.Lobby
             "Hallway&Stair",
             "Kitchen&LivingRoom",
             "VestibuleRoom",
-            "S_Env"
+            "S_Env",
+            "BedRoom_Sub",
+            "BedRoom2_Sub",
+            "Kitchen&LivingRoom_Sub",
+            "VestibuleRoom_Sub"
         };
 
         private Coroutine _loadRoutine;
