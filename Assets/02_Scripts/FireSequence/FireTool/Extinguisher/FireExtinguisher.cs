@@ -12,14 +12,25 @@ public class FireExtinguisher : FireTool
     
     [Header("Nozzle")]
     [SerializeField] private XRGrabInteractable _nozzleGrabInteractable;
+    [SerializeField] private Collider _nozzleGrabPointCollider;
+    [SerializeField] private Collider[] _bodyColliders;
     private Rigidbody _nozzleRigidBody;
 
     public event Action Grabbed;
     public event Action SafetyPinPulled;
 
+    protected override void Awake()
+    {
+        base.Awake();
+
+        IgnoreInternalNozzleCollisions();
+    }
+
     protected override void OnEnable()
     {
         base.OnEnable();
+
+        IgnoreInternalNozzleCollisions();
 
         if (GrabInteractable != null)
         {
@@ -84,6 +95,24 @@ public class FireExtinguisher : FireTool
     private void HandleGrabbed(SelectEnterEventArgs args)
     {
         Grabbed?.Invoke();
+    }
+
+    private void IgnoreInternalNozzleCollisions()
+    {
+        if (_nozzleGrabPointCollider == null || _bodyColliders == null)
+        {
+            return;
+        }
+
+        foreach (Collider bodyCollider in _bodyColliders)
+        {
+            if (bodyCollider == null)
+            {
+                continue;
+            }
+
+            Physics.IgnoreCollision(_nozzleGrabPointCollider, bodyCollider, true);
+        }
     }
 
     private void GrabbedNozzle(SelectEnterEventArgs args)
