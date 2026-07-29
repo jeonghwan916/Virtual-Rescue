@@ -25,6 +25,9 @@ namespace VirtualRescue.Interaction
 
         [Header("Fire Audio")]
         [SerializeField]
+        private bool _enableFireAudio = true;
+
+        [SerializeField]
         private AudioSource _fireAudio;
 
         [SerializeField, Min(0f)]
@@ -129,7 +132,8 @@ namespace VirtualRescue.Interaction
             }
 
             // 플레이어가 감지 영역에 있으면 오디오 지연 시작
-            if (_audioDetectionColliders.Count > 0 &&
+            if (_enableFireAudio &&
+                _audioDetectionColliders.Count > 0 &&
                 _audioDelayRoutine == null &&
                 !_fireAudio.isPlaying)
             {
@@ -189,7 +193,8 @@ namespace VirtualRescue.Interaction
             }
 
             // XR Origin만 감지되어도 3초 뒤 소리 재생
-            if (_audioDelayRoutine == null &&
+            if (_enableFireAudio &&
+                _audioDelayRoutine == null &&
                 !_fireAudio.isPlaying)
             {
                 _audioDelayRoutine =
@@ -268,6 +273,7 @@ namespace VirtualRescue.Interaction
             yield return new WaitForSeconds(_audioDelay);
 
             bool canPlay =
+                _enableFireAudio &&
                 _handleTemperature != null &&
                 _handleTemperature.IsDangerous &&
                 _audioDetectionColliders.Count > 0;
@@ -364,7 +370,8 @@ namespace VirtualRescue.Interaction
 
         private void StartFireAudio()
         {
-            if (_fireAudio == null)
+            if (!_enableFireAudio ||
+                _fireAudio == null)
             {
                 Debug.LogWarning(
                     $"[{name}] AudioSource가 없습니다.",
