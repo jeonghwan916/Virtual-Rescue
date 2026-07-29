@@ -16,6 +16,12 @@ public class FireExtinguisher : FireTool
     [SerializeField] private Collider[] _bodyColliders;
     private Rigidbody _nozzleRigidBody;
 
+    [Header("Handle")]
+    [SerializeField] private Transform _handle;
+    [SerializeField] private float _handlePressedXAngle = -15f;
+    [SerializeField] private float _handleRotationSpeed = 180f;
+    private Quaternion _handleInitialLocalRotation;
+
     public event Action Grabbed;
     public event Action SafetyPinPulled;
 
@@ -23,7 +29,17 @@ public class FireExtinguisher : FireTool
     {
         base.Awake();
 
+        if (_handle != null)
+        {
+            _handleInitialLocalRotation = _handle.localRotation;
+        }
+
         IgnoreInternalNozzleCollisions();
+    }
+
+    private void LateUpdate()
+    {
+        UpdateHandleRotation();
     }
 
     protected override void OnEnable()
@@ -35,6 +51,7 @@ public class FireExtinguisher : FireTool
         if (GrabInteractable != null)
         {
             GrabInteractable.selectEntered.AddListener(HandleGrabbed);
+            GrabInteractable.selectExited.AddListener(HandleReleased);
         }
 
         if (_safetyPinSocket != null)
@@ -55,6 +72,7 @@ public class FireExtinguisher : FireTool
         if (GrabInteractable != null)
         {
             GrabInteractable.selectEntered.RemoveListener(HandleGrabbed);
+            GrabInteractable.selectExited.RemoveListener(HandleReleased);
         }
 
         if (_safetyPinSocket != null)
@@ -95,6 +113,28 @@ public class FireExtinguisher : FireTool
     private void HandleGrabbed(SelectEnterEventArgs args)
     {
         Grabbed?.Invoke();
+    }
+
+    private void HandleReleased(SelectExitEventArgs args)
+    {
+        StopFiring();
+    }
+
+    private void UpdateHandleRotation()
+    {
+        if (_handle == null)
+        {
+            return;
+        }
+
+        Quaternion targetRotation = IsFiring
+            ? _handleInitialLocalRotation * Quaternion.Euler(_handlePressedXAngle, 0f, 0f)
+            : _handleInitialLocalRotation;
+
+        _handle.localRotation = Quaternion.RotateTowards(
+            _handle.localRotation,
+            targetRotation,
+            _handleRotationSpeed * Time.deltaTime);
     }
 
     private void IgnoreInternalNozzleCollisions()
