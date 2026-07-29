@@ -219,7 +219,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7999f72aa63c1f54b947515166ca72fd, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -286,7 +286,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &4249901879668990584
@@ -334,17 +334,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c2a6531639f4d74ab7f7e71df59b73a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SubtitleFollower
-  targetCamera: {fileID: 0}
-  distance: 0.75
-  verticalOffset: -0.35
-  positionFollowMode: 0
-  positionSmoothTime: 0.3
-  moveSpeed: 6
-  rotationSmoothSpeed: 180
-  minCameraRotationAngle: 27.5
-  stopTrackingAngle: 3
-  followYawOnly: 1
-  faceCamera: 1
+  _targetCamera: {fileID: 0}
+  _distance: 2
+  _verticalOffset: -0.35
+  _positionFollowMode: 0
+  _positionSmoothTime: 0.5
+  _moveSpeed: 6
+  _rotationSmoothSpeed: 12
+  _minCameraRotationAngle: 27.5
+  _stopTrackingAngle: 1
+  _followYawOnly: 1
+  _faceCamera: 1
 --- !u!1 &8205546013332860494
 GameObject:
   m_ObjectHideFlags: 0
@@ -515,7 +515,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7999f72aa63c1f54b947515166ca72fd, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -582,6 +582,6 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}

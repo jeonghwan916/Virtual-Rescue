@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VirtualRescue.Effects;
 using VirtualRescue.Loading;
+using VirtualRescue.Player;
 
 namespace VirtualRescue.Lobby
 {
@@ -22,7 +23,11 @@ namespace VirtualRescue.Lobby
             "Hallway&Stair",
             "Kitchen&LivingRoom",
             "VestibuleRoom",
-            "S_Env"
+            "S_Env",
+            "BedRoom_Sub",
+            "BedRoom2_Sub",
+            "Kitchen&LivingRoom_Sub",
+            "VestibuleRoom_Sub"
         };
 
         private Coroutine _loadRoutine;
@@ -68,7 +73,10 @@ namespace VirtualRescue.Lobby
             string[] additiveSceneKeys = !string.IsNullOrWhiteSpace(_selectedSceneKey) && _loadMainGameAdditiveScenes
                 ? MainGameAdditiveSceneKeys
                 : null;
-            LoadingRequest.Set(_selectedSceneKey, _selectedSceneBuildIndex, additiveSceneKeys);
+            LoadingRequest.Set(
+                _selectedSceneKey,
+                _selectedSceneBuildIndex,
+                additiveSceneKeys);
 
             yield return FadeOut();
 
@@ -89,10 +97,29 @@ namespace VirtualRescue.Lobby
         {
             if (_screenFader == null)
             {
+                _screenFader = FindScreenFader();
+            }
+
+            if (_screenFader == null)
+            {
                 yield break;
             }
 
             yield return _screenFader.FadeOut(_fadeDuration);
+        }
+
+        private static ScreenFader FindScreenFader()
+        {
+            if (PersistentPlayerRoot.Instance != null)
+            {
+                ScreenFader playerFader = PersistentPlayerRoot.Instance.GetComponentInChildren<ScreenFader>(true);
+                if (playerFader != null)
+                {
+                    return playerFader;
+                }
+            }
+
+            return FindFirstObjectByType<ScreenFader>(FindObjectsInactive.Include);
         }
     }
 }

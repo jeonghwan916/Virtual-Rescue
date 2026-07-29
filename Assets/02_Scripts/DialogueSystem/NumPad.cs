@@ -1,25 +1,46 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
 
 public class NumPad : MonoBehaviour
 {
+    private enum KeyType
+    {
+        Digit,
+        Star,
+        Hash,
+        Delete,
+        Call
+    }
+
+    [Serializable]
+    private sealed class KeyBinding
+    {
+        public BoxCollider TouchArea;
+        public KeyType Type;
+        public int Digit;
+    }
+
     [Header("Input")]
     [SerializeField] private TMP_InputField _inputField;
     [SerializeField] private int _maxLength = 10;
     [SerializeField] private string _correctNumber = "119";
 
-    [Header("Buttons")]
-    [Tooltip("Assign buttons in digit order: 0, 1, 2, ... 9.")]
-    [SerializeField] private Button[] _numberButtons = new Button[10];
-    [SerializeField] private Button _starButton;
-    [SerializeField] private Button _hashButton;
-    [SerializeField] private Button _deleteButton;
-    [SerializeField] private Button _callButton;
+    [Header("Keys")]
+    [SerializeField] private KeyBinding[] _keyBindings;
+    [SerializeField] private LayerMask _touchLayerMask = 1 << 12;
+    [SerializeField] private float _touchDebounceTime = 0.15f;
 
-    private UnityAction[] _numberButtonActions;
+    [Header("Haptics")]
+    [SerializeField] private HapticImpulsePlayer _hapticPlayer;
+    [SerializeField] private float _hapticAmplitude = 0.3f;
+    [SerializeField] private float _hapticDuration = 0.05f;
+
+    private readonly Collider[] _touchHits = new Collider[8];
+    private bool _isInputLocked;
+    private bool _isTouchActive;
+    private float _nextTouchTime;
 
     public event Action OnCorrectNumber;
     public event Action OnWrongNumber;
@@ -27,22 +48,17 @@ public class NumPad : MonoBehaviour
     private void Awake()
     {
         ConfigureInputField();
-        CreateNumberButtonActions();
     }
 
-    private void OnEnable()
+    private void Update()
     {
-        RegisterButtonListeners();
-    }
-
-    private void OnDisable()
-    {
-        UnregisterButtonListeners();
+        UpdateTouchKeys();
     }
 
     private void OnValidate()
     {
         _maxLength = Mathf.Max(0, _maxLength);
+        _touchDebounceTime = Mathf.Max(0f, _touchDebounceTime);
 
         if (_inputField != null)
         {
@@ -52,6 +68,13 @@ public class NumPad : MonoBehaviour
 
     public void AppendNumber(int number)
     {
+        if (_isInputLocked)
+        {
+            return;
+        }
+
+        PlayHaptic();
+
         if (number < 0 || number > 9)
         {
             Debug.LogWarning($"{nameof(NumPad)} only accepts single digit numbers.", this);
@@ -63,16 +86,37 @@ public class NumPad : MonoBehaviour
 
     public void AppendStar()
     {
+        if (_isInputLocked)
+        {
+            return;
+        }
+
+        PlayHaptic();
+
         AppendKey("*");
     }
 
     public void AppendHash()
     {
+        if (_isInputLocked)
+        {
+            return;
+        }
+
+        PlayHaptic();
+
         AppendKey("#");
     }
 
     public void DeleteLastDigit()
     {
+        if (_isInputLocked)
+        {
+            return;
+        }
+
+        PlayHaptic();
+
         if (_inputField == null || string.IsNullOrEmpty(_inputField.text))
         {
             return;
@@ -83,6 +127,13 @@ public class NumPad : MonoBehaviour
 
     public void Call()
     {
+        if (_isInputLocked)
+        {
+            return;
+        }
+
+        PlayHaptic();
+
         if (_inputField == null)
         {
             Debug.LogWarning($"{nameof(NumPad)} needs an input field before calling.", this);
@@ -110,101 +161,97 @@ public class NumPad : MonoBehaviour
         _inputField.readOnly = true;
     }
 
-    private void CreateNumberButtonActions()
+    private void UpdateTouchKeys()
     {
-        if (_numberButtons == null)
+        if (_isInputLocked || _keyBindings == null)
         {
-            _numberButtons = new Button[10];
-        }
-
-        _numberButtonActions = new UnityAction[_numberButtons.Length];
-
-        for (int i = 0; i < _numberButtons.Length; i++)
-        {
-            int digit = i;
-            _numberButtonActions[i] = () => AppendNumber(digit);
-        }
-    }
-
-    private void RegisterButtonListeners()
-    {
-        if (_numberButtons == null)
-        {
-            Debug.LogWarning($"{nameof(NumPad)} needs number buttons assigned in 0-9 order.", this);
             return;
         }
 
-        if (_numberButtonActions == null || _numberButtonActions.Length != _numberButtons.Length)
-        {
-            CreateNumberButtonActions();
-        }
+        KeyBinding touchedBinding = null;
 
-        if (_numberButtons.Length != 10)
+        foreach (KeyBinding binding in _keyBindings)
         {
-            Debug.LogWarning($"{nameof(NumPad)} expects exactly 10 number buttons assigned in 0-9 order.", this);
-        }
-
-        for (int i = 0; i < _numberButtons.Length && i < _numberButtonActions.Length; i++)
-        {
-            if (_numberButtons[i] != null)
+            if (binding?.TouchArea == null)
             {
-                _numberButtons[i].onClick.AddListener(_numberButtonActions[i]);
+                continue;
+            }
+
+            if (IsTouching(binding.TouchArea) && touchedBinding == null)
+            {
+                touchedBinding = binding;
             }
         }
 
-        if (_deleteButton != null)
+        if (touchedBinding == null)
         {
-            _deleteButton.onClick.AddListener(DeleteLastDigit);
+            _isTouchActive = false;
+            return;
         }
 
-        if (_starButton != null)
+        if (_isTouchActive || Time.time < _nextTouchTime)
         {
-            _starButton.onClick.AddListener(AppendStar);
+            _isTouchActive = true;
+            return;
         }
 
-        if (_hashButton != null)
+        ExecuteKey(touchedBinding);
+        _isTouchActive = true;
+        _nextTouchTime = Time.time + _touchDebounceTime;
+    }
+
+    private bool IsTouching(BoxCollider touchArea)
+    {
+        Transform touchTransform = touchArea.transform;
+        Vector3 center = touchTransform.TransformPoint(touchArea.center);
+        Vector3 halfExtents = Vector3.Scale(touchArea.size * 0.5f, Abs(touchTransform.lossyScale));
+        int hitCount = Physics.OverlapBoxNonAlloc(
+            center,
+            halfExtents,
+            _touchHits,
+            touchTransform.rotation,
+            _touchLayerMask,
+            QueryTriggerInteraction.Collide);
+
+        for (int i = 0; i < hitCount; i++)
         {
-            _hashButton.onClick.AddListener(AppendHash);
+            if (_touchHits[i] != touchArea)
+            {
+                return true;
+            }
         }
 
-        if (_callButton != null)
+        return false;
+    }
+
+    private void ExecuteKey(KeyBinding binding)
+    {
+        switch (binding.Type)
         {
-            _callButton.onClick.AddListener(Call);
+            case KeyType.Digit:
+                AppendNumber(binding.Digit);
+                break;
+            case KeyType.Star:
+                AppendStar();
+                break;
+            case KeyType.Hash:
+                AppendHash();
+                break;
+            case KeyType.Delete:
+                DeleteLastDigit();
+                break;
+            case KeyType.Call:
+                Call();
+                break;
+            default:
+                Debug.LogWarning($"{nameof(NumPad)} received an unsupported key type.", this);
+                break;
         }
     }
 
-    private void UnregisterButtonListeners()
+    private static Vector3 Abs(Vector3 value)
     {
-        if (_numberButtons != null && _numberButtonActions != null)
-        {
-            for (int i = 0; i < _numberButtons.Length && i < _numberButtonActions.Length; i++)
-            {
-                if (_numberButtons[i] != null)
-                {
-                    _numberButtons[i].onClick.RemoveListener(_numberButtonActions[i]);
-                }
-            }
-        }
-
-        if (_deleteButton != null)
-        {
-            _deleteButton.onClick.RemoveListener(DeleteLastDigit);
-        }
-
-        if (_starButton != null)
-        {
-            _starButton.onClick.RemoveListener(AppendStar);
-        }
-
-        if (_hashButton != null)
-        {
-            _hashButton.onClick.RemoveListener(AppendHash);
-        }
-
-        if (_callButton != null)
-        {
-            _callButton.onClick.RemoveListener(Call);
-        }
+        return new Vector3(Mathf.Abs(value.x), Mathf.Abs(value.y), Mathf.Abs(value.z));
     }
 
     private void AppendKey(string key)
@@ -223,11 +270,28 @@ public class NumPad : MonoBehaviour
         _inputField.text += key;
     }
 
+    private void PlayHaptic()
+    {
+        if (_hapticPlayer == null)
+        {
+            return;
+        }
+
+        _hapticPlayer.SendHapticImpulse(_hapticAmplitude, _hapticDuration);
+    }
+
     public void IsNumberIsCorrect(bool flag)
     {
         if (flag)
         {
+            _isInputLocked = true;
             Debug.Log("OnCorrectNumber");
+
+            if (_inputField != null && _inputField.textComponent != null)
+            {
+                _inputField.textComponent.color = Color.green;
+            }
+            // todo : 인풋필드 내 숫자 초록색으로 변경
             OnCorrectNumber?.Invoke();
         }
         else

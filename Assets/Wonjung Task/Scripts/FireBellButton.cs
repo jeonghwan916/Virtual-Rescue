@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -17,6 +18,8 @@ namespace VirtualRescue.Interactions
         private AudioSource _emergencyBell;
         private XRSimpleInteractable _interactable;
         private bool _isPressed;
+
+        public event Action Pressed;
 
         private void Awake()
         {
@@ -69,7 +72,16 @@ namespace VirtualRescue.Interactions
                 _emergencyLight.enabled = true;
             }
 
+            Pressed?.Invoke();
             StartCoroutine(LockButtonAfterPress());
+        }
+
+        public void StopBell()
+        {
+            if (_emergencyBell != null)
+            {
+                _emergencyBell.Stop();
+            }
         }
 
         private IEnumerator LockButtonAfterPress()

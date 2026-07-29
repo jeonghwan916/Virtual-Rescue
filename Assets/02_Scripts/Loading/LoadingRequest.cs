@@ -9,7 +9,10 @@ namespace VirtualRescue.Loading
         public static bool HasValidMainScene =>
             !string.IsNullOrWhiteSpace(MainSceneKey) || MainSceneBuildIndex >= 0;
 
-        public static void Set(string mainSceneKey, int mainSceneBuildIndex, string[] additiveSceneKeys)
+        public static void Set(
+            string mainSceneKey,
+            int mainSceneBuildIndex,
+            string[] additiveSceneKeys)
         {
             MainSceneKey = mainSceneKey;
             MainSceneBuildIndex = mainSceneBuildIndex;
