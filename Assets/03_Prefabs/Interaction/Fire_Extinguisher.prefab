@@ -576,7 +576,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 796b75e345bd64d47a31edd757bd2670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.ChainIKConstraint
-  m_Weight: 0.7
+  m_Weight: 1
   m_Data:
     m_Root: {fileID: 9101042454538635291}
     m_Tip: {fileID: 8435572772488164874}
@@ -597,7 +597,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       propertyPath: m_LocalPosition.y
@@ -605,23 +605,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.33
+      value: 0.295
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.00000056624407
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -629,7 +629,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -918,6 +918,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -5719423979153083793, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5145802750738074647}
+    - targetCorrespondingSourceObject: {fileID: -5196431263645462941, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7303665675941434082}
     - targetCorrespondingSourceObject: {fileID: -7660316843367681903, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3941938474414100456}
@@ -968,6 +971,9 @@ MonoBehaviour:
   _nozzleGrabPointCollider: {fileID: 5955460972380771600}
   _bodyColliders:
   - {fileID: 5145802750738074647}
+  _handle: {fileID: 800578020598058769}
+  _handlePressedXAngle: -15
+  _handleRotationSpeed: 180
 --- !u!95 &7851581880871316926
 Animator:
   serializedVersion: 7
@@ -1082,7 +1088,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.XR.Interaction.Toolkit::UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable
   m_InteractionManager: {fileID: 0}
   m_Colliders:
-  - {fileID: 5145802750738074647}
+  - {fileID: 7303665675941434082}
   m_InteractionLayers:
     m_Bits: 1
   m_DistanceCalculationMode: 1
@@ -1213,7 +1219,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1295,6 +1301,11 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!4 &800578020598058769 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -9154591376794298144, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
+  m_PrefabInstance: {fileID: 858044385494423537}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &892517224870621210 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
@@ -1418,7 +1429,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_StartingHoverFilters: []
-  m_StartingSelectFilters: []
+  m_StartingSelectFilters:
+  - {fileID: 6747909912846078458}
   m_StartingInteractionStrengthFilters: []
   m_AutoFindParentInteractableInHierarchy: 0
   m_ParentInteractableObject: {fileID: 0}
@@ -1614,6 +1626,33 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 5018759537448012861, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
+--- !u!1 &4326538254661998994 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -5196431263645462941, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
+  m_PrefabInstance: {fileID: 858044385494423537}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &7303665675941434082
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4326538254661998994}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -988625244598821498, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
 --- !u!4 &4973878686884698298 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -3535705577725374645, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
