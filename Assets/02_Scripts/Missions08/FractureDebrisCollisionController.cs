@@ -26,11 +26,11 @@ namespace VirtualRescue.Missions08
         }
 
         internal bool IsLandingCollision(
-            LocalizedFracturePiece piece,
+            FractureDebrisLandingDetector detector,
             Collision collision)
         {
-            if (piece == null ||
-                !piece.IsReleased ||
+            if (detector == null ||
+                !detector.IsReleased ||
                 collision == null ||
                 collision.rigidbody != null ||
                 IsPlayerObject(collision.gameObject) ||
@@ -51,9 +51,11 @@ namespace VirtualRescue.Missions08
             return false;
         }
 
-        internal void IgnorePlayerCollisions(LocalizedFracturePiece piece)
+        internal void IgnorePlayerCollisions(
+            FractureDebrisLandingDetector detector)
         {
-            Collider fragmentCollider = piece != null ? piece.FragmentCollider : null;
+            Collider fragmentCollider =
+                detector != null ? detector.FragmentCollider : null;
             if (fragmentCollider == null || _playerColliders == null)
             {
                 return;
@@ -97,6 +99,31 @@ namespace VirtualRescue.Missions08
                 }
 
                 detector.Initialize(piece, this);
+            }
+
+            Rigidbody[] rigidbodies = GetComponentsInChildren<Rigidbody>(true);
+            foreach (Rigidbody fragmentRigidbody in rigidbodies)
+            {
+                if (fragmentRigidbody.GetComponent<LocalizedFracturePiece>() != null)
+                {
+                    continue;
+                }
+
+                Collider fragmentCollider = fragmentRigidbody.GetComponent<Collider>();
+                if (fragmentCollider == null)
+                {
+                    continue;
+                }
+
+                FractureDebrisLandingDetector detector =
+                    fragmentRigidbody.GetComponent<FractureDebrisLandingDetector>();
+                if (detector == null)
+                {
+                    detector = fragmentRigidbody.gameObject
+                        .AddComponent<FractureDebrisLandingDetector>();
+                }
+
+                detector.Initialize(fragmentRigidbody, fragmentCollider, this);
             }
         }
 
