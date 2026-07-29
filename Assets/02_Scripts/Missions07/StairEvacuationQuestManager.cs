@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using VirtualRescue.DialogueSystem;
 using VirtualRescue.Missions09;
 
@@ -43,6 +44,8 @@ namespace VirtualRescue.Missions07
 
         private void OnEnable()
         {
+            SceneManager.sceneLoaded += HandleSceneLoaded;
+            
             if (_stairDoor != null)
             {
                 _stairDoor.Opened += HandleStairDoorOpened;
@@ -56,6 +59,8 @@ namespace VirtualRescue.Missions07
 
         private void OnDisable()
         {
+            SceneManager.sceneLoaded -= HandleSceneLoaded;
+            
             if (_stairDoor != null)
             {
                 _stairDoor.Opened -= HandleStairDoorOpened;
@@ -120,6 +125,28 @@ namespace VirtualRescue.Missions07
             {
                 Debug.LogWarning("Mission 07 could not find the emergency stair door.", this);
             }
+        }
+        
+        private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (scene.name != "S_Env")
+            {
+                return;
+            }
+
+            TryBindStairDoor();
+        }
+        
+        private void TryBindStairDoor()
+        {
+            FireExitDoorController stairDoor = Mission07References.FireExitDoorController;
+            if (stairDoor == null)
+            {
+                return;
+            }
+
+            _stairDoor = stairDoor;
+            _stairDoor.Opened += HandleStairDoorOpened;
         }
     }
 }

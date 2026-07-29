@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 557810072634470097}
   - component: {fileID: 4488960023977492915}
   - component: {fileID: 5955460972380771600}
-  - component: {fileID: 1564402600655704828}
+  - component: {fileID: 1984004345211717603}
   m_Layer: 0
   m_Name: Nozzle_GrabPoint
   m_TagString: Untagged
@@ -82,7 +82,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.035, y: 0.035, z: 0.035}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1564402600655704828
+--- !u!114 &1984004345211717603
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -91,9 +91,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1216575975009734028}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f9a7d0e8c9348e6a92f0f3bdbfd3b21, type: 3}
+  m_Script: {fileID: 11500000, guid: 7a9d7b0b270447748987cd4493d874a0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KeepParentGrabInteractable
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.FireSequence.KeepParentGrabInteractable
   m_InteractionManager: {fileID: 0}
   m_Colliders:
   - {fileID: 5955460972380771600}
@@ -165,7 +165,7 @@ MonoBehaviour:
   m_SnapToColliderVolume: 1
   m_ReinitializeDynamicAttachEverySingleGrab: 1
   m_AttachEaseInTime: 0.15
-  m_MovementType: 0
+  m_MovementType: 1
   m_PredictedVisualsTransform: {fileID: 0}
   m_VelocityDamping: 1
   m_VelocityScale: 1
@@ -212,7 +212,7 @@ MonoBehaviour:
   m_LimitAngularVelocity: 0
   m_MaxLinearVelocityDelta: 10
   m_MaxAngularVelocityDelta: 20
-  m_ParentOverride: {fileID: 892517224870621210}
+  m_ParentOverride: {fileID: 0}
   m_KeepWorldPosition: 1
 --- !u!1 &1396836493248529866
 GameObject:
@@ -964,7 +964,7 @@ MonoBehaviour:
   _isFiring: 0
   _isSafetyPinHasPulledOff: 0
   _safetyPinSocket: {fileID: 4517090643793763065}
-  _nozzleGrabInteractable: {fileID: 1564402600655704828}
+  _nozzleGrabInteractable: {fileID: 1984004345211717603}
   _nozzleGrabPointCollider: {fileID: 5955460972380771600}
   _bodyColliders:
   - {fileID: 5145802750738074647}

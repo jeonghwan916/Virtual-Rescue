@@ -185,6 +185,146 @@ AudioSource:
   m_CorrespondingSourceObject: {fileID: 7884228769781634763, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
   m_PrefabInstance: {fileID: 81554447}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &402497893 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
+  m_PrefabInstance: {fileID: 797269202}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77e7e6d42b62dda4d89ccd89d5506c2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
+--- !u!1 &419033517
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 419033519}
+  - component: {fileID: 419033518}
+  - component: {fileID: 419033520}
+  m_Layer: 0
+  m_Name: Start Trigger_Stair Evacuation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &419033518
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 419033517}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &419033519
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 419033517}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 11.68, y: 1.5, z: 15}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &419033520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 419033517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27272727c3d44e5f8011223344556677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions07.StairEvacuationQuestTrigger
+  _questManager: {fileID: 1901095152}
+--- !u!1001 &622788559
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1901095151}
+    m_Modifications:
+    - target: {fileID: 2334406938883092374, guid: dd7ffc85f68889c4dbca6890a26513d5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 13.939
+      objectReference: {fileID: 0}
+    - target: {fileID: 2334406938883092374, guid: dd7ffc85f68889c4dbca6890a26513d5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.263269
+      objectReference: {fileID: 0}
+    - target: {fileID: 2334406938883092374, guid: dd7ffc85f68889c4dbca6890a26513d5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 16.363
+      objectReference: {fileID: 0}
+    - target: {fileID: 2334406938883092374, guid: dd7ffc85f68889c4dbca6890a26513d5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2334406938883092374, guid: dd7ffc85f68889c4dbca6890a26513d5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2334406938883092374, guid: dd7ffc85f68889c4dbca6890a26513d5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2334406938883092374, guid: dd7ffc85f68889c4dbca6890a26513d5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2334406938883092374, guid: dd7ffc85f68889c4dbca6890a26513d5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2334406938883092374, guid: dd7ffc85f68889c4dbca6890a26513d5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180
+      objectReference: {fileID: 0}
+    - target: {fileID: 2334406938883092374, guid: dd7ffc85f68889c4dbca6890a26513d5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5838945681628169420, guid: dd7ffc85f68889c4dbca6890a26513d5, type: 3}
+      propertyPath: m_Name
+      value: Fire Hydrant Cabinet
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: dd7ffc85f68889c4dbca6890a26513d5, type: 3}
+--- !u!4 &622788560 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2334406938883092374, guid: dd7ffc85f68889c4dbca6890a26513d5, type: 3}
+  m_PrefabInstance: {fileID: 622788559}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &681005354
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -415,7 +555,7 @@ GameObject:
   m_Layer: 0
   m_Name: PlayerSpawnPoint
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -427,13 +567,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1213456532}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0.70710677, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 20, y: 1.5, z: 15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1001 &1325325924
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -558,6 +698,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1901095151}
+  - component: {fileID: 1901095153}
+  - component: {fileID: 1901095152}
   m_Layer: 0
   m_Name: -----Quest-----
   m_TagString: Untagged
@@ -577,9 +719,42 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 622788560}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1901095152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1901095150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17171717b2c34d4e9f00112233445566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions07.StairEvacuationQuestManager
+  _dialogueManager: {fileID: 402497893}
+  _stairDoor: {fileID: 0}
+  _startDialogueGroup: quest07_start
+  _finishDialogueGroup: quest07_finish
+--- !u!114 &1901095153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1901095150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e202a4b5c6d74829a1bcdef234567890, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions02.FireAlarmQuestManager
+  _dialogueManager: {fileID: 402497893}
+  _fireBellButton: {fileID: 0}
+  _startDialogueGroup: quest02_start
+  _finishDialogueGroup: quest02_finish
 --- !u!1 &1946915405
 GameObject:
   m_ObjectHideFlags: 0
@@ -590,8 +765,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1946915406}
   - component: {fileID: 1946915407}
+  - component: {fileID: 1946915408}
   m_Layer: 0
-  m_Name: Start Trigger
+  m_Name: Start Trigger_Fire Alarm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -605,8 +781,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1946915405}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 15.813, y: 1.301, z: 15.552}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -627,12 +803,25 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1946915408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946915405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f202b5c6d7e8493ab2cdef3456789012, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions02.FireAlarmQuestTrigger
+  _questManager: {fileID: 1901095153}
 --- !u!1 &1951033805
 GameObject:
   m_ObjectHideFlags: 0
@@ -675,5 +864,6 @@ SceneRoots:
   - {fileID: 1325325924}
   - {fileID: 1951033806}
   - {fileID: 797269202}
-  - {fileID: 1901095151}
   - {fileID: 1946915406}
+  - {fileID: 419033519}
+  - {fileID: 1901095151}
