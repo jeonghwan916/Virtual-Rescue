@@ -19,12 +19,16 @@ namespace VirtualRescue.Missions03
             Collider triggerCollider = GetComponent<Collider>();
             if (!triggerCollider.isTrigger)
             {
-                Debug.LogWarning("03 소화기 퀘스트 트리거의 Collider에서 Is Trigger를 활성화하세요.", this);
+                Debug.LogWarning(
+                    "03 소화기 미션 Start Trigger의 Collider에서 Is Trigger를 활성화하세요.",
+                    this);
             }
 
             if (_questManager == null)
             {
-                Debug.LogWarning("03 소화기 퀘스트 트리거의 상위 오브젝트에서 전용 QuestManager를 찾을 수 없습니다.", this);
+                Debug.LogWarning(
+                    "03 소화기 미션 Start Trigger에서 QuestManager를 찾을 수 없습니다.",
+                    this);
             }
         }
 
