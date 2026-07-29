@@ -185,6 +185,133 @@ AudioSource:
   m_CorrespondingSourceObject: {fileID: 7884228769781634763, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
   m_PrefabInstance: {fileID: 81554447}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &270516069
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1901095151}
+    m_Modifications:
+    - target: {fileID: 1046775135793673631, guid: 0147061a9c8c75947aa6590c23668984, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.909
+      objectReference: {fileID: 0}
+    - target: {fileID: 1046775135793673631, guid: 0147061a9c8c75947aa6590c23668984, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.262
+      objectReference: {fileID: 0}
+    - target: {fileID: 1046775135793673631, guid: 0147061a9c8c75947aa6590c23668984, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 10.85531
+      objectReference: {fileID: 0}
+    - target: {fileID: 1046775135793673631, guid: 0147061a9c8c75947aa6590c23668984, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1046775135793673631, guid: 0147061a9c8c75947aa6590c23668984, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1046775135793673631, guid: 0147061a9c8c75947aa6590c23668984, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1046775135793673631, guid: 0147061a9c8c75947aa6590c23668984, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1046775135793673631, guid: 0147061a9c8c75947aa6590c23668984, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1046775135793673631, guid: 0147061a9c8c75947aa6590c23668984, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1046775135793673631, guid: 0147061a9c8c75947aa6590c23668984, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8011120237274993233, guid: 0147061a9c8c75947aa6590c23668984, type: 3}
+      propertyPath: m_Name
+      value: HandkerChief
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0147061a9c8c75947aa6590c23668984, type: 3}
+--- !u!4 &270516070 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1046775135793673631, guid: 0147061a9c8c75947aa6590c23668984, type: 3}
+  m_PrefabInstance: {fileID: 270516069}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &376067545
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1901095151}
+    m_Modifications:
+    - target: {fileID: 1198690116294839110, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+      propertyPath: m_Name
+      value: WaterBottle
+      objectReference: {fileID: 0}
+    - target: {fileID: 6971898300175568549, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7422418412371342915, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.787
+      objectReference: {fileID: 0}
+    - target: {fileID: 7422418412371342915, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.669
+      objectReference: {fileID: 0}
+    - target: {fileID: 7422418412371342915, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 11.688
+      objectReference: {fileID: 0}
+    - target: {fileID: 7422418412371342915, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7422418412371342915, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7422418412371342915, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7422418412371342915, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7422418412371342915, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7422418412371342915, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7422418412371342915, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8067549198906224463, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.155
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
 --- !u!114 &402497893 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
@@ -244,7 +371,7 @@ Transform:
   m_GameObject: {fileID: 419033517}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 11.68, y: 1.5, z: 15}
+  m_LocalPosition: {x: 12.82, y: 1.5, z: 13.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -543,6 +670,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33fe149c883993241a493776b391e046, type: 3}
+--- !u!4 &1034253656 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7422418412371342915, guid: b1755d06810455244bedfc0745cfa4f2, type: 3}
+  m_PrefabInstance: {fileID: 376067545}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1213456532
 GameObject:
   m_ObjectHideFlags: 0
@@ -567,13 +699,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1213456532}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.70710677, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 20, y: 1.5, z: 15}
+  m_LocalRotation: {x: -0, y: -0.0000004768371, z: -0, w: 1}
+  m_LocalPosition: {x: -4, y: 1.5, z: 0.0000011920929}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1325325924
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -658,6 +790,74 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4249901879668990584, guid: 57dbc9a37b44cd948ba4f68eb9096c9b, type: 3}
   m_PrefabInstance: {fileID: 1325325924}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1631117467
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1631117470}
+  - component: {fileID: 1631117469}
+  - component: {fileID: 1631117468}
+  m_Layer: 0
+  m_Name: Start Trigger_Smoke Evacuation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1631117468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1631117467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5af94504080347a0ad186cf86b31a9e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions06.SmokeEvacuationQuestTrigger
+  _questManager: {fileID: 1901095154}
+  _triggerType: 0
+--- !u!65 &1631117469
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1631117467}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1631117470
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1631117467}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -4.23, y: 1.5, z: 4.43}
+  m_LocalScale: {x: 6.196, y: 1, z: 6}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1853125024
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,6 +900,7 @@ GameObject:
   - component: {fileID: 1901095151}
   - component: {fileID: 1901095153}
   - component: {fileID: 1901095152}
+  - component: {fileID: 1901095154}
   m_Layer: 0
   m_Name: -----Quest-----
   m_TagString: Untagged
@@ -721,6 +922,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 622788560}
+  - {fileID: 270516070}
+  - {fileID: 1034253656}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1901095152
@@ -755,6 +958,28 @@ MonoBehaviour:
   _fireBellButton: {fileID: 0}
   _startDialogueGroup: quest02_start
   _finishDialogueGroup: quest02_finish
+--- !u!114 &1901095154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1901095150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39847c4c8bd04f50a2e33a644aeb8762, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions06.SmokeEvacuationQuestManager
+  _dialogueManager: {fileID: 402497893}
+  _handkerchief: {fileID: 0}
+  _faceTrigger: {fileID: 0}
+  _doorController: {fileID: 0}
+  _smokeParticle: {fileID: 0}
+  _startDialogueGroup: quest06_start
+  _handkerchiefDialogueGroup: quest06_handkerchief
+  _doorDialogueGroup: quest06_door
+  _smokeDialogueGroup: quest06_smoke
+  _finishDialogueGroup: quest06_finish
 --- !u!1 &1946915405
 GameObject:
   m_ObjectHideFlags: 0
@@ -782,8 +1007,8 @@ Transform:
   m_GameObject: {fileID: 1946915405}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 15.813, y: 1.301, z: 15.552}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 7.8129997, y: 1.301, z: 15.552}
+  m_LocalScale: {x: 2.6901, y: 1, z: 1.5165}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -866,4 +1091,5 @@ SceneRoots:
   - {fileID: 797269202}
   - {fileID: 1946915406}
   - {fileID: 419033519}
+  - {fileID: 1631117470}
   - {fileID: 1901095151}
