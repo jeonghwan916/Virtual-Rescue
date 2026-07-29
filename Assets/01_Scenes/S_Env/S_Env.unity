@@ -1675,6 +1675,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 968248169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &878092678
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 878092680}
+  - component: {fileID: 878092679}
+  m_Layer: 0
+  m_Name: SceneReference
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &878092679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878092678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec4a728d825d104998be96a36ef14e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions02.Mission02References
+  _fireExitDoorController: {fileID: 2081756102}
+--- !u!4 &878092680
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878092678}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &906009193
 GameObject:
   m_ObjectHideFlags: 0
@@ -4066,6 +4111,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5483804995878953647, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
   m_PrefabInstance: {fileID: 2081756100}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2081756102 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2483867232326413644, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+  m_PrefabInstance: {fileID: 2081756100}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d6df3066bb7445fa2375a75b730d602, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions09.FireExitDoorController
 --- !u!1001 &2093592207
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4717,6 +4773,7 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 878092680}
   - {fileID: 906009197}
   - {fileID: 531268034}
   - {fileID: 968248169}
