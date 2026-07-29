@@ -169,11 +169,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions03.FireExtinguisherQuestManager
   _dialogueManager: {fileID: 801862951}
   _fireExtinguisher: {fileID: 0}
-  _fireObject: {fileID: 0}
-  _startDialogueGroup: quest03_start
-  _safetyPinDialogueGroup: quest03_pin
-  _sprayDialogueGroup: quest03_spray
-  _finishDialogueGroup: quest03_finish
+  _fireObjects: []
+  _startGroup: start
+  _grabGroup: grab
+  _removePinGroup: remove_pin
+  _completeGroup: complete
 --- !u!1001 &119666697
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -636,7 +636,7 @@ PrefabInstance:
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _dialogueCsv
       value: 
-      objectReference: {fileID: 4900000, guid: b4c224af2ecdad543a07757070a952da, type: 3}
+      objectReference: {fileID: 4900000, guid: 8482915672215754a969057156c5ea21, type: 3}
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _speakerText
       value: 
@@ -652,7 +652,7 @@ PrefabInstance:
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _dialogueTextCsv
       value: 
-      objectReference: {fileID: 4900000, guid: ebd69072c2f6b2341995837a282f61db, type: 3}
+      objectReference: {fileID: 4900000, guid: 93e58085fbe606647ba74184bd019c3f, type: 3}
     - target: {fileID: 7167137039038344234, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -751,6 +751,26 @@ PrefabInstance:
     - target: {fileID: 5040499814158158394, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
       propertyPath: m_Name
       value: PlayerPrefabs
+      objectReference: {fileID: 0}
+    - target: {fileID: 5532992026282289034, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -9.99
+      objectReference: {fileID: 0}
+    - target: {fileID: 5532992026282289034, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 5.22
+      objectReference: {fileID: 0}
+    - target: {fileID: 5532992026282289034, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7503602
+      objectReference: {fileID: 0}
+    - target: {fileID: 5532992026282289034, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.6610293
+      objectReference: {fileID: 0}
+    - target: {fileID: 5532992026282289034, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 82.757
       objectReference: {fileID: 0}
     - target: {fileID: 6085909147132242292, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
       propertyPath: m_LocalPosition.x
@@ -899,8 +919,8 @@ Transform:
   m_GameObject: {fileID: 1571244473}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: 1, z: 2}
-  m_LocalScale: {x: 8.102, y: 4, z: 1}
+  m_LocalPosition: {x: -10, y: 1, z: 5.4}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -963,8 +983,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1964120349}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.42, y: 1.194, z: -1.366}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -9.99, y: 0.125, z: 5.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -985,8 +1005,8 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1109813805}
   - {fileID: 1964120350}
+  - {fileID: 1109813805}
   - {fileID: 439471302}
   - {fileID: 758666829}
   - {fileID: 655678553}
