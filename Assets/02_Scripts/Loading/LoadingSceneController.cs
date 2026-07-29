@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using VirtualRescue.Effects;
-using VirtualRescue.Loading;
 using VirtualRescue.Player;
 
 namespace VirtualRescue.Loading
