@@ -30,6 +30,7 @@ namespace VirtualRescue.SmokeStairs
         private SmokeStairsQuestStep _nextStep;
         private string _activeDialogueGroup;
         private bool _isDialoguePlaying;
+        private PlayerReferenceHub _playerReferenceHub;
         
         public SmokeStairsQuestStep CurrentStep => _currentStep;
         public bool IsDialoguePlaying => _isDialoguePlaying;
@@ -48,13 +49,22 @@ namespace VirtualRescue.SmokeStairs
                     "Alarm Stairs 퀘스트에서 DialogueManager를 찾을 수 없습니다.",
                     this);
             }
+
+            BindPlayerReferences();
         }
 
         private void OnEnable()
         {
+            BindPlayerReferences();
+
             if (_dialogueManager != null)
             {
                 _dialogueManager.GroupCompleted += HandleDialogueGroupCompleted;
+            }
+
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady += HandleSceneReady;
             }
         }
 
@@ -63,6 +73,12 @@ namespace VirtualRescue.SmokeStairs
             if (_dialogueManager != null)
             {
                 _dialogueManager.GroupCompleted -= HandleDialogueGroupCompleted;
+            }
+
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady -= HandleSceneReady;
+                _playerReferenceHub = null;
             }
         }
 
@@ -136,6 +152,26 @@ namespace VirtualRescue.SmokeStairs
 
             _dialogueManager.Stop();
             _dialogueManager.PlayGroup(groupId);
+        }
+
+        private void BindPlayerReferences()
+        {
+            _playerReferenceHub = PlayerReferenceHub.Instance;
+            if (_playerReferenceHub == null)
+            {
+                return;
+            }
+
+            if (_vignetteController == null)
+            {
+                _vignetteController = _playerReferenceHub.VignetteController;
+            }
+        }
+
+        private void HandleSceneReady()
+        {
+            TryAdvance(SmokeStairsQuestStep.Start);
+            _vignetteController.WipeIn();
         }
 
         private void HandleDialogueGroupCompleted(string groupId)
