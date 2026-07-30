@@ -25,6 +25,7 @@ namespace VirtualRescue.PartitionEscape
         private PartitionEscapeQuestStep _nextStep;
         private string _activeDialogueGroup;
         private bool _isDialoguePlaying;
+        private PlayerReferenceHub _playerReferenceHub;
 
         public PartitionEscapeQuestStep CurrentStep => _currentStep;
         public bool IsDialoguePlaying => _isDialoguePlaying;
@@ -51,6 +52,11 @@ namespace VirtualRescue.PartitionEscape
             {
                 _dialogueManager.GroupCompleted += HandleDialogueGroupCompleted;
             }
+            
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady += HandleSceneReady;
+            }
         }
 
         private void OnDisable()
@@ -58,6 +64,12 @@ namespace VirtualRescue.PartitionEscape
             if (_dialogueManager != null)
             {
                 _dialogueManager.GroupCompleted -= HandleDialogueGroupCompleted;
+            }
+            
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady -= HandleSceneReady;
+                _playerReferenceHub = null;
             }
         }
 
@@ -137,6 +149,11 @@ namespace VirtualRescue.PartitionEscape
             _currentStep = _nextStep;
             _activeDialogueGroup = string.Empty;
             _isDialoguePlaying = false;
+        }
+        
+        private void HandleSceneReady()
+        {
+            TryAdvance(PartitionEscapeQuestStep.Start);
         }
     }
 }
