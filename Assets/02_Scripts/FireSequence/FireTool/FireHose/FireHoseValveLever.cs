@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
@@ -12,12 +13,11 @@ public sealed class FireHoseValveLever : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform valvePivot;
     [SerializeField] private XRSimpleInteractable interactable;
-    [SerializeField] private HoseButton hoseButton;
 
     [Header("Valve Rotation")]
     [SerializeField] private float minimumAngle = 0f;
-    [SerializeField] private float maximumAngle = 90f;
-    [SerializeField] private float enableThresholdAngle = 45f;
+    [SerializeField] private float maximumAngle = 360f;
+    [SerializeField] private float enableThresholdAngle = 270f;
     [SerializeField] private float rotationSensitivity = 1f;
     [SerializeField] private float maximumDegreesPerFrame = 8f;
     [SerializeField] private float minimumInputDegrees = 0.02f;
@@ -39,7 +39,6 @@ public sealed class FireHoseValveLever : MonoBehaviour
     {
         valvePivot = transform;
         interactable = GetComponent<XRSimpleInteractable>();
-        hoseButton = GetComponent<HoseButton>();
     }
 
     private void Awake()
@@ -49,10 +48,7 @@ public sealed class FireHoseValveLever : MonoBehaviour
 
         if (interactable == null)
             interactable = GetComponent<XRSimpleInteractable>();
-
-        if (hoseButton == null)
-            hoseButton = GetComponent<HoseButton>();
-
+        
         initialLocalRotation = valvePivot.localRotation;
         SetAngle(currentAngle);
         EvaluateLeverState();
@@ -143,7 +139,7 @@ public sealed class FireHoseValveLever : MonoBehaviour
             return 0f;
 
         float signedAngle = Vector3.SignedAngle(previousOffset, currentOffset, worldAxis);
-        float angleDelta = -signedAngle * rotationSensitivity;
+        float angleDelta = signedAngle * rotationSensitivity;
         return Mathf.Clamp(angleDelta, -maximumDegreesPerFrame, maximumDegreesPerFrame);
     }
 
@@ -155,7 +151,7 @@ public sealed class FireHoseValveLever : MonoBehaviour
 
     private void ApplyRotation()
     {
-        Quaternion angleRotation = Quaternion.AngleAxis(-currentAngle, Vector3.right);
+        Quaternion angleRotation = Quaternion.AngleAxis(currentAngle, Vector3.right);
         valvePivot.localRotation = initialLocalRotation * angleRotation;
     }
 
@@ -170,12 +166,10 @@ public sealed class FireHoseValveLever : MonoBehaviour
 
         if (isLeverEnabled)
         {
-            hoseButton?.LeverEnabled();
             Opened?.Invoke();
         }
         else
         {
-            hoseButton?.LeverDisabled();
             Closed?.Invoke();
         }
     }
