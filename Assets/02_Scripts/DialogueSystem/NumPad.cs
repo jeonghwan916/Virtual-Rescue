@@ -291,7 +291,7 @@ public class NumPad : MonoBehaviour
             {
                 _inputField.textComponent.color = Color.green;
             }
-            // todo : 인풋필드 내 숫자 초록색으로 변경
+
             OnCorrectNumber?.Invoke();
         }
         else

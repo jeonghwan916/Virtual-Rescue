@@ -100,6 +100,7 @@ namespace VirtualRescue.Loading
 
             yield return FadeBlockingOverlayOut();
 
+            PlayerReferenceHub.Instance?.NotifySceneReady();
             LoadingRequest.Clear();
             Destroy(gameObject);
         }
