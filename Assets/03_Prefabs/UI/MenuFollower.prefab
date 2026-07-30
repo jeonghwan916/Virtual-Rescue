@@ -295,9 +295,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd0d8f4750192a6458f7c9da156ca3a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuFollowerController
-  _returnToLobbyButtonName: Button-ReturnToLobby
-  _settingButtonName: Button-Setting
-  _closeButtonName: Button-Close
+  _returnToLobbyButton: {fileID: 5423610204212615679}
+  _settingButton: {fileID: 3720867601376899908}
+  _closeButton: {fileID: 573024714007706517}
   _leftControllerXButtonPath: <XRController>{LeftHand}/{PrimaryButton}
   _lobbySceneName: LobbyScene
   _loadingSceneName: LoadingScene
