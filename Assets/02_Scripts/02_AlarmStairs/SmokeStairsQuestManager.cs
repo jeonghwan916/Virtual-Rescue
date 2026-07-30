@@ -22,6 +22,9 @@ namespace VirtualRescue.SmokeStairs
         [SerializeField] private string _exitDialogueGroup = "exit";
         [SerializeField] private string _elevatorDialogueGroup = "elevator";
         [SerializeField] private string _finishDialogueGroup = "finish";
+        
+        [Header("References")]
+        [SerializeField] private VignetteController _vignetteController;
 
         private SmokeStairsQuestStep _currentStep = SmokeStairsQuestStep.Start;
         private SmokeStairsQuestStep _nextStep;
