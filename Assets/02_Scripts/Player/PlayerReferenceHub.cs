@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using VirtualRescue.Effects;
 
 public class PlayerReferenceHub : MonoBehaviour
@@ -10,9 +11,11 @@ public class PlayerReferenceHub : MonoBehaviour
     [Header("Player References")]
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private VignetteController _vignetteController;
+    [SerializeField] private Transform _playerTransform;
     
     public AudioSource XrAudioSource => _audioSource;
     public VignetteController VignetteController => _vignetteController;
+    public Transform PlayerTransform => _playerTransform;
 
     public void NotifySceneReady()
     {

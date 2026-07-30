@@ -1,18 +1,42 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class FireHose : FireTool
 {
-    [Header("Fire Requirements")]
-    [SerializeField] private HoseDistanceLimiter _hoseConnectionState;
-    [SerializeField] private HoseButton _hoseButton;
+    [Header("Pipe Twist")]
+    [SerializeField] private Transform _pipe;
+    [SerializeField] private float _pipeMaxAngle = 90f;
+    [SerializeField] private float _fireThresholdAngle = 45f;
+    [SerializeField] private bool _invertTwistDirection = false;
 
-    private bool _isActivateHeld;
-    private bool _hasButtonPressSignal;
+    [Header("Valve Requirement")]
+    [SerializeField] private FireHoseValveLever _valveLever;
+
+    private readonly List<IXRSelectInteractor> _selectingInteractors = new();
+
+    private IXRSelectInteractor _secondaryInteractor;
+    private Transform _secondaryInteractorTransform;
+    private Quaternion _secondaryInitialRotation;
+    private Quaternion _pipeInitialLocalRotation;
+    private float _secondaryInitialPipeAngle;
+    private float _pipeAngle;
+    private bool _isPipeOpen;
 
     public event Action Grabbed;
     public event Action FiringStarted;
+    public event Action PipeOpened;
+    public event Action PipeClosed;
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        if (_pipe != null)
+            _pipeInitialLocalRotation = _pipe.localRotation;
+    }
 
     protected override void OnEnable()
     {
@@ -21,16 +45,9 @@ public class FireHose : FireTool
         if (GrabInteractable != null)
         {
             GrabInteractable.selectEntered.AddListener(HandleGrabbed);
+            GrabInteractable.selectExited.AddListener(HandleReleased);
         }
 
-        if (_hoseButton != null)
-        {
-            _hoseButton.OnButtonPressed += OnHoseButtonPressed;
-            _hoseButton.OnButtonUnPressed += OnHoseButtonUnPressed;
-        }
-
-        if (_hoseConnectionState != null)
-            _hoseConnectionState.ConnectionChanged += OnHoseConnectionChanged;
     }
 
     protected override void OnDisable()
@@ -38,70 +55,153 @@ public class FireHose : FireTool
         if (GrabInteractable != null)
         {
             GrabInteractable.selectEntered.RemoveListener(HandleGrabbed);
+            GrabInteractable.selectExited.RemoveListener(HandleReleased);
         }
 
-        if (_hoseButton != null)
-        {
-            _hoseButton.OnButtonPressed -= OnHoseButtonPressed;
-            _hoseButton.OnButtonUnPressed -= OnHoseButtonUnPressed;
-        }
-
-        if (_hoseConnectionState != null)
-            _hoseConnectionState.ConnectionChanged -= OnHoseConnectionChanged;
-
-        _isActivateHeld = false;
-        _hasButtonPressSignal = false;
+        ClearGrabState();
 
         base.OnDisable();
     }
 
     private void HandleGrabbed(SelectEnterEventArgs args)
     {
+        if (args.interactorObject != null && !_selectingInteractors.Contains(args.interactorObject))
+        {
+            _selectingInteractors.Add(args.interactorObject);
+
+            if (_selectingInteractors.Count == 2)
+                SetSecondaryInteractor(args.interactorObject, args);
+        }
+
         Grabbed?.Invoke();
+    }
+
+    private void HandleReleased(SelectExitEventArgs args)
+    {
+        if (args.interactorObject == null)
+            return;
+
+        bool releasedSecondary = ReferenceEquals(_secondaryInteractor, args.interactorObject);
+
+        _selectingInteractors.Remove(args.interactorObject);
+
+        if (releasedSecondary || _selectingInteractors.Count < 2)
+            ClearSecondaryInteractor();
     }
 
     protected override void OnFireStart(ActivateEventArgs args)
     {
-        _isActivateHeld = true;
-        TryStartFiring();
     }
 
     protected override void OnFireEnd(DeactivateEventArgs args)
     {
-        _isActivateHeld = false;
-        StopFiring();
     }
 
-    private void OnHoseButtonPressed()
+    private void LateUpdate()
     {
-        _hasButtonPressSignal = true;
-        TryStartFiring();
+        UpdatePipeTwist();
+        EvaluateFiringState();
     }
 
-    private void OnHoseButtonUnPressed()
+    private void SetSecondaryInteractor(IXRSelectInteractor interactor, SelectEnterEventArgs args)
     {
-        _hasButtonPressSignal = false;
-        StopFiring();
+        _secondaryInteractor = interactor;
+        _secondaryInteractorTransform = interactor.GetAttachTransform(args.interactableObject);
+
+        if (_secondaryInteractorTransform == null)
+            _secondaryInteractorTransform = interactor.transform;
+
+        if (_secondaryInteractorTransform != null)
+            _secondaryInitialRotation = _secondaryInteractorTransform.rotation;
+
+        _secondaryInitialPipeAngle = _pipeAngle;
     }
 
-    private void OnHoseConnectionChanged(bool connected)
+    private void ClearGrabState()
     {
-        if (connected)
-            TryStartFiring();
+        _selectingInteractors.Clear();
+        ClearSecondaryInteractor();
+    }
+
+    private void ClearSecondaryInteractor()
+    {
+        _secondaryInteractor = null;
+        _secondaryInteractorTransform = null;
+    }
+
+    private void UpdatePipeTwist()
+    {
+        if (_secondaryInteractorTransform == null)
+            return;
+
+        Vector3 twistAxis = _pipe != null ? _pipe.TransformDirection(Vector3.up) : transform.up;
+        Quaternion rotationDelta = _secondaryInteractorTransform.rotation * Quaternion.Inverse(_secondaryInitialRotation);
+        rotationDelta.ToAngleAxis(out float angle, out Vector3 axis);
+
+        if (angle > 180f)
+            angle -= 360f;
+
+        float direction = Vector3.Dot(axis, twistAxis) >= 0f ? 1f : -1f;
+        float signedAngle = angle * direction;
+
+        if (_invertTwistDirection)
+            signedAngle = -signedAngle;
+
+        SetPipeAngle(_secondaryInitialPipeAngle + signedAngle);
+    }
+
+    private void SetPipeAngle(float angle)
+    {
+        _pipeAngle = Mathf.Clamp(angle, 0f, _pipeMaxAngle);
+
+        if (_pipe == null)
+        {
+            EvaluatePipeState();
+            return;
+        }
+
+        _pipe.localRotation = _pipeInitialLocalRotation * Quaternion.AngleAxis(_pipeAngle, Vector3.up);
+        EvaluatePipeState();
+    }
+
+    private void EvaluatePipeState()
+    {
+        bool shouldBeOpen = _pipeAngle >= _fireThresholdAngle;
+
+        if (_isPipeOpen == shouldBeOpen)
+            return;
+
+        _isPipeOpen = shouldBeOpen;
+
+        if (_isPipeOpen)
+            PipeOpened?.Invoke();
         else
+            PipeClosed?.Invoke();
+    }
+
+    private void EvaluateFiringState()
+    {
+        if (CanStartFiring())
+            TryStartFiring();
+        else if (IsFiring)
             StopFiring();
     }
 
     protected override bool CanStartFiring()
     {
-        return _isActivateHeld
-            && _hasButtonPressSignal
-            && _hoseConnectionState != null
-            && _hoseConnectionState.IsConnected;
+        return _pipeAngle >= _fireThresholdAngle
+            && _valveLever != null
+            && _valveLever.IsLeverEnabled;
     }
 
     protected override void OnFiringStarted()
     {
         FiringStarted?.Invoke();
+    }
+
+    private void OnValidate()
+    {
+        _pipeMaxAngle = Mathf.Max(0f, _pipeMaxAngle);
+        _fireThresholdAngle = Mathf.Clamp(_fireThresholdAngle, 0f, _pipeMaxAngle);
     }
 }

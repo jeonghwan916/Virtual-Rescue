@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class HoseDistanceLimiter : MonoBehaviour
@@ -10,24 +12,26 @@ public class HoseDistanceLimiter : MonoBehaviour
     [SerializeField] private XRSocketInteractor socketInteractor;
     [SerializeField] private Transform hydrantAnchor;
     [SerializeField] private Transform limitedTarget;
-    [SerializeField] private VerletRope rope;
+    [SerializeField] private XRGrabInteractable requiredGrabInteractable;
+    [SerializeField] private bool usePlayerReferenceHubAsLimitedTarget = true;
 
     [Header("Distance Limit")]
-    [SerializeField] private float slack = 0.15f;
+    [SerializeField] private float maxDistance = 5f;
     [SerializeField] private bool limitHorizontalOnly = true;
+    [SerializeField] private float distanceEventThreshold = 5f;
 
     [Header("Grab Requirement")]
     [SerializeField] private bool requireHeldTarget = true;
 
     private bool isConnected = true;
-    private int heldSelectCount;
+    private readonly HashSet<IXRSelectInteractor> holdingInteractors = new();
 
     public bool IsConnected => isConnected;
-    public bool IsHeld => heldSelectCount > 0;
+    public bool IsHeld => holdingInteractors.Count > 0;
     public Transform HydrantAnchor => hydrantAnchor;
     public Transform LimitedTarget => limitedTarget;
-    public VerletRope Rope => rope;
     public event Action<bool> ConnectionChanged;
+    public event Action DistanceThresholdReached;
 
     private void Awake()
     {
@@ -37,17 +41,44 @@ public class HoseDistanceLimiter : MonoBehaviour
 
     private IEnumerator Start()
     {
+        BindLimitedTargetFromPlayerReferenceHub();
         SyncConnectionFromSocket();
+        SyncHeldStateFromRequiredGrab();
         yield return null;
+        BindLimitedTargetFromPlayerReferenceHub();
         SyncConnectionFromSocket();
+        SyncHeldStateFromRequiredGrab();
+    }
+
+    private void OnEnable()
+    {
+        if (requiredGrabInteractable == null)
+            return;
+
+        requiredGrabInteractable.selectEntered.AddListener(OnRequiredGrabEntered);
+        requiredGrabInteractable.selectExited.AddListener(OnRequiredGrabExited);
+    }
+
+    private void OnDisable()
+    {
+        if (requiredGrabInteractable != null)
+        {
+            requiredGrabInteractable.selectEntered.RemoveListener(OnRequiredGrabEntered);
+            requiredGrabInteractable.selectExited.RemoveListener(OnRequiredGrabExited);
+        }
+
+        holdingInteractors.Clear();
     }
 
     // Applies the distance limit after other movement systems have updated the target position.
     private void LateUpdate()
     {
+        BindLimitedTargetFromPlayerReferenceHub();
+
         if (!CanLimitDistance())
             return;
 
+        EvaluateDistanceThreshold();
         LimitDistance();
     }
 
@@ -68,6 +99,35 @@ public class HoseDistanceLimiter : MonoBehaviour
 
         if (socketInteractor.hasSelection)
             SetConnected(true);
+    }
+
+    private void SyncHeldStateFromRequiredGrab()
+    {
+        if (requiredGrabInteractable == null)
+            return;
+
+        holdingInteractors.Clear();
+
+        foreach (IXRSelectInteractor interactor in requiredGrabInteractable.interactorsSelecting)
+        {
+            if (interactor is XRSocketInteractor)
+                continue;
+
+            holdingInteractors.Add(interactor);
+        }
+    }
+
+    private void BindLimitedTargetFromPlayerReferenceHub()
+    {
+        if (!usePlayerReferenceHubAsLimitedTarget || limitedTarget != null)
+            return;
+
+        PlayerReferenceHub playerReferenceHub = PlayerReferenceHub.Instance;
+
+        if (playerReferenceHub == null || playerReferenceHub.PlayerTransform == null)
+            return;
+
+        limitedTarget = playerReferenceHub.PlayerTransform;
     }
 
     // Enables distance limiting from a UnityEvent without requiring event arguments.
@@ -100,7 +160,7 @@ public class HoseDistanceLimiter : MonoBehaviour
         if (args.interactorObject is XRSocketInteractor)
             return;
 
-        heldSelectCount++;
+        holdingInteractors.Add(args.interactorObject);
     }
 
     // Tracks when the hose end is released by a non-socket interactor.
@@ -109,7 +169,7 @@ public class HoseDistanceLimiter : MonoBehaviour
         if (args.interactorObject is XRSocketInteractor)
             return;
 
-        heldSelectCount = Mathf.Max(0, heldSelectCount - 1);
+        holdingInteractors.Remove(args.interactorObject);
     }
 
     // Replaces the hydrant anchor used as the distance limit origin.
@@ -124,26 +184,18 @@ public class HoseDistanceLimiter : MonoBehaviour
         limitedTarget = target;
     }
 
-    // Replaces the rope reference used to calculate the maximum hose distance.
-    public void SetRope(VerletRope targetRope)
-    {
-        rope = targetRope;
-    }
-
     // Checks whether all required state and references are available before limiting movement.
     private bool CanLimitDistance()
     {
         return isConnected
             && (!requireHeldTarget || IsHeld)
             && hydrantAnchor != null
-            && limitedTarget != null
-            && rope != null;
+            && limitedTarget != null;
     }
 
-    // Clamps the target position so it stays within the allowed hose distance.
+    // Clamps the target position so it stays within the configured anchor distance.
     private void LimitDistance()
     {
-        float maxDistance = GetMaxDistance();
         float maxDistanceSqr = maxDistance * maxDistance;
         Vector3 offset = GetOffsetFromAnchor();
 
@@ -159,10 +211,16 @@ public class HoseDistanceLimiter : MonoBehaviour
         limitedTarget.position = correctedPosition;
     }
 
-    // Calculates the maximum allowed distance from the rope segment length and slack value.
-    private float GetMaxDistance()
+    private void EvaluateDistanceThreshold()
     {
-        return Mathf.Max(0.0f, rope.constraintDistance * (rope.pointsNb - 1) - slack);
+        float distance = GetOffsetFromAnchor().magnitude;
+        bool reachedThreshold = distance >= distanceEventThreshold;
+
+        if (reachedThreshold)
+        {
+            Debug.Log($"{nameof(HoseDistanceLimiter)} distance threshold reached. Distance: {distance:F2}", this);
+            DistanceThresholdReached?.Invoke();
+        }
     }
 
     // Calculates the target offset from the anchor, optionally ignoring vertical movement.
@@ -174,5 +232,11 @@ public class HoseDistanceLimiter : MonoBehaviour
             offset.y = 0.0f;
 
         return offset;
+    }
+
+    private void OnValidate()
+    {
+        maxDistance = Mathf.Max(0.0f, maxDistance);
+        distanceEventThreshold = Mathf.Max(0.0f, distanceEventThreshold);
     }
 }
