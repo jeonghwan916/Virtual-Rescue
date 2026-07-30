@@ -1,8 +1,18 @@
+using DG.Tweening;
 using System;
 using UnityEngine;
 
 public class FireObject : MonoBehaviour
 {
+    // 랜덤으로 사용할 이징 목록 미리 정의
+    private readonly Ease[] randomEases = new Ease[]
+    {
+        Ease.OutQuad,
+        Ease.OutBounce,
+        Ease.OutBack,
+        Ease.OutElastic
+    };
+
     private struct ParticleInitialState
     {
         public ParticleSystem Particle;
@@ -23,13 +33,16 @@ public class FireObject : MonoBehaviour
     private float _accumulatedExtinguishTime;
     private int _currentStage;
     private bool _isExtinguished;
-    
+
     // 불이 꺼졌을때의 후속 동작이 필요하다면 여기 이벤트 구독하면 됨
     public event Action OnExtinguished;
-    
+
     // 기존 필드들 아래에 추가
     private AudioSource _audioSource;
     private float _initialVolume;
+
+    // 2026.07.30 / HyungJun / 불 이펙트 -> 라이팅 두트윈 로직 추가
+    private Light _light;
 
     private void Awake()
     {
@@ -58,7 +71,27 @@ public class FireObject : MonoBehaviour
                 StartLifetime = main.startLifetime
             };
         }
+
+        // 2026.07.30 / HyungJun / 불 이펙트 -> 라이팅 두트윈 로직 추가
+        foreach (Transform child in transform)
+        {
+            if (child.TryGetComponent(out _light))
+            {
+                Ease selectedEase = randomEases[UnityEngine.Random.Range(0, randomEases.Length)];
+
+                var rand = UnityEngine.Random.Range(0.5f, 1.0f);
+                var rand_duration = UnityEngine.Random.Range(0.5f, 1.0f);
+                _light.intensity = 0.5f;
+
+                _light.DOIntensity(rand, rand_duration)
+                        .SetEase(selectedEase)
+                        .SetLoops(-1, LoopType.Yoyo);
+
+            }
+        }
     }
+
+    //public float Light_Duration = 1.0f;
 
     public void TakeExtinguish(float deltaTime)
     {
