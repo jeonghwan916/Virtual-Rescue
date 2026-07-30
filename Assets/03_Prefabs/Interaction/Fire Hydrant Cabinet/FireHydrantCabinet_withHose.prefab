@@ -6401,7 +6401,7 @@ MonoBehaviour:
     transform: {fileID: 6430538463093075049}
     force: {x: 0, y: 0, z: 0}
   - id: 39
-    transform: {fileID: 2223938038461668994}
+    transform: {fileID: 132150715873326181}
     force: {x: 0, y: 0, z: 0}
   pos: []
   prevPos: []
@@ -6701,9 +6701,11 @@ MonoBehaviour:
   socketInteractor: {fileID: 7520203095743099751}
   hydrantAnchor: {fileID: 430746065004643045}
   limitedTarget: {fileID: 0}
-  rope: {fileID: 299853056920520361}
-  slack: 0.15
+  requiredGrabInteractable: {fileID: 7790715006920517575}
+  usePlayerReferenceHubAsLimitedTarget: 1
+  maxDistance: 5
   limitHorizontalOnly: 1
+  distanceEventThreshold: 3
   requireHeldTarget: 1
 --- !u!1 &7442217533049987997
 GameObject:
@@ -6729,13 +6731,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7442217533049987997}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1.15}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 3.13, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 132150715873326181}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &7790260512140843484
 GameObject:
   m_ObjectHideFlags: 0
@@ -11671,11 +11673,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8210026584455813250, guid: f571b9aca2ae26a419134465a2bea597, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.11101371
+      value: 0.111013554
       objectReference: {fileID: 0}
     - target: {fileID: 8210026584455813250, guid: f571b9aca2ae26a419134465a2bea597, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.0731504
+      value: 1.0731525
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

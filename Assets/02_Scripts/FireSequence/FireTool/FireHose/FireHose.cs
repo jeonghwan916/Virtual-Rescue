@@ -23,9 +23,12 @@ public class FireHose : FireTool
     private Quaternion _pipeInitialLocalRotation;
     private float _secondaryInitialPipeAngle;
     private float _pipeAngle;
+    private bool _isPipeOpen;
 
     public event Action Grabbed;
     public event Action FiringStarted;
+    public event Action PipeOpened;
+    public event Action PipeClosed;
 
     protected override void Awake()
     {
@@ -152,9 +155,28 @@ public class FireHose : FireTool
         _pipeAngle = Mathf.Clamp(angle, 0f, _pipeMaxAngle);
 
         if (_pipe == null)
+        {
+            EvaluatePipeState();
             return;
+        }
 
         _pipe.localRotation = _pipeInitialLocalRotation * Quaternion.AngleAxis(_pipeAngle, Vector3.up);
+        EvaluatePipeState();
+    }
+
+    private void EvaluatePipeState()
+    {
+        bool shouldBeOpen = _pipeAngle >= _fireThresholdAngle;
+
+        if (_isPipeOpen == shouldBeOpen)
+            return;
+
+        _isPipeOpen = shouldBeOpen;
+
+        if (_isPipeOpen)
+            PipeOpened?.Invoke();
+        else
+            PipeClosed?.Invoke();
     }
 
     private void EvaluateFiringState()
