@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using VirtualRescue.DialogueSystem;
 
@@ -22,6 +23,7 @@ namespace VirtualRescue.Missions04
         [SerializeField] private FireHoseValveLever _valveLever;
         [SerializeField] private FireHose _fireHose;
         [SerializeField] private FireObject _fireObject;
+        [SerializeField] private bool _autoStartWhenNoPlayerReferenceHub = true;
 
         [Header("Dialogue Groups")]
         [SerializeField] private string _startDialogueGroup = "quest04_start";
@@ -31,6 +33,7 @@ namespace VirtualRescue.Missions04
         [SerializeField] private string _finishDialogueGroup = "quest04_finish";
 
         private IndoorFireHydrantQuestStep _currentStep = IndoorFireHydrantQuestStep.WaitingForStart;
+        private PlayerReferenceHub _playerReferenceHub;
 
         public IndoorFireHydrantQuestStep CurrentStep => _currentStep;
 
@@ -62,10 +65,23 @@ namespace VirtualRescue.Missions04
             }
 
             ValidateReferences();
+            BindPlayerReferences();
+        }
+
+        private IEnumerator Start()
+        {
+            yield return null;
+
+            if (_autoStartWhenNoPlayerReferenceHub && PlayerReferenceHub.Instance == null)
+            {
+                TryStartQuest();
+            }
         }
 
         private void OnEnable()
         {
+            BindPlayerReferences();
+
             if (_cabinetDoor != null)
             {
                 _cabinetDoor.Opened += HandleCabinetDoorOpened;
@@ -85,6 +101,11 @@ namespace VirtualRescue.Missions04
             if (_fireObject != null)
             {
                 _fireObject.OnExtinguished += HandleFireExtinguished;
+            }
+
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady += HandleSceneReady;
             }
         }
 
@@ -110,6 +131,12 @@ namespace VirtualRescue.Missions04
             {
                 _fireObject.OnExtinguished -= HandleFireExtinguished;
             }
+
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady -= HandleSceneReady;
+                _playerReferenceHub = null;
+            }
         }
 
         public bool TryStartQuest()
@@ -123,6 +150,16 @@ namespace VirtualRescue.Missions04
             _dialogueManager.PlayGroup(_startDialogueGroup);
             _currentStep = IndoorFireHydrantQuestStep.WaitingForCabinetDoor;
             return true;
+        }
+
+        private void BindPlayerReferences()
+        {
+            _playerReferenceHub = PlayerReferenceHub.Instance;
+        }
+
+        private void HandleSceneReady()
+        {
+            TryStartQuest();
         }
 
         private void HandleCabinetDoorOpened()

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using VirtualRescue.DialogueSystem;
 
@@ -25,6 +26,7 @@ namespace VirtualRescue.SmokeStairs
         
         [Header("References")]
         [SerializeField] private VignetteController _vignetteController;
+        [SerializeField] private bool _autoStartWhenNoPlayerReferenceHub = true;
 
         private SmokeStairsQuestStep _currentStep = SmokeStairsQuestStep.Start;
         private SmokeStairsQuestStep _nextStep;
@@ -51,6 +53,17 @@ namespace VirtualRescue.SmokeStairs
             }
 
             BindPlayerReferences();
+        }
+
+        private IEnumerator Start()
+        {
+            yield return null;
+
+            if (_autoStartWhenNoPlayerReferenceHub && PlayerReferenceHub.Instance == null)
+            {
+                TryAdvance(SmokeStairsQuestStep.Start);
+                WipeVignetteIn();
+            }
         }
 
         private void OnEnable()
@@ -171,7 +184,15 @@ namespace VirtualRescue.SmokeStairs
         private void HandleSceneReady()
         {
             TryAdvance(SmokeStairsQuestStep.Start);
-            _vignetteController.WipeIn();
+            WipeVignetteIn();
+        }
+
+        private void WipeVignetteIn()
+        {
+            if (_vignetteController != null)
+            {
+                _vignetteController.WipeIn();
+            }
         }
 
         private void HandleDialogueGroupCompleted(string groupId)
