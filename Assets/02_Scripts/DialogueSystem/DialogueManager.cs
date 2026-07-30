@@ -38,6 +38,8 @@ namespace VirtualRescue.DialogueSystem
         [Header("Audio")]
         [Tooltip("대사 음성 파일 실행할 AudioSource. XR Origin의 AudioSource 컴포넌트 연결")]
         [SerializeField] private AudioSource _audioSource;
+        [Tooltip("활성화하면 런타임에 PlayerPrefabs의 XR Origin AudioSource를 사용")]
+        [SerializeField] private bool _usePlayerAudioSource = true;
         [Tooltip("실행할 대사 음성 파일이 저장되어있는 경로. Resources 폴더의 하위 경로임")]
         [SerializeField] private string _audioBasePath = "Audio/Dialogue/KR";
 
@@ -69,9 +71,12 @@ namespace VirtualRescue.DialogueSystem
 
         private Coroutine _currentDialogueRoutine;
 
+        public event Action<string> GroupCompleted;
+
         // 컴포넌트가 초기화될 때 CSV 데이터를 읽고 검색용 Dictionary를 구성한다.
         private void Awake()
         {
+            BindPlayerAudioSource();
             LoadDialogueData();
             
             if (_dialogueMethodTest != null)
@@ -79,6 +84,29 @@ namespace VirtualRescue.DialogueSystem
                 RegisterCallback("LockDoor", _dialogueMethodTest.LockDoor);
                 RegisterCallback("HighLight", _dialogueMethodTest.HighLight);
             }
+        }
+
+        private void BindPlayerAudioSource()
+        {
+            if (!_usePlayerAudioSource)
+            {
+                return;
+            }
+
+            if (PlayerReferenceHub.Instance == null)
+            {
+                Debug.LogWarning("PlayerReferenceHub를 찾을 수 없어 기존 DialogueManager AudioSource를 유지합니다.", this);
+                return;
+            }
+
+            AudioSource playerAudioSource = PlayerReferenceHub.Instance.XrAudioSource;
+            if (playerAudioSource == null)
+            {
+                Debug.LogWarning("PlayerReferenceHub에 AudioSource가 없어 기존 DialogueManager AudioSource를 유지합니다.", this);
+                return;
+            }
+
+            _audioSource = playerAudioSource;
         }
 
         // 단일 대사 ID를 기준으로 대사를 재생한다.
@@ -116,7 +144,7 @@ namespace VirtualRescue.DialogueSystem
             }
 
             StopCurrentDialogue();
-            _currentDialogueRoutine = StartCoroutine(PlayDialogueGroupRoutine(entries));
+            _currentDialogueRoutine = StartCoroutine(PlayDialogueGroupRoutine(groupId, entries));
         }
 
         // 현재 재생 중인 대사와 음성을 중단하고 자막을 비활성화한다.
@@ -229,7 +257,7 @@ namespace VirtualRescue.DialogueSystem
         }
 
         // 여러 대사 데이터를 받아 순차적으로 재생한다.
-        private IEnumerator PlayDialogueGroupRoutine(List<DialogueEntry> entries)
+        private IEnumerator PlayDialogueGroupRoutine(string groupId, List<DialogueEntry> entries)
         {
             DialogueEntry lastEntry = null;
 
@@ -245,6 +273,7 @@ namespace VirtualRescue.DialogueSystem
             }
 
             _currentDialogueRoutine = null;
+            GroupCompleted?.Invoke(groupId);
         }
 
         // 대사 ID와 현재 언어 설정에 맞는 자막 문자열을 반환한다.

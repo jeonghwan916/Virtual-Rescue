@@ -1,5 +1,9 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VirtualRescue.Effects;
+using VirtualRescue.Loading;
+using VirtualRescue.Player;
 
 namespace VirtualRescue.Lobby
 {
@@ -7,30 +11,115 @@ namespace VirtualRescue.Lobby
     {
         [SerializeField] private string _selectedSceneKey;
         [SerializeField] private int _selectedSceneBuildIndex = -1;
+        [SerializeField] private bool _loadMainGameAdditiveScenes = true;
+        [SerializeField] private ScreenFader _screenFader;
+        [SerializeField] private float _fadeDuration = 1f;
+        [SerializeField] private string _loadingSceneName = "LoadingScene";
+
+        private static readonly string[] MainGameAdditiveSceneKeys =
+        {
+            "BedRoom",
+            "BedRoom2",
+            "Hallway&Stair",
+            "Kitchen&LivingRoom",
+            "VestibuleRoom",
+            "S_Env",
+            "BedRoom_Sub",
+            "BedRoom2_Sub",
+            "Kitchen&LivingRoom_Sub",
+            "VestibuleRoom_Sub"
+        };
+
+        private Coroutine _loadRoutine;
 
         public void SetSelectedScene(string sceneKey, int sceneBuildIndex)
         {
+            SetSelectedScene(sceneKey, sceneBuildIndex, true);
+        }
+
+        public void SetSelectedScene(string sceneKey, int sceneBuildIndex, bool loadMainGameAdditiveScenes)
+        {
             _selectedSceneKey = sceneKey;
             _selectedSceneBuildIndex = sceneBuildIndex;
+            _loadMainGameAdditiveScenes = loadMainGameAdditiveScenes;
         }
 
         public void LoadSelectedScene()
         {
-            if (!string.IsNullOrWhiteSpace(_selectedSceneKey))
+            if (_loadRoutine != null)
             {
-                Debug.Log("Loading... " + _selectedSceneKey);
-                SceneManager.LoadScene(_selectedSceneKey);
                 return;
             }
 
-            if (_selectedSceneBuildIndex < 0)
+            _loadRoutine = StartCoroutine(LoadSelectedSceneRoutine());
+        }
+
+        private IEnumerator LoadSelectedSceneRoutine()
+        {
+            if (string.IsNullOrWhiteSpace(_selectedSceneKey) && _selectedSceneBuildIndex < 0)
             {
                 Debug.LogWarning("Selected scene key is empty and selected scene build index is invalid.");
-                return;
+                _loadRoutine = null;
+                yield break;
             }
 
-            Debug.Log("Loading... BuildIndex " + _selectedSceneBuildIndex);
-            SceneManager.LoadScene(_selectedSceneBuildIndex);
+            if (string.IsNullOrWhiteSpace(_loadingSceneName))
+            {
+                Debug.LogWarning("Loading scene name is empty.");
+                _loadRoutine = null;
+                yield break;
+            }
+
+            string[] additiveSceneKeys = !string.IsNullOrWhiteSpace(_selectedSceneKey) && _loadMainGameAdditiveScenes
+                ? MainGameAdditiveSceneKeys
+                : null;
+            LoadingRequest.Set(
+                _selectedSceneKey,
+                _selectedSceneBuildIndex,
+                additiveSceneKeys);
+
+            yield return FadeOut();
+
+            Debug.Log("Loading scene... " + _loadingSceneName);
+            AsyncOperation loadingOperation = SceneManager.LoadSceneAsync(_loadingSceneName, LoadSceneMode.Single);
+            if (loadingOperation == null)
+            {
+                Debug.LogWarning($"Failed to load loading scene: {_loadingSceneName}");
+                LoadingRequest.Clear();
+                _loadRoutine = null;
+                yield break;
+            }
+
+            yield return loadingOperation;
+        }
+
+        private IEnumerator FadeOut()
+        {
+            if (_screenFader == null)
+            {
+                _screenFader = FindScreenFader();
+            }
+
+            if (_screenFader == null)
+            {
+                yield break;
+            }
+
+            yield return _screenFader.FadeOut(_fadeDuration);
+        }
+
+        private static ScreenFader FindScreenFader()
+        {
+            if (PersistentPlayerRoot.Instance != null)
+            {
+                ScreenFader playerFader = PersistentPlayerRoot.Instance.GetComponentInChildren<ScreenFader>(true);
+                if (playerFader != null)
+                {
+                    return playerFader;
+                }
+            }
+
+            return FindFirstObjectByType<ScreenFader>(FindObjectsInactive.Include);
         }
     }
 }

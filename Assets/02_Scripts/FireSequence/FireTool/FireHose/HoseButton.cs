@@ -3,17 +3,22 @@ using UnityEngine;
 
 public class HoseButton : MonoBehaviour
 {
+    [SerializeField] private bool _isLeverEnable = false;
+    
     public event Action OnButtonPressed;
+    public event Action OnButtonUnPressed;
 
-    // todo : Temporary - Init
-    private void Start()
+    public void LeverEnabled()
     {
-        Press();
+        Debug.Log($"{nameof(HoseButton)} enabled.", this);
+        _isLeverEnable = true;
+        OnButtonPressed?.Invoke();
     }
 
-    public void Press()
+    public void LeverDisabled()
     {
-        Debug.Log($"{nameof(HoseButton)} pressed.", this);
-        OnButtonPressed?.Invoke();
+        Debug.Log($"{nameof(HoseButton)} disabled.", this);
+        _isLeverEnable = false;
+        OnButtonUnPressed?.Invoke();
     }
 }

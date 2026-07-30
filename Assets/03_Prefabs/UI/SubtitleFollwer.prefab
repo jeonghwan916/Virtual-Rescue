@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -0.1}
-  m_SizeDelta: {x: 1.75, y: 0.5}
+  m_SizeDelta: {x: 2.2, y: 0.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4978921399926208024
 CanvasRenderer:
@@ -178,7 +178,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4159696785877325545}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.00000047683716}
+  m_LocalPosition: {x: 0, y: 0, z: -0.00000045953}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -186,8 +186,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1.75, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -0.000000014901161}
+  m_SizeDelta: {x: 2.2, y: 0.5}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1821457583200287194
 CanvasRenderer:
@@ -219,8 +219,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7999f72aa63c1f54b947515166ca72fd, type: 2}
+  m_sharedMaterial: {fileID: 5137553765892669104, guid: 7999f72aa63c1f54b947515166ca72fd, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -334,17 +334,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c2a6531639f4d74ab7f7e71df59b73a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SubtitleFollower
-  targetCamera: {fileID: 0}
-  distance: 0.75
-  verticalOffset: -0.35
-  positionFollowMode: 0
-  positionSmoothTime: 0.3
-  moveSpeed: 6
-  rotationSmoothSpeed: 180
-  minCameraRotationAngle: 27.5
-  stopTrackingAngle: 3
-  followYawOnly: 1
-  faceCamera: 1
+  _targetCamera: {fileID: 0}
+  _distance: 2
+  _verticalOffset: -0.35
+  _positionFollowMode: 0
+  _positionSmoothTime: 0.5
+  _moveSpeed: 6
+  _rotationSmoothSpeed: 12
+  _minCameraRotationAngle: 27.5
+  _stopTrackingAngle: 1
+  _followYawOnly: 1
+  _faceCamera: 1
 --- !u!1 &8205546013332860494
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,7 +373,7 @@ RectTransform:
   m_GameObject: {fileID: 8205546013332860494}
   m_LocalRotation: {x: -0.15212336, y: 0, z: 0, w: 0.98836154}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.275, y: 0.275, z: 0.275}
+  m_LocalScale: {x: 0.4375, y: 0.4375, z: 0.4375}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 301940644364938304}
@@ -515,8 +515,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7999f72aa63c1f54b947515166ca72fd, type: 2}
+  m_sharedMaterial: {fileID: 5137553765892669104, guid: 7999f72aa63c1f54b947515166ca72fd, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

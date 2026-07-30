@@ -1,24 +1,76 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class HandkerChiefEnterTrigger : MonoBehaviour
 {
-    // 인스펙터 창에서 감지하고 싶은 레이어를 선택하세요.
     [SerializeField] private LayerMask _targetLayer;
     [SerializeField] private VignetteController _vignetteController;
+    [SerializeField] private string _smokeTag = "SmokeZone";
+    [SerializeField, Range(0f, 1f)] private float _smokeApertureSize = 0.85f;
+
+    private readonly HashSet<Collider> _activeSmokeColliders = new();
+    private bool _hasAppliedWetHandkerchief;
+
+    public event Action WetHandkerchiefApplied;
 
     private void OnTriggerEnter(Collider other)
     {
-        // 비트 연산을 통해 충돌한 오브젝트의 레이어가 targetLayer에 포함되어 있는지 확인합니다.
-        if (((1 << other.gameObject.layer) & _targetLayer) != 0)
+        if (other.CompareTag(_smokeTag))
         {
-            Debug.Log($"지정한 레이어와 충돌했습니다! : {other.gameObject.name}");
+            bool wasOutsideSmoke = _activeSmokeColliders.Count == 0;
+            _activeSmokeColliders.Add(other);
 
-            if (other.GetComponent<HandkerChiefWet>().IsCompletelyWet)
+            if (wasOutsideSmoke && _vignetteController != null)
             {
-                Debug.Log("다 젖은 손수건을 입에 갖다 댐");
-                _vignetteController.WipeOut();
+                _vignetteController.SetApertureSize(_smokeApertureSize);
             }
+
+            return;
+        }
+
+        if (_hasAppliedWetHandkerchief ||
+            ((1 << other.gameObject.layer) & _targetLayer) == 0)
+        {
+            return;
+        }
+
+        HandkerChiefWet wetHandkerchief = other.GetComponentInParent<HandkerChiefWet>();
+        if (wetHandkerchief == null || !wetHandkerchief.IsCompletelyWet)
+        {
+            return;
+        }
+
+        _hasAppliedWetHandkerchief = true;
+
+        if (_activeSmokeColliders.Count == 0 && _vignetteController != null)
+        {
+            _vignetteController.WipeOut();
+        }
+
+        WetHandkerchiefApplied?.Invoke();
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (!other.CompareTag(_smokeTag) || !_activeSmokeColliders.Remove(other))
+        {
+            return;
+        }
+
+        if (_activeSmokeColliders.Count == 0 && _vignetteController != null)
+        {
+            _vignetteController.WipeOut();
+        }
+    }
+
+    private void OnDisable()
+    {
+        _activeSmokeColliders.Clear();
+
+        if (_vignetteController != null)
+        {
+            _vignetteController.SetApertureSize(1f);
         }
     }
 }

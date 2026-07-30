@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
@@ -11,26 +12,81 @@ public class FireExtinguisher : FireTool
     
     [Header("Nozzle")]
     [SerializeField] private XRGrabInteractable _nozzleGrabInteractable;
-    Rigidbody _nozzleRigidBody;
+    [SerializeField] private Collider _nozzleGrabPointCollider;
+    [SerializeField] private Collider[] _bodyColliders;
+    private Rigidbody _nozzleRigidBody;
+
+    [Header("Handle")]
+    [SerializeField] private Transform _handle;
+    [SerializeField] private float _handlePressedXAngle = -15f;
+    [SerializeField] private float _handleRotationSpeed = 180f;
+    private Quaternion _handleInitialLocalRotation;
+
+    public event Action Grabbed;
+    public event Action SafetyPinPulled;
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        if (_handle != null)
+        {
+            _handleInitialLocalRotation = _handle.localRotation;
+        }
+
+        IgnoreInternalNozzleCollisions();
+    }
+
+    private void LateUpdate()
+    {
+        UpdateHandleRotation();
+    }
 
     protected override void OnEnable()
     {
         base.OnEnable();
-        
-        _nozzleRigidBody = _nozzleGrabInteractable.transform.GetComponent<Rigidbody>();
-        
-        _safetyPinSocket.selectExited.AddListener(PulledOffSafetyPin);
-        _nozzleGrabInteractable.selectEntered.AddListener(GrabbedNozzle);
-        _nozzleGrabInteractable.selectExited.AddListener(ReleaseNozzle);
+
+        IgnoreInternalNozzleCollisions();
+
+        if (GrabInteractable != null)
+        {
+            GrabInteractable.selectEntered.AddListener(HandleGrabbed);
+            GrabInteractable.selectExited.AddListener(HandleReleased);
+        }
+
+        if (_safetyPinSocket != null)
+        {
+            _safetyPinSocket.selectExited.AddListener(PulledOffSafetyPin);
+        }
+
+        if (_nozzleGrabInteractable != null)
+        {
+            _nozzleRigidBody = _nozzleGrabInteractable.GetComponent<Rigidbody>();
+            _nozzleGrabInteractable.selectEntered.AddListener(GrabbedNozzle);
+            _nozzleGrabInteractable.selectExited.AddListener(ReleaseNozzle);
+        }
     }
 
     protected override void OnDisable()
     {
+        if (GrabInteractable != null)
+        {
+            GrabInteractable.selectEntered.RemoveListener(HandleGrabbed);
+            GrabInteractable.selectExited.RemoveListener(HandleReleased);
+        }
+
+        if (_safetyPinSocket != null)
+        {
+            _safetyPinSocket.selectExited.RemoveListener(PulledOffSafetyPin);
+        }
+
+        if (_nozzleGrabInteractable != null)
+        {
+            _nozzleGrabInteractable.selectEntered.RemoveListener(GrabbedNozzle);
+            _nozzleGrabInteractable.selectExited.RemoveListener(ReleaseNozzle);
+        }
+
         base.OnDisable();
-        
-        _safetyPinSocket.selectExited.RemoveAllListeners();
-        _nozzleGrabInteractable.selectExited.RemoveAllListeners();
-        _nozzleGrabInteractable.selectExited.RemoveAllListeners();
     }
 
     protected override bool CanStartFiring()
@@ -40,18 +96,78 @@ public class FireExtinguisher : FireTool
 
     private void PulledOffSafetyPin(SelectExitEventArgs args)
     {
-        _isSafetyPinHasPulledOff = true;
+        if (_isSafetyPinHasPulledOff)
+        {
+            return;
+        }
 
-        if (_safetyPinSocket != null) _safetyPinSocket.gameObject.SetActive(false);
+        _isSafetyPinHasPulledOff = true;
+        SafetyPinPulled?.Invoke();
+
+        if (_safetyPinSocket != null)
+        {
+            _safetyPinSocket.gameObject.SetActive(false);
+        }
+    }
+
+    private void HandleGrabbed(SelectEnterEventArgs args)
+    {
+        Grabbed?.Invoke();
+    }
+
+    private void HandleReleased(SelectExitEventArgs args)
+    {
+        StopFiring();
+    }
+
+    private void UpdateHandleRotation()
+    {
+        if (_handle == null)
+        {
+            return;
+        }
+
+        Quaternion targetRotation = IsFiring
+            ? _handleInitialLocalRotation * Quaternion.Euler(_handlePressedXAngle, 0f, 0f)
+            : _handleInitialLocalRotation;
+
+        _handle.localRotation = Quaternion.RotateTowards(
+            _handle.localRotation,
+            targetRotation,
+            _handleRotationSpeed * Time.deltaTime);
+    }
+
+    private void IgnoreInternalNozzleCollisions()
+    {
+        if (_nozzleGrabPointCollider == null || _bodyColliders == null)
+        {
+            return;
+        }
+
+        foreach (Collider bodyCollider in _bodyColliders)
+        {
+            if (bodyCollider == null)
+            {
+                continue;
+            }
+
+            Physics.IgnoreCollision(_nozzleGrabPointCollider, bodyCollider, true);
+        }
     }
 
     private void GrabbedNozzle(SelectEnterEventArgs args)
     {
-        _nozzleRigidBody.isKinematic = false;
+        if (_nozzleRigidBody != null)
+        {
+            _nozzleRigidBody.isKinematic = false;
+        }
     }
     
     private void ReleaseNozzle(SelectExitEventArgs args)
     {
-        _nozzleRigidBody.isKinematic = false;
+        if (_nozzleRigidBody != null)
+        {
+            _nozzleRigidBody.isKinematic = false;
+        }
     }
 }

@@ -20,6 +20,7 @@ public abstract class FireTool : MonoBehaviour
     [SerializeField] private bool _isFiring = false;
 
     protected bool IsFiring => _isFiring;
+    protected XRGrabInteractable GrabInteractable => _grabInteractable;
 
     protected virtual void Awake()
     {
