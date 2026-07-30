@@ -9,9 +9,9 @@ using VirtualRescue.Player;
 
 public class MenuFollowerController : MonoBehaviour
 {
-    [SerializeField] private string _returnToLobbyButtonName = "Button-ReturnToLobby";
-    [SerializeField] private string _settingButtonName = "Button-Setting";
-    [SerializeField] private string _closeButtonName = "Button-Close";
+    [SerializeField] private Button _returnToLobbyButton;
+    [SerializeField] private Button _settingButton;
+    [SerializeField] private Button _closeButton;
     [SerializeField] private string _leftControllerXButtonPath = "<XRController>{LeftHand}/{PrimaryButton}";
     [SerializeField] private string _lobbySceneName = "BuildTest_Lobby";
     [SerializeField] private string _loadingSceneName = "LoadingScene";
@@ -22,9 +22,9 @@ public class MenuFollowerController : MonoBehaviour
 
     private void Awake()
     {
-        BindButton(_returnToLobbyButtonName, ReturnToLobby);
-        BindButton(_settingButtonName, OpenSetting);
-        BindButton(_closeButtonName, Close);
+        BindButton(_returnToLobbyButton, ReturnToLobby);
+        BindButton(_settingButton, OpenSetting);
+        BindButton(_closeButton, Close);
         MenuFollowerInputDriver.Register(this, _leftControllerXButtonPath);
     }
 
@@ -38,7 +38,22 @@ public class MenuFollowerController : MonoBehaviour
 
     public void Show()
     {
+        if (_returnRoutine != null)
+        {
+            return;
+        }
+
         gameObject.SetActive(true);
+    }
+
+    public void Toggle()
+    {
+        if (_returnRoutine != null)
+        {
+            return;
+        }
+
+        gameObject.SetActive(!gameObject.activeSelf);
     }
 
     public void Close()
@@ -53,7 +68,8 @@ public class MenuFollowerController : MonoBehaviour
             return;
         }
 
-        _returnRoutine = StartCoroutine(ReturnToLobbyRoutine());
+        _returnRoutine = MenuFollowerInputDriver.StartRoutine(ReturnToLobbyRoutine());
+        Hide();
     }
 
     public void OpenSetting()
@@ -87,19 +103,11 @@ public class MenuFollowerController : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void BindButton(string buttonName, UnityEngine.Events.UnityAction action)
+    private void BindButton(Button button, UnityEngine.Events.UnityAction action)
     {
-        Transform buttonTransform = FindChildTransform(transform, buttonName);
-        if (buttonTransform == null)
-        {
-            Debug.LogWarning($"{nameof(MenuFollowerController)} could not find {buttonName}.", this);
-            return;
-        }
-
-        Button button = buttonTransform.GetComponent<Button>();
         if (button == null)
         {
-            Debug.LogWarning($"{buttonName} does not have a Button component.", this);
+            Debug.LogWarning($"{nameof(MenuFollowerController)} has a missing button reference.", this);
             return;
         }
 
@@ -119,25 +127,6 @@ public class MenuFollowerController : MonoBehaviour
         }
 
         return FindFirstObjectByType<ScreenFader>(FindObjectsInactive.Include);
-    }
-
-    private static Transform FindChildTransform(Transform root, string transformName)
-    {
-        if (root.name == transformName)
-        {
-            return root;
-        }
-
-        foreach (Transform child in root)
-        {
-            Transform found = FindChildTransform(child, transformName);
-            if (found != null)
-            {
-                return found;
-            }
-        }
-
-        return null;
     }
 }
 
@@ -164,6 +153,16 @@ internal sealed class MenuFollowerInputDriver : MonoBehaviour
         }
 
         _instance.SetMenuFollower(menuFollower, buttonPath);
+    }
+
+    public static Coroutine StartRoutine(IEnumerator routine)
+    {
+        if (_instance == null || routine == null)
+        {
+            return null;
+        }
+
+        return _instance.StartCoroutine(routine);
     }
 
     private void OnDestroy()
@@ -208,6 +207,6 @@ internal sealed class MenuFollowerInputDriver : MonoBehaviour
             return;
         }
 
-        _menuFollower.Show();
+        _menuFollower.Toggle();
     }
 }

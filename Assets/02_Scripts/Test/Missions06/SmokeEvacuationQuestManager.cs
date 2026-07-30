@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using VirtualRescue.DialogueSystem;
 using VirtualRescue.Missions09;
 
@@ -30,6 +31,7 @@ namespace VirtualRescue.Missions06
         [SerializeField] private HandkerChiefEnterTrigger _faceTrigger;
         [SerializeField] private FireExitDoorController _doorController;
         [SerializeField] private ParticleSystem _smokeParticle;
+        [SerializeField] private VignetteController _vignetteController;
 
         [Header("Dialogue Groups")]
         [SerializeField] private string _startDialogueGroup = "quest06_start";
@@ -74,6 +76,11 @@ namespace VirtualRescue.Missions06
                 _smokeParticle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             }
 
+            if (_vignetteController == null)
+            {
+                _vignetteController = _faceTrigger.GetComponent<VignetteController>();
+            }
+            
             ValidateReferences();
         }
 
@@ -93,6 +100,8 @@ namespace VirtualRescue.Missions06
             {
                 _doorController.Opened += HandleDoorOpened;
             }
+            
+            _vignetteController.WipeIn();
         }
 
         private void OnDisable()

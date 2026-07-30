@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using VirtualRescue.SmokeStairs;
+using VirtualRescue.Missions02;
 
 public class VignetteController : MonoBehaviour
 {
@@ -22,8 +24,8 @@ public class VignetteController : MonoBehaviour
             vignetteRenderer = GetComponent<MeshRenderer>();
 
         propertyBlock = new MaterialPropertyBlock();
-        //WipeIn();
     }
+    
 
     public void WipeOut()
     {
@@ -31,6 +33,9 @@ public class VignetteController : MonoBehaviour
             StopCoroutine(wipeOutRoutine);
 
         wipeOutRoutine = StartCoroutine(WipeOutRoutine());
+
+        SmokeStairsQuestManager smokeStairsQuestManager = Mission02References.SmokeStairsQuestManager;
+        smokeStairsQuestManager.TryAdvance(SmokeStairsQuestStep.Exit);
     }
 
     public void WipeIn()

@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7422418412371342915}
+  - component: {fileID: 4248093472490761755}
   m_Layer: 0
   m_Name: WaterBottle
   m_TagString: Untagged
@@ -30,9 +31,27 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6971898300175568549}
-  - {fileID: 8067549198906224463}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4248093472490761755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198690116294839110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8de7c9a16c8943a7a3b8e86f6d67507c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterBottleWetRaycaster
+  _rayOrigin: {fileID: 8067549198906224463}
+  _clothLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  _rayRange: 5
+  _pourAngleThreshold: 60
+  _wetBlueSpeed: 0.25
 --- !u!1 &4633876725531796275
 GameObject:
   m_ObjectHideFlags: 0
@@ -57,12 +76,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4633876725531796275}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 1.0843999, z: 1.21}
-  m_LocalScale: {x: 0.025, y: 0.025, z: 0.025}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.605, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.125}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7422418412371342915}
+  m_Father: {fileID: 6971898300175568549}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &8017227128048948109
 GameObject:
@@ -78,7 +97,6 @@ GameObject:
   - component: {fileID: 3894519435826076029}
   - component: {fileID: 4510249711897516619}
   - component: {fileID: 2542618938157942806}
-  - component: {fileID: 8286720327656846290}
   m_Layer: 0
   m_Name: Bottle
   m_TagString: Untagged
@@ -95,10 +113,12 @@ Transform:
   m_GameObject: {fileID: 8017227128048948109}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.964, z: 1.21}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.05, y: 0.2, z: 0.05}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 7349755827965589991}
+  - {fileID: 8067549198906224463}
   m_Father: {fileID: 7422418412371342915}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4677971275587185276
@@ -116,7 +136,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8017227128048948109}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -335,22 +355,77 @@ MonoBehaviour:
   m_LimitAngularVelocity: 0
   m_MaxLinearVelocityDelta: 10
   m_MaxAngularVelocityDelta: 20
---- !u!114 &8286720327656846290
-MonoBehaviour:
+--- !u!1001 &1600868904856437259
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6971898300175568549}
+    m_Modifications:
+    - target: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.52
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8683835741180092758, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+      propertyPath: m_Name
+      value: Water_Bottle
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+--- !u!4 &7349755827965589991 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8343197815879580652, guid: 2263aa8817b7c0a49b3e2ed0378fc883, type: 3}
+  m_PrefabInstance: {fileID: 1600868904856437259}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8017227128048948109}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8de7c9a16c8943a7a3b8e86f6d67507c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WaterBottleWetRaycaster
-  _rayOrigin: {fileID: 8067549198906224463}
-  _clothLayer:
-    serializedVersion: 2
-    m_Bits: 1024
-  _rayRange: 5
-  _pourAngleThreshold: 60
-  _wetBlueSpeed: 0.25
