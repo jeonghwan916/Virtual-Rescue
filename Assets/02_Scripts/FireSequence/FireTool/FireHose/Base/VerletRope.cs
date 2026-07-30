@@ -30,6 +30,7 @@ public class VerletRope : MonoBehaviour
         public Transform anchor;
         public float radius = 0.05f;
         public float stiffness = 1.0f;
+        public bool fixedPosition;
         public bool released;
     }
     
@@ -260,6 +261,14 @@ public class VerletRope : MonoBehaviour
         StorageAnchor storageAnchor = storageAnchors[storageAnchorIndex];
         if (storageAnchor == null || storageAnchor.released || storageAnchor.anchor == null) return;
         if (storageAnchor.pointId < 0 || storageAnchor.pointId >= pointsNb) return;
+
+        if (storageAnchor.fixedPosition) {
+            pos[storageAnchor.pointId] = storageAnchor.anchor.position;
+            prevPos[storageAnchor.pointId] = storageAnchor.anchor.position;
+            mass[storageAnchor.pointId] = 0.0f;
+            return;
+        }
+
         if (mass[storageAnchor.pointId] == 0.0f) return;
 
         float radius = Mathf.Max(0.0f, storageAnchor.radius);
