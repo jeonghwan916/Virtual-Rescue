@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using VirtualRescue.DialogueSystem;
@@ -23,6 +24,7 @@ namespace VirtualRescue.Missions03
         [SerializeField] private DialogueManager _dialogueManager;
         [SerializeField] private FireExtinguisher _fireExtinguisher;
         [SerializeField] private FireObject[] _fireObjects;
+        [SerializeField] private bool _autoStartWhenNoPlayerReferenceHub = true;
 
         [Header("Dialogue Groups")]
         [SerializeField] private string _startGroup = "start";
@@ -39,6 +41,7 @@ namespace VirtualRescue.Missions03
         private bool _isDialoguePlaying;
         private bool _hasExtinguisherBeenGrabbed;
         private bool _hasSafetyPinBeenPulled;
+        private PlayerReferenceHub _playerReferenceHub;
 
         public FireExtinguisherQuestStep CurrentStep => _currentStep;
         public int ExtinguishedFireCount => _extinguishedFireObjects.Count;
@@ -63,10 +66,23 @@ namespace VirtualRescue.Missions03
             }
 
             ValidateReferences();
+            BindPlayerReferences();
+        }
+
+        private IEnumerator Start()
+        {
+            yield return null;
+
+            if (_autoStartWhenNoPlayerReferenceHub && PlayerReferenceHub.Instance == null)
+            {
+                TryStartQuest();
+            }
         }
 
         private void OnEnable()
         {
+            BindPlayerReferences();
+
             if (_dialogueManager != null)
             {
                 _dialogueManager.GroupCompleted += HandleDialogueGroupCompleted;
@@ -79,6 +95,11 @@ namespace VirtualRescue.Missions03
             }
 
             BindFireEvents();
+
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady += HandleSceneReady;
+            }
         }
 
         private void OnDisable()
@@ -95,6 +116,12 @@ namespace VirtualRescue.Missions03
             }
 
             UnbindFireEvents();
+
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady -= HandleSceneReady;
+                _playerReferenceHub = null;
+            }
         }
 
         public bool TryStartQuest()
@@ -110,6 +137,16 @@ namespace VirtualRescue.Missions03
                 _startGroup,
                 FireExtinguisherQuestStep.WaitingForExtinguisherGrab);
             return true;
+        }
+
+        private void BindPlayerReferences()
+        {
+            _playerReferenceHub = PlayerReferenceHub.Instance;
+        }
+
+        private void HandleSceneReady()
+        {
+            TryStartQuest();
         }
 
         private void HandleExtinguisherGrabbed()

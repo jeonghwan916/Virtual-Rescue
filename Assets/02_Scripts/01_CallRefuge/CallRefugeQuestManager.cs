@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using VirtualRescue.DialogueSystem;
 using VirtualRescue.Missions09;
@@ -27,11 +28,13 @@ namespace VirtualRescue.CallRefuge
         [Header("In-Scene Component")]
         [SerializeField] private NumPad _numPad;
         [SerializeField] private FireExitDoorController _fireExitDoorController;
+        [SerializeField] private bool _autoStartWhenNoPlayerReferenceHub = true;
 
         private CallRefugeQuestStep _currentStep = CallRefugeQuestStep.Start;
         private CallRefugeQuestStep _nextStep;
         private string _activeDialogueGroup;
         private bool _isDialoguePlaying;
+        private PlayerReferenceHub _playerReferenceHub;
         
         public CallRefugeQuestStep CurrentStep => _currentStep;
         public bool IsDialoguePlaying => _isDialoguePlaying;
@@ -50,15 +53,34 @@ namespace VirtualRescue.CallRefuge
                     "Call Refuge 퀘스트에서 DialogueManager를 찾을 수 없습니다.",
                     this);
             }
+
+            BindPlayerReferences();
+        }
+
+        private IEnumerator Start()
+        {
+            yield return null;
+
+            if (_autoStartWhenNoPlayerReferenceHub && PlayerReferenceHub.Instance == null)
+            {
+                TryAdvance(CallRefugeQuestStep.Start);
+            }
         }
 
         private void OnEnable()
         {
+            BindPlayerReferences();
+
             if (_dialogueManager != null)
             {
                 _dialogueManager.GroupCompleted += HandleDialogueGroupCompleted;
                 _numPad.OnCorrectNumber += OnCellPhoneCall;
                 _fireExitDoorController.Closed += OnDoorClosed;
+            }
+
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady += HandleSceneReady;
             }
         }
 
@@ -69,6 +91,12 @@ namespace VirtualRescue.CallRefuge
                 _dialogueManager.GroupCompleted -= HandleDialogueGroupCompleted;
                 _numPad.OnCorrectNumber -= OnCellPhoneCall;
                 _fireExitDoorController.Closed -= OnDoorClosed;
+            }
+
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady -= HandleSceneReady;
+                _playerReferenceHub = null;
             }
         }
 
@@ -142,6 +170,16 @@ namespace VirtualRescue.CallRefuge
 
             _dialogueManager.Stop();
             _dialogueManager.PlayGroup(groupId);
+        }
+
+        private void BindPlayerReferences()
+        {
+            _playerReferenceHub = PlayerReferenceHub.Instance;
+        }
+
+        private void HandleSceneReady()
+        {
+            TryAdvance(CallRefugeQuestStep.Start);
         }
 
         private void HandleDialogueGroupCompleted(string groupId)
