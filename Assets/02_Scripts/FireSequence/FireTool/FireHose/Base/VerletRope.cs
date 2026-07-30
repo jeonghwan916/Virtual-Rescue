@@ -32,6 +32,13 @@ public class VerletRope : MonoBehaviour
         public float stiffness = 1.0f;
         public bool released;
     }
+
+    [System.Serializable]
+    private class FixedPointAnchor
+    {
+        public int pointId;
+        public Transform anchor;
+    }
     
     [Header("Rope")]
     [SerializeField] private float attachedBodiesDamping = 0.5f;
@@ -57,6 +64,10 @@ public class VerletRope : MonoBehaviour
     [SerializeField] private float maxRopeLength = 1.0f;
     [SerializeField] private int lengthLimitPointId = -1;
     [SerializeField, Range(0.0f, 1.0f)] private float lengthLimitDamping = 0.75f;
+
+    [Header("Fixed Points")]
+    [SerializeField] private bool enableFixedPointAnchors = false;
+    [SerializeField] private FixedPointAnchor[] fixedPointAnchors;
 
     [Header("Collision")]
     [SerializeField] private bool enableCollision = false;
@@ -97,9 +108,11 @@ public class VerletRope : MonoBehaviour
         if (pointsNb > 1) {
             ApplyForces();
             ApplyAttach();
+            ApplyFixedPoints();
             
             ApplyVerlet();
             ApplyConstraints();
+            ApplyFixedPoints();
         }
 
         if (line)
@@ -241,6 +254,21 @@ public class VerletRope : MonoBehaviour
 
         pos[pointId] = lengthLimitAnchor.position + offset.normalized * maxLength;
         prevPos[pointId] = Vector3.Lerp(prevPos[pointId], pos[pointId], lengthLimitDamping);
+    }
+
+    private void ApplyFixedPoints() {
+        if (!enableFixedPointAnchors || fixedPointAnchors == null || fixedPointAnchors.Length == 0) return;
+
+        for (int i = 0; i < fixedPointAnchors.Length; i++) {
+            FixedPointAnchor fixedPointAnchor = fixedPointAnchors[i];
+            if (fixedPointAnchor == null || fixedPointAnchor.anchor == null) continue;
+            if (fixedPointAnchor.pointId < 0 || fixedPointAnchor.pointId >= pointsNb) continue;
+
+            Vector3 fixedPosition = fixedPointAnchor.anchor.position;
+            pos[fixedPointAnchor.pointId] = fixedPosition;
+            prevPos[fixedPointAnchor.pointId] = fixedPosition;
+            mass[fixedPointAnchor.pointId] = 0.0f;
+        }
     }
 
     private void ApplyStorageAnchors() {
