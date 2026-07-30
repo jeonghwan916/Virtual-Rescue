@@ -385,6 +385,10 @@ PrefabInstance:
       propertyPath: _spawnPoint
       value: 
       objectReference: {fileID: 1032727468}
+    - target: {fileID: 7465221851370242313, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -456,7 +460,7 @@ PrefabInstance:
       objectReference: {fileID: 1388057766}
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _audioBasePath
-      value: Audio/05_HazardEscape
+      value: Audio/05_PartitionEscape/Ver2
       objectReference: {fileID: 0}
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _dialogueTextCsv
@@ -530,7 +534,7 @@ GameObject:
   m_Layer: 0
   m_Name: Player Spawn Point
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -542,13 +546,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1032727467}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.7660445, z: 0, w: 0.64278764}
-  m_LocalPosition: {x: -7.5, y: 0, z: 4.5}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -10, y: 1.5, z: 5.411}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &1109315185
 GameObject:
   m_ObjectHideFlags: 0
@@ -732,74 +736,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 910050000000000041}
   m_LocalEulerAnglesHint: {x: 65, y: -180, z: 0}
---- !u!1 &1681980722
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1681980723}
-  - component: {fileID: 1681980724}
-  - component: {fileID: 1681980725}
-  m_Layer: 0
-  m_Name: Start_Trigger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1681980723
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1681980722}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8, y: 1, z: 4.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 910050000000000001}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1681980724
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1681980722}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2, y: 2, z: 3}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1681980725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1681980722}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6a934b2e18d47cba20f7635d94c8e11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.PartitionEscape.PartitionEscapeQuestTrigger
-  _questManager: {fileID: 910050000000000002}
-  _questStep: 0
 --- !u!1 &1753973751
 GameObject:
   m_ObjectHideFlags: 0
@@ -900,7 +836,6 @@ Transform:
   - {fileID: 910050000000000011}
   - {fileID: 910050000000000021}
   - {fileID: 910050000000000041}
-  - {fileID: 1681980723}
   - {fileID: 493456434}
   - {fileID: 1109315186}
   - {fileID: 1753973752}
@@ -924,6 +859,7 @@ MonoBehaviour:
   _entranceDialogueGroup: entrance
   _partitionDialogueGroup: partition
   _completeDialogueGroup: complete
+  _autoStartWhenNoPlayerReferenceHub: 1
 --- !u!1001 &910050000000000010
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using VirtualRescue.DialogueSystem;
 
@@ -20,11 +21,13 @@ namespace VirtualRescue.PartitionEscape
         [SerializeField] private string _entranceDialogueGroup = "entrance";
         [SerializeField] private string _partitionDialogueGroup = "partition";
         [SerializeField] private string _completeDialogueGroup = "complete";
+        [SerializeField] private bool _autoStartWhenNoPlayerReferenceHub = true;
 
         private PartitionEscapeQuestStep _currentStep = PartitionEscapeQuestStep.Start;
         private PartitionEscapeQuestStep _nextStep;
         private string _activeDialogueGroup;
         private bool _isDialoguePlaying;
+        private PlayerReferenceHub _playerReferenceHub;
 
         public PartitionEscapeQuestStep CurrentStep => _currentStep;
         public bool IsDialoguePlaying => _isDialoguePlaying;
@@ -43,13 +46,32 @@ namespace VirtualRescue.PartitionEscape
                     "Partition Escape 퀘스트에서 DialogueManager를 찾을 수 없습니다.",
                     this);
             }
+
+            BindPlayerReferences();
+        }
+
+        private IEnumerator Start()
+        {
+            yield return null;
+
+            if (_autoStartWhenNoPlayerReferenceHub && PlayerReferenceHub.Instance == null)
+            {
+                TryAdvance(PartitionEscapeQuestStep.Start);
+            }
         }
 
         private void OnEnable()
         {
+            BindPlayerReferences();
+
             if (_dialogueManager != null)
             {
                 _dialogueManager.GroupCompleted += HandleDialogueGroupCompleted;
+            }
+            
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady += HandleSceneReady;
             }
         }
 
@@ -58,6 +80,12 @@ namespace VirtualRescue.PartitionEscape
             if (_dialogueManager != null)
             {
                 _dialogueManager.GroupCompleted -= HandleDialogueGroupCompleted;
+            }
+            
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady -= HandleSceneReady;
+                _playerReferenceHub = null;
             }
         }
 
@@ -127,6 +155,11 @@ namespace VirtualRescue.PartitionEscape
             _dialogueManager.PlayGroup(groupId);
         }
 
+        private void BindPlayerReferences()
+        {
+            _playerReferenceHub = PlayerReferenceHub.Instance;
+        }
+
         private void HandleDialogueGroupCompleted(string groupId)
         {
             if (!_isDialoguePlaying || groupId != _activeDialogueGroup)
@@ -137,6 +170,11 @@ namespace VirtualRescue.PartitionEscape
             _currentStep = _nextStep;
             _activeDialogueGroup = string.Empty;
             _isDialoguePlaying = false;
+        }
+        
+        private void HandleSceneReady()
+        {
+            TryAdvance(PartitionEscapeQuestStep.Start);
         }
     }
 }

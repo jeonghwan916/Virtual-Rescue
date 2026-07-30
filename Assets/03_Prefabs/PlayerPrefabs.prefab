@@ -4783,6 +4783,7 @@ GameObject:
   - component: {fileID: 6085909147132242292}
   - component: {fileID: 7383174844094132801}
   - component: {fileID: 7383174844094132802}
+  - component: {fileID: 5775269200674212979}
   m_Layer: 0
   m_Name: PlayerPrefabs
   m_TagString: Untagged
@@ -4838,6 +4839,20 @@ MonoBehaviour:
   _spawnPoint: {fileID: 0}
   _applyAsSpawnPoint: 1
   _onlyApplyWhenSceneIsActive: 1
+--- !u!114 &5775269200674212979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5040499814158158394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3100e79f145f8942933b3e5004995f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerReferenceHub
+  _audioSource: {fileID: 7884228769781634763}
+  _vignetteController: {fileID: 2256658240131441154}
 --- !u!1 &5078464982010922456
 GameObject:
   m_ObjectHideFlags: 0
@@ -9012,6 +9027,10 @@ PrefabInstance:
       propertyPath: vignetteRenderer
       value: 
       objectReference: {fileID: 6697649103486103045}
+    - target: {fileID: 1115487956068712536, guid: 0d509232f93beaf45a70b0aa5be427d8, type: 3}
+      propertyPath: startApertureSize
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 3302483652646056249, guid: 0d509232f93beaf45a70b0aa5be427d8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -9061,6 +9080,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0d509232f93beaf45a70b0aa5be427d8, type: 3}
+--- !u!114 &2256658240131441154 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1115487956068712536, guid: 0d509232f93beaf45a70b0aa5be427d8, type: 3}
+  m_PrefabInstance: {fileID: 1164814734026728026}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cff0685de160e84b9a9b54911d409d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VignetteController
 --- !u!4 &4467157099411755875 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3302483652646056249, guid: 0d509232f93beaf45a70b0aa5be427d8, type: 3}

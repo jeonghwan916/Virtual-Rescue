@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using VirtualRescue.DialogueSystem;
 
@@ -22,11 +23,16 @@ namespace VirtualRescue.SmokeStairs
         [SerializeField] private string _exitDialogueGroup = "exit";
         [SerializeField] private string _elevatorDialogueGroup = "elevator";
         [SerializeField] private string _finishDialogueGroup = "finish";
+        
+        [Header("References")]
+        [SerializeField] private VignetteController _vignetteController;
+        [SerializeField] private bool _autoStartWhenNoPlayerReferenceHub = true;
 
         private SmokeStairsQuestStep _currentStep = SmokeStairsQuestStep.Start;
         private SmokeStairsQuestStep _nextStep;
         private string _activeDialogueGroup;
         private bool _isDialoguePlaying;
+        private PlayerReferenceHub _playerReferenceHub;
         
         public SmokeStairsQuestStep CurrentStep => _currentStep;
         public bool IsDialoguePlaying => _isDialoguePlaying;
@@ -45,13 +51,33 @@ namespace VirtualRescue.SmokeStairs
                     "Alarm Stairs 퀘스트에서 DialogueManager를 찾을 수 없습니다.",
                     this);
             }
+
+            BindPlayerReferences();
+        }
+
+        private IEnumerator Start()
+        {
+            yield return null;
+
+            if (_autoStartWhenNoPlayerReferenceHub && PlayerReferenceHub.Instance == null)
+            {
+                TryAdvance(SmokeStairsQuestStep.Start);
+                WipeVignetteIn();
+            }
         }
 
         private void OnEnable()
         {
+            BindPlayerReferences();
+
             if (_dialogueManager != null)
             {
                 _dialogueManager.GroupCompleted += HandleDialogueGroupCompleted;
+            }
+
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady += HandleSceneReady;
             }
         }
 
@@ -60,6 +86,12 @@ namespace VirtualRescue.SmokeStairs
             if (_dialogueManager != null)
             {
                 _dialogueManager.GroupCompleted -= HandleDialogueGroupCompleted;
+            }
+
+            if (_playerReferenceHub != null)
+            {
+                _playerReferenceHub.SceneReady -= HandleSceneReady;
+                _playerReferenceHub = null;
             }
         }
 
@@ -133,6 +165,34 @@ namespace VirtualRescue.SmokeStairs
 
             _dialogueManager.Stop();
             _dialogueManager.PlayGroup(groupId);
+        }
+
+        private void BindPlayerReferences()
+        {
+            _playerReferenceHub = PlayerReferenceHub.Instance;
+            if (_playerReferenceHub == null)
+            {
+                return;
+            }
+
+            if (_vignetteController == null)
+            {
+                _vignetteController = _playerReferenceHub.VignetteController;
+            }
+        }
+
+        private void HandleSceneReady()
+        {
+            TryAdvance(SmokeStairsQuestStep.Start);
+            WipeVignetteIn();
+        }
+
+        private void WipeVignetteIn()
+        {
+            if (_vignetteController != null)
+            {
+                _vignetteController.WipeIn();
+            }
         }
 
         private void HandleDialogueGroupCompleted(string groupId)

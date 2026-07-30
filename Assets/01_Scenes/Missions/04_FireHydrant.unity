@@ -603,73 +603,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6294508013172393185, guid: 043176b6a68be2b43b073aaaa4782c7d, type: 3}
   m_PrefabInstance: {fileID: 654669613}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1069643848
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1069643851}
-  - component: {fileID: 1069643850}
-  - component: {fileID: 1069643849}
-  m_Layer: 0
-  m_Name: Start Trigger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1069643849
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1069643848}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7a8e5b2d3f44b95b0a6c1d2e3f40718, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions04.IndoorFireHydrantQuestTrigger
-  _questManager: {fileID: 1530777836}
---- !u!65 &1069643850
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1069643848}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!4 &1069643851
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1069643848}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16, y: 0.881, z: 15.496}
-  m_LocalScale: {x: 1, y: 2.7386, z: 1.5673}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1118684290
 GameObject:
   m_ObjectHideFlags: 0
@@ -753,6 +686,7 @@ MonoBehaviour:
   _valveLever: {fileID: 0}
   _fireHose: {fileID: 0}
   _fireObject: {fileID: 0}
+  _autoStartWhenNoPlayerReferenceHub: 1
   _startDialogueGroup: quest04_start
   _doorDialogueGroup: quest04_door
   _valveDialogueGroup: quest04_valve
@@ -941,5 +875,4 @@ SceneRoots:
   - {fileID: 446156342}
   - {fileID: 171128674}
   - {fileID: 355310970}
-  - {fileID: 1069643851}
   - {fileID: 1530777835}
