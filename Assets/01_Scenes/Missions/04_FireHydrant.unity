@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 12e4983fc1d1afb498ab063a3f64eac1, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -376,7 +376,7 @@ PrefabInstance:
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _dialogueCsv
       value: 
-      objectReference: {fileID: 4900000, guid: 84f8b42b6078f0147830b21d072d3d78, type: 3}
+      objectReference: {fileID: 4900000, guid: 602a7fe8012e9a842b6c436d70c11b81, type: 3}
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _speakerText
       value: 
@@ -390,9 +390,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 569674678}
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
+      propertyPath: _audioBasePath
+      value: Audio/04_FireHydrant/Ver1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _dialogueTextCsv
       value: 
-      objectReference: {fileID: 4900000, guid: 2ce82be12b0d739438da8c77e50862cd, type: 3}
+      objectReference: {fileID: 4900000, guid: b27a547650fc4c24ab9bc61befa3ac62, type: 3}
     - target: {fileID: 7167137039038344234, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
