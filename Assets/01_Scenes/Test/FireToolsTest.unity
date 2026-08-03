@@ -3377,21 +3377,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: FireHydrantCabinet_withHose
       objectReference: {fileID: 0}
-    - target: {fileID: 2251321244910549349, guid: 9558e5205e472bb46bccf0a7ea826ee3, type: 3}
-      propertyPath: m_Renderer
+    - target: {fileID: 2642630051123991847, guid: 9558e5205e472bb46bccf0a7ea826ee3, type: 3}
+      propertyPath: limitedTarget
       value: 
-      objectReference: {fileID: 1423512154}
-    - target: {fileID: 4879361120962351629, guid: 9558e5205e472bb46bccf0a7ea826ee3, type: 3}
-      propertyPath: m_Enabled
-      value: 1
+      objectReference: {fileID: 2062423326}
+    - target: {fileID: 7861321354189579375, guid: 9558e5205e472bb46bccf0a7ea826ee3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.11101371
       objectReference: {fileID: 0}
-    - target: {fileID: 4879361120962351629, guid: 9558e5205e472bb46bccf0a7ea826ee3, type: 3}
-      propertyPath: m_ColorPropertyName
-      value: _BaseColor
-      objectReference: {fileID: 0}
-    - target: {fileID: 5968885072627293777, guid: 9558e5205e472bb46bccf0a7ea826ee3, type: 3}
-      propertyPath: m_Enabled
-      value: 1
+    - target: {fileID: 7861321354189579375, guid: 9558e5205e472bb46bccf0a7ea826ee3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.0731504
       objectReference: {fileID: 0}
     - target: {fileID: 8172063181932262359, guid: 9558e5205e472bb46bccf0a7ea826ee3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3947,17 +3943,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 676793802}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1361902499 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3563362856402344549, guid: f1cdb1d6f69a1ba4f9b1b83a1af61fe8, type: 3}
-  m_PrefabInstance: {fileID: 1141960719}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3433649f09850ff42b52a5d84d5e0a13, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1361902501 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3563362856402344548, guid: f1cdb1d6f69a1ba4f9b1b83a1af61fe8, type: 3}
@@ -4103,11 +4088,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 676793802}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &1423512154 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 5734850851901277962, guid: 9558e5205e472bb46bccf0a7ea826ee3, type: 3}
-  m_PrefabInstance: {fileID: 1190520366}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1441112146
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5329,6 +5309,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 676793802}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &2062423326 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5532992026282289034, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
+  m_PrefabInstance: {fileID: 1441112146}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2081511341
 GameObject:
   m_ObjectHideFlags: 0
@@ -5911,9 +5896,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 104734424}
     - target: {fileID: 6592045710704823977, guid: cf4a8482ad2882d4cad40ddd04ad018b, type: 3}
-      propertyPath: rope
-      value: 
-      objectReference: {fileID: 1361902499}
+      propertyPath: maxDistance
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 6592045710704823977, guid: cf4a8482ad2882d4cad40ddd04ad018b, type: 3}
       propertyPath: limitedTarget
       value: 
