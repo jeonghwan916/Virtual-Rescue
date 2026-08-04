@@ -573,16 +573,19 @@ MonoBehaviour:
     anchor: {fileID: 0}
     radius: 0
     stiffness: 0
+    fixedPosition: 0
     released: 0
   - pointId: 6
     anchor: {fileID: 0}
     radius: 0
     stiffness: 0
+    fixedPosition: 0
     released: 0
   - pointId: 9
     anchor: {fileID: 0}
     radius: 0
     stiffness: 0
+    fixedPosition: 0
     released: 0
   storageAnchorIterations: 1
   storageAnchorStiffness: 0.35
@@ -970,8 +973,11 @@ MonoBehaviour:
   _extinguisherSFX: {fileID: 9136137807165907051}
   _grabInteractable: {fileID: 305121439709143196}
   _isFiring: 0
-  _hoseConnectionState: {fileID: 0}
-  _hoseButton: {fileID: 0}
+  _pipe: {fileID: 0}
+  _pipeMaxAngle: 90
+  _fireThresholdAngle: 45
+  _invertTwistDirection: 0
+  _valveLever: {fileID: 0}
 --- !u!82 &9136137807165907051
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1077,58 +1083,47 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3367234223335144629}
     m_Modifications:
-    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63,
-        type: 3}
+    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63,
-        type: 3}
+    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63,
-        type: 3}
+    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
       propertyPath: m_LocalPosition.z
       value: 2.25
       objectReference: {fileID: 0}
-    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63,
-        type: 3}
+    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63,
-        type: 3}
+    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63,
-        type: 3}
+    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
       propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63,
-        type: 3}
+    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63,
-        type: 3}
+    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63,
-        type: 3}
+    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63,
-        type: 3}
+    - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7531308009844027268, guid: 8935033923c39204997ac28ea4e6eb63,
-        type: 3}
+    - target: {fileID: 7531308009844027268, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
       propertyPath: m_Name
       value: PressurisedSteam
       objectReference: {fileID: 0}
@@ -1139,13 +1134,11 @@ PrefabInstance:
   m_SourcePrefab: {fileID: 100100000, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
 --- !u!198 &940675270439166049 stripped
 ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 7033688097589592831, guid: 8935033923c39204997ac28ea4e6eb63,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 7033688097589592831, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
   m_PrefabInstance: {fileID: 7823136435480683166}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &9141242485466903673 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
   m_PrefabInstance: {fileID: 7823136435480683166}
   m_PrefabAsset: {fileID: 0}
