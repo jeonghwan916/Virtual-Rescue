@@ -9,6 +9,7 @@
 ```text
 하루 시작
 → 기본 집 모듈 및 임시 ExitScene 비동기 로드
+→ PlayerPrefabs를 하루 시작 위치로 이동
 → 무상황 또는 상황 하나 선택
 → 선택된 경우 상황 오버레이 씬 로드 및 활성화
 → 플레이어 탐색 및 상황 해결
@@ -71,6 +72,8 @@ Core 씬은 날짜가 바뀌어도 유지되는 전역 오브젝트만 가진다
 
 - `DayFlowController.Start Automatically`를 활성화한다.
 - `DaySceneCoordinator`에 위 컨트롤러, 로더, 정의 에셋 참조를 연결한다.
+- `DaySceneCoordinator.Player Root`에 Core 씬의 `PlayerPrefabs`를 연결한다.
+- `DaySceneCoordinator.Day Start Spawn Point`에 매일 돌아갈 시작 위치를 연결한다.
 - `DayOutcomeController`에 `DayFlowController`와 `SituationSceneLoader`를 연결한다.
 - 상황을 항상 발생시키는 테스트에서는 `SituationSelector.No Situation Chance`를 `0`으로 설정한다.
 
@@ -161,7 +164,8 @@ Core 씬은 날짜가 바뀌어도 유지되는 전역 오브젝트만 가진다
 ```mermaid
 flowchart TD
     A["하루 시작"] --> B["집 모듈과 출구 모듈 로드"]
-    B --> C["상황 선택"]
+    B --> B2["PlayerPrefabs를 하루 시작 위치로 이동"]
+    B2 --> C["상황 선택"]
 
     C -->|무상황| D["상황 씬 없이 Playing"]
     C -->|상황 선택| E["상황 오버레이 씬 로드"]
@@ -306,6 +310,7 @@ flowchart TD
 ### 13. `DaySceneCoordinator` - 기본 구현 완료
 
 - 하루 시작 시 `HomeLayoutDefinition`에 등록된 기본 집 모듈과 현재 테스트용 `ExitScene`을 먼저 로드한다.
+- 집 로드 완료 후 Inspector로 연결된 `PersistentPlayerRoot`를 하루 시작 위치로 이동한다.
 - 집 로드 완료 후 상황을 선택하고 필요한 경우 상황 씬을 로드한다.
 - 상황 활성화 성공 후 상황 ID를 발생 이력에 등록한다.
 - 무상황 또는 상황 준비 완료 후 `NotifyHomeLoaded()`로 플레이 상태에 진입한다.
@@ -405,6 +410,7 @@ flowchart TD
 24. `DayFlowController` Inspector에서 플레이 중 현재 일자를 확인할 수 있다.
 25. 디자이너 작업 완료 전까지 `Hallway&Stair` 씬에 개발용 변경이 발생하지 않는다.
 26. 최종 통합 후 `ExitScene`은 모듈 목록에서 제거되고 출구는 `Hallway&Stair`에 한 번만 존재한다.
+27. 첫날과 다음 날 모두 집 모듈 로드 후 상황 선택 전에 `PlayerPrefabs`가 지정한 하루 시작 위치로 이동한다.
 
 ## 10. 기본 결정
 
