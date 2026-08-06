@@ -55,9 +55,9 @@
 
 ## 3. 씬 구성
 
-### Core 씬: `RoopTest`
+### Core 씬: `LoopBase`
 
-Core 씬은 날짜가 바뀌어도 유지되는 전역 오브젝트만 가진다.
+Core 씬의 경로는 `Assets/01_Scenes/Situation/LoopBase.unity`다. 날짜가 바뀌어도 유지되는 전역 오브젝트만 가진다.
 
 - XR Player와 Main Camera
 - 전역 조명, UI, EventSystem 등 공통 요소
@@ -330,7 +330,7 @@ flowchart TD
 
 - 임시 `ExitScene`에 출구 오브젝트 및 상호작용을 배치한다.
 - 테스트 기간에는 `HomeLayoutDefinition`에 `ExitScene`을 등록한다.
-- `RoopTest`에 `DayOutcomeController`를 배치하고 참조를 연결한다.
+- `LoopBase`에 `DayOutcomeController`를 배치하고 참조를 연결한다.
 - 상황 해결 전·후 및 무상황에서 출구 판정 흐름을 통합 검증한다.
 - 디자이너의 `Hallway&Stair` 작업 완료 후 협의하여 출구 오브젝트, 상호작용과 `ExitController`를 해당 씬에 통합한다.
 - 통합이 끝나면 `HomeLayoutDefinition`에서 임시 `ExitScene`을 제거하고 중복 출구가 없는지 다시 검증한다.
@@ -384,7 +384,7 @@ flowchart TD
 
 ## 9. 통합 검증 목록
 
-1. `RoopTest` 시작 직후 기본 집 모듈과 현재 테스트용 `ExitScene` 로딩이 시작된다.
+1. `LoopBase` 시작 직후 기본 집 모듈과 현재 테스트용 `ExitScene` 로딩이 시작된다.
 2. 모든 기본 모듈 로드가 끝난 뒤에만 상황을 선택한다.
 3. 무상황이면 상황 씬 없이 `Playing` 상태로 진입한다.
 4. 상황이 선택되면 해당 상황 오버레이 하나만 추가 로드한다.
