@@ -43,11 +43,13 @@
 | 무상황 | 없음 | 엘리베이터 |
 | 0단계 | 없음 | 상황 해결 후 엘리베이터 |
 | 1단계 | 없음 | 상황 해결 후 엘리베이터 |
-| 2단계 | 양수 제한시간 사용 | 상황 해결 후 해당 상황에 설정된 탈출구 |
+| 2단계 | 양수 제한시간 사용 | 제한시간 내 해당 상황에 설정된 탈출구 도달 |
 
 - 2단계에서는 엘리베이터를 허용하지 않는다.
-- 상황이 존재하는 날에는 단계와 관계없이 미해결 상태에서 출구를 사용하면 실패한다.
+- 0·1단계 상황은 미해결 상태에서 출구를 사용하면 실패한다.
+- 2단계 상황은 `Active` 상태에서 허용된 출구에 도달하면 그 출구 요청으로 상황을 해결한다.
 - `ResolveSituation()`은 출구 사용이 가능한 상태로 만드는 처리이며 날짜를 직접 변경하지 않는다.
+- 2단계의 출구 해결도 내부적으로 `ResolveSituation()`을 거쳐 타이머를 중지한 뒤 날짜를 변경한다.
 - 최종 날짜 변경은 `DayOutcomeController`만 `CompleteDay()` 또는 `FailDay()`를 호출해 수행한다.
 
 ## 3. 씬 구성
@@ -145,14 +147,74 @@ Core 씬은 날짜가 바뀌어도 유지되는 전역 오브젝트만 가진다
 0·1단계 해결 + 다른 출구 요청
 → FailDay()
 
-2단계 미해결 + 모든 출구 요청
-→ FailDay()
-
-2단계 해결 + 정의에 허용된 출구 요청
+2단계 Active + 정의에 허용된 출구 요청
+→ TryResolveByExit()
+→ 타이머 중지 및 Resolved
 → CompleteDay()
 
-2단계 해결 + Elevator 또는 허용되지 않은 출구 요청
+2단계 Active 또는 Resolved + Elevator 또는 허용되지 않은 출구 요청
 → FailDay()
+```
+
+### 전체 게임 루프 다이어그램
+
+```mermaid
+flowchart TD
+    A["하루 시작"] --> B["집 모듈과 출구 모듈 로드"]
+    B --> C["상황 선택"]
+
+    C -->|무상황| D["상황 씬 없이 Playing"]
+    C -->|상황 선택| E["상황 오버레이 씬 로드"]
+    E --> F["SituationController 활성화"]
+    F --> D
+
+    D --> G["플레이어가 출구 사용"]
+    G --> H["ExitController.RequestExit()"]
+    H --> I["DayOutcomeController 판정"]
+
+    I -->|성공| J["CompleteDay()"]
+    I -->|실패| K["FailDay()"]
+
+    J --> L{"8일차 도달?"}
+    L -->|예| M["게임 클리어"]
+    L -->|아니요| N["상황 및 집 모듈 언로드"]
+    N --> A
+
+    K --> O["날짜를 1일차로 초기화"]
+    O --> P["상황 발생 이력 초기화"]
+    P --> N
+```
+
+### 단계·상태·출구별 판정 다이어그램
+
+```mermaid
+flowchart TD
+    A["ExitController.RequestExit()"] --> B{"현재 상황"}
+
+    B -->|무상황| NS{"출구 종류"}
+    NS -->|Elevator| COMPLETE["CompleteDay()<br/>다음 날 진행"]
+    NS -->|그 외| FAIL["FailDay()<br/>1일차로 초기화"]
+
+    B -->|"0단계 또는 1단계"| L01{"상황 상태"}
+    L01 -->|"Active 또는 Failed"| FAIL
+    L01 -->|Resolved| L01EXIT{"출구 종류"}
+    L01EXIT -->|Elevator| COMPLETE
+    L01EXIT -->|그 외| FAIL
+
+    B -->|2단계| L2STATE{"상황 상태"}
+    L2STATE -->|"Failed 또는 Inactive"| FAIL
+    L2STATE -->|Active| L2EXIT{"SituationDefinition에서<br/>허용된 출구인가?"}
+    L2STATE -->|Resolved| L2RESOLVED{"허용된 출구인가?"}
+
+    L2EXIT -->|아니요| FAIL
+    L2EXIT -->|예| RESOLVE["TryResolveByExit()<br/>타이머 중지<br/>Resolved 처리"]
+    RESOLVE --> COMPLETE
+
+    L2RESOLVED -->|예| COMPLETE
+    L2RESOLVED -->|아니요| FAIL
+
+    TIMER["2단계 제한시간 만료"] --> TFAIL["SituationController.Failed"]
+    TFAIL --> FAIL
 ```
 
 ## 5. 스크립트 현황과 책임
@@ -201,6 +263,7 @@ Core 씬은 날짜가 바뀌어도 유지되는 전역 오브젝트만 가진다
 - 모든 상황별 컨트롤러의 공통 기반 클래스다.
 - `Activate()`, `ResetSituation()`, `Resolved`, `Failed`를 제공한다.
 - 2단계 상황의 제한시간 만료를 처리한다.
+- `TryResolveByExit()`은 2단계 `Active` 상태와 허용 출구를 다시 검증하고 성공 시 타이머를 중지하며 해결 처리한다.
 - 파생 상황은 조건 충족 시 `ResolveSituation()` 또는 `FailSituation()`까지만 호출한다.
 - `CompleteDay()`와 `FailDay()`를 직접 호출하지 않는다.
 
@@ -235,7 +298,8 @@ Core 씬은 날짜가 바뀌어도 유지되는 전역 오브젝트만 가진다
 
 - Core 씬에서 출구 요청을 한 번 구독한다.
 - `SituationSceneLoader`가 제공하는 현재 상황 정의와 컨트롤러를 사용한다.
-- 무상황, 미해결 상황, 해결된 단계별 상황의 출구 규칙을 판정한다.
+- 무상황과 0·1단계의 해결 상태 및 출구 규칙을 판정한다.
+- 2단계에서는 허용된 출구 도달을 `TryResolveByExit()`에 전달하고 해결 성공 후 하루를 완료한다.
 - 성공 시 `CompleteDay()`, 실패 시 `FailDay()`를 호출한다.
 - `SituationController.Failed` 이벤트도 `FailDay()`로 연결한다.
 
@@ -330,7 +394,7 @@ Core 씬은 날짜가 바뀌어도 유지되는 전역 오브젝트만 가진다
 13. 0·1단계 해결 후 엘리베이터를 사용하면 다음 날로 진행한다.
 14. 0·1단계 해결 후 다른 출구를 사용하면 실패한다.
 15. 2단계에서 설정된 제한시간이 시작되고 만료 시 실패한다.
-16. 2단계 해결 후 허용된 탈출구를 사용하면 다음 날로 진행한다.
+16. 2단계 `Active` 상태에서 제한시간 내 허용된 탈출구를 사용하면 타이머가 중지되고 `Resolved` 처리된 뒤 다음 날로 진행한다.
 17. 2단계에서 엘리베이터 또는 허용되지 않은 출구를 사용하면 실패한다.
 18. `ResolveSituation()`만으로 날짜가 증가하거나 씬이 언로드되지 않는다.
 19. 출구 판정 과정에서 상황 씬이 `ExitController`를 검색하거나 구독하지 않는다.
