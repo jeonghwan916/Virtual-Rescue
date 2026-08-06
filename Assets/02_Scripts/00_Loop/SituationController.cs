@@ -75,6 +75,19 @@ namespace VirtualRescue.GameFlow
             Definition = null;
         }
 
+        public bool TryResolveByExit(ExitType exitType)
+        {
+            if (_state != SituationState.Active ||
+                Definition == null ||
+                Definition.Level != SituationLevel.Level2 ||
+                !Definition.IsExitAllowed(exitType))
+            {
+                return false;
+            }
+
+            return ResolveSituation();
+        }
+
         protected bool ResolveSituation()
         {
             if (_state != SituationState.Active)

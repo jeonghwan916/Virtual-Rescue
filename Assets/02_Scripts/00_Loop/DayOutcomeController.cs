@@ -71,7 +71,29 @@ namespace VirtualRescue.GameFlow
                     "Situation definition and controller must either both exist or both be absent.");
             }
 
-            if (controller.IsFailed || !controller.IsResolved)
+            if (controller.IsFailed)
+            {
+                return FailDay();
+            }
+
+            if (definition.Level == SituationLevel.Level2)
+            {
+                if (!definition.IsExitAllowed(exitType))
+                {
+                    return FailDay();
+                }
+
+                if (controller.IsActive && !controller.TryResolveByExit(exitType))
+                {
+                    return FailDay();
+                }
+
+                return controller.IsResolved
+                    ? CompleteDay()
+                    : FailDay();
+            }
+
+            if (!controller.IsResolved)
             {
                 return FailDay();
             }
