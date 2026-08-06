@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using VirtualRescue.GameFlow;
+using VirtualRescue.Player;
 
 public class DaySceneCoordinator : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class DaySceneCoordinator : MonoBehaviour
     [Header("Home")]
     [SerializeField] private HomeModuleLoader _homeModuleLoader;
     [SerializeField] private HomeLayoutDefinition _homeLayout;
+
+    [Header("Player")]
+    [SerializeField] private PersistentPlayerRoot _playerRoot;
+    [SerializeField] private Transform _dayStartSpawnPoint;
 
     [Header("Situation")]
     [SerializeField] private SituationSelector _situationSelector;
@@ -59,6 +64,14 @@ public class DaySceneCoordinator : MonoBehaviour
                 ReportError(_homeModuleLoader.LastError);
                 return;
             }
+
+            if (_playerRoot == null || _dayStartSpawnPoint == null)
+            {
+                ReportError("플레이어 또는 하루 시작 위치가 설정되지 않았습니다.");
+                return;
+            }
+
+            _playerRoot.ApplySpawn(_dayStartSpawnPoint);
 
             bool selectionSucceeded = _situationSelector.TrySelect(
                 currentDay,
