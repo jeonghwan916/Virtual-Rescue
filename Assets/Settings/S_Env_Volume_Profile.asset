@@ -64,37 +64,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.ProbeVolumesOptions
   active: 1
   normalBias:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0.05
   viewBias:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0.1
   scaleBiasWithMinProbeDistance:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0
   samplingNoise:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0.1
   animateSamplingNoise:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 1
   leakReductionMode:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 2
   minValidDotProductValue:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 0.1
   occlusionOnlyReflectionNormalization:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 1
   intensityMultiplier:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 1
   skyOcclusionIntensityMultiplier:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: 1
   worldOffset:
-    m_OverrideState: 1
+    m_OverrideState: 0
     m_Value: {x: 0, y: 0, z: 0}
 --- !u!114 &-3357603926938260329
 MonoBehaviour:

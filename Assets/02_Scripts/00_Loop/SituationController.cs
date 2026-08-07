@@ -21,10 +21,8 @@ namespace VirtualRescue.GameFlow
 
         private Coroutine _countdownRoutine;
 
-        public event Action Activated;
         public event Action Resolved;
         public event Action Failed;
-        public event Action ResetPerformed;
 
         public SituationDefinition Definition { get; private set; }
         public SituationState State => _state;
