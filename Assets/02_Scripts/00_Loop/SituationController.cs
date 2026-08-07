@@ -21,8 +21,10 @@ namespace VirtualRescue.GameFlow
 
         private Coroutine _countdownRoutine;
 
+        public event Action Activated;
         public event Action Resolved;
         public event Action Failed;
+        public event Action ResetPerformed;
 
         public SituationDefinition Definition { get; private set; }
         public SituationState State => _state;
@@ -57,6 +59,7 @@ namespace VirtualRescue.GameFlow
             _remainingTime = definition.TimeLimitSeconds;
 
             OnActivated();
+            Activated?.Invoke();
 
             if (_state == SituationState.Active && definition.UsesTimeLimit)
             {
@@ -72,6 +75,7 @@ namespace VirtualRescue.GameFlow
             _state = SituationState.Inactive;
             _remainingTime = 0f;
             OnReset();
+            ResetPerformed?.Invoke();
             Definition = null;
         }
 
