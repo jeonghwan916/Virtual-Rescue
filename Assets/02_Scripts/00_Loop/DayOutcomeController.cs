@@ -61,8 +61,8 @@ namespace VirtualRescue.GameFlow
             if (definition == null && controller == null)
             {
                 return exitType == ExitType.Elevator
-                    ? CompleteDay()
-                    : FailDay();
+                    ? CompleteDay(definition)
+                    : FailDay(definition);
             }
 
             if (definition == null || controller == null)
@@ -73,34 +73,34 @@ namespace VirtualRescue.GameFlow
 
             if (controller.IsFailed)
             {
-                return FailDay();
+                return FailDay(definition);
             }
 
             if (definition.Level == SituationLevel.Level2)
             {
                 if (!definition.IsExitAllowed(exitType))
                 {
-                    return FailDay();
+                    return FailDay(definition);
                 }
 
                 if (controller.IsActive && !controller.TryResolveByExit(exitType))
                 {
-                    return FailDay();
+                    return FailDay(definition);
                 }
 
                 return controller.IsResolved
-                    ? CompleteDay()
-                    : FailDay();
+                    ? CompleteDay(definition)
+                    : FailDay(definition);
             }
 
             if (!controller.IsResolved)
             {
-                return FailDay();
+                return FailDay(definition);
             }
 
             return definition.IsExitAllowed(exitType)
-                ? CompleteDay()
-                : FailDay();
+                ? CompleteDay(definition)
+                : FailDay(definition);
         }
 
         private void HandleExitRequested(ExitType exitType)
@@ -127,7 +127,12 @@ namespace VirtualRescue.GameFlow
                 return;
             }
 
-            if (!_dayFlowController.FailDay())
+            SituationDefinition definition =
+                _situationSceneLoader != null
+                    ? _situationSceneLoader.CurrentDefinition
+                    : null;
+
+            if (!_dayFlowController.FailDay(DayResultContext.Failed(definition)))
             {
                 Fail("Day flow rejected a situation failure result.");
             }
@@ -161,9 +166,10 @@ namespace VirtualRescue.GameFlow
             _boundSituationController = null;
         }
 
-        private bool CompleteDay()
+        private bool CompleteDay(SituationDefinition definition)
         {
-            if (_dayFlowController.CompleteDay())
+            if (_dayFlowController.CompleteDay(
+                    DayResultContext.Completed(definition)))
             {
                 return true;
             }
@@ -171,9 +177,9 @@ namespace VirtualRescue.GameFlow
             return Fail("Day flow rejected a successful day result.");
         }
 
-        private bool FailDay()
+        private bool FailDay(SituationDefinition definition)
         {
-            if (_dayFlowController.FailDay())
+            if (_dayFlowController.FailDay(DayResultContext.Failed(definition)))
             {
                 return true;
             }
