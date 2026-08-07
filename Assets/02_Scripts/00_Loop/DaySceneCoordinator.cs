@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
+using VirtualRescue.Effects;
 using VirtualRescue.GameFlow;
 using VirtualRescue.Player;
 
@@ -16,6 +18,15 @@ public class DaySceneCoordinator : MonoBehaviour
     [Header("Player")]
     [SerializeField] private PersistentPlayerRoot _playerRoot;
     [SerializeField] private Transform _dayStartSpawnPoint;
+
+    [Header("Fade")]
+    [SerializeField] private ScreenFader _screenFader;
+    [SerializeField] private float _fadeInDuration = 1.5f;
+    [SerializeField] private float _fadeOutDuration = 1f;
+
+    [Header("Radio")]
+    [SerializeField] private RadioController _radioController;
+    [SerializeField] private float _radioStartDelay = 2f;
 
     [Header("Situation")]
     [SerializeField] private SituationSelector _situationSelector;
@@ -58,6 +69,8 @@ public class DaySceneCoordinator : MonoBehaviour
 
         try
         {
+            _screenFader?.ShowBlack();
+
             bool homeLoaded = await _homeModuleLoader.LoadAsync(_homeLayout);
             if (!homeLoaded)
             {
@@ -110,10 +123,15 @@ public class DaySceneCoordinator : MonoBehaviour
                 Debug.Log($"{currentDay}일차는 무상황입니다.", this);
             }
 
+            await RunFadeAsync(_screenFader?.FadeIn(_fadeInDuration));
+
             if (!_dayFlowController.NotifyHomeLoaded())
             {
                 ReportError("하루를 Playing 상태로 전환하지 못했습니다.");
+                return;
             }
+
+            ScheduleRadioBroadcast(currentDay);
         }
         catch (Exception exception)
         {
@@ -139,6 +157,8 @@ public class DaySceneCoordinator : MonoBehaviour
 
         try
         {
+            await RunFadeAsync(_screenFader?.FadeOut(_fadeOutDuration));
+
             unloaded = await UnloadCurrentDayAsync();
 
             if (unloaded)
@@ -207,6 +227,53 @@ public class DaySceneCoordinator : MonoBehaviour
         }
 
         return true;
+    }
+
+    private void ScheduleRadioBroadcast(int day)
+    {
+        if (_radioController == null)
+        {
+            return;
+        }
+
+        StartCoroutine(PlayRadioBroadcastAfterDelay(day));
+    }
+
+    private IEnumerator PlayRadioBroadcastAfterDelay(int day)
+    {
+        if (_radioStartDelay > 0f)
+        {
+            yield return new WaitForSeconds(_radioStartDelay);
+        }
+
+        if (_dayFlowController == null ||
+            _dayFlowController.CurrentState != DayFlowState.Playing ||
+            _dayFlowController.CurrentDay != day)
+        {
+            yield break;
+        }
+
+        _radioController.PlayForResult(_dayFlowController.LastDayResult);
+    }
+
+    private Task RunFadeAsync(IEnumerator fadeRoutine)
+    {
+        if (fadeRoutine == null)
+        {
+            return Task.CompletedTask;
+        }
+
+        TaskCompletionSource<bool> completionSource = new();
+        StartCoroutine(RunFadeCoroutine(fadeRoutine, completionSource));
+        return completionSource.Task;
+    }
+
+    private static IEnumerator RunFadeCoroutine(
+        IEnumerator fadeRoutine,
+        TaskCompletionSource<bool> completionSource)
+    {
+        yield return fadeRoutine;
+        completionSource.TrySetResult(true);
     }
 
     private void ReportError(string message)

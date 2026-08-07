@@ -32,6 +32,12 @@ namespace VirtualRescue.Effects
             yield return Fade(0f, 1f, duration);
         }
 
+        public void ShowBlack()
+        {
+            SetFadeObjectActive(true);
+            SetAlpha(1f);
+        }
+
         public void Clear()
         {
             SetAlpha(0f);
