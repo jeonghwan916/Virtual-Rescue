@@ -14,6 +14,9 @@ GameObject:
   - component: {fileID: 2652096966788962789}
   - component: {fileID: 4417980025593943992}
   - component: {fileID: 6302370890028480532}
+  - component: {fileID: 8785442786149863488}
+  - component: {fileID: 372863211711878241}
+  - component: {fileID: 854591901516658405}
   m_Layer: 0
   m_Name: Lightweight_Partitions
   m_TagString: Untagged
@@ -29,9 +32,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6548098364176133317}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 13, y: 0.5750207, z: -6.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -165,43 +168,43 @@ MonoBehaviour:
   m_Positions:
   - {x: -0.5, y: -0.52500665, z: 2}
   - {x: -0.25, y: -0.52500665, z: 2}
-  - {x: -0.5, y: 3.4749932, z: 2}
-  - {x: -0.25, y: 3.4749932, z: 2}
+  - {x: -0.5, y: 2.6749792, z: 2}
+  - {x: -0.25, y: 2.6749792, z: 2}
   - {x: -0.25, y: -0.52500665, z: 2}
   - {x: -0.25, y: -0.52500665, z: -0.25}
-  - {x: -0.25, y: 3.4749932, z: 2}
-  - {x: -0.25, y: 3.4749932, z: -0.25}
+  - {x: -0.25, y: 2.6749792, z: 2}
+  - {x: -0.25, y: 2.6749792, z: -0.25}
   - {x: -0.25, y: -0.52500665, z: -0.25}
   - {x: -0.5, y: -0.52500665, z: -0.25}
-  - {x: -0.25, y: 3.4749932, z: -0.25}
-  - {x: -0.5, y: 3.4749932, z: -0.25}
+  - {x: -0.25, y: 2.6749792, z: -0.25}
+  - {x: -0.5, y: 2.6749792, z: -0.25}
   - {x: -0.5, y: -0.52500665, z: -0.25}
   - {x: -0.5, y: -0.52500665, z: 2}
-  - {x: -0.5, y: 3.4749932, z: -0.25}
-  - {x: -0.5, y: 3.4749932, z: 2}
-  - {x: -0.5, y: 3.4749932, z: 2}
-  - {x: -0.25, y: 3.4749932, z: 2}
-  - {x: -0.5, y: 3.4749932, z: -0.25}
-  - {x: -0.25, y: 3.4749932, z: -0.25}
+  - {x: -0.5, y: 2.6749792, z: -0.25}
+  - {x: -0.5, y: 2.6749792, z: 2}
+  - {x: -0.5, y: 2.6749792, z: 2}
+  - {x: -0.25, y: 2.6749792, z: 2}
+  - {x: -0.5, y: 2.6749792, z: -0.25}
+  - {x: -0.25, y: 2.6749792, z: -0.25}
   - {x: -0.5, y: -0.52500665, z: -0.25}
   - {x: -0.25, y: -0.52500665, z: -0.25}
   - {x: -0.5, y: -0.52500665, z: 2}
   - {x: -0.25, y: -0.52500665, z: 2}
   m_Textures0:
-  - {x: 0.25, y: -3}
-  - {x: 0, y: -3}
+  - {x: 0.25, y: -2.199986}
+  - {x: 0, y: -2.199986}
   - {x: 0.25, y: 1}
   - {x: 0, y: 1}
-  - {x: 2.25, y: -3}
-  - {x: 0, y: -3}
+  - {x: 2.25, y: -2.199986}
+  - {x: 0, y: -2.199986}
   - {x: 2.25, y: 1}
   - {x: 0, y: 1}
-  - {x: 0.25, y: -3}
-  - {x: 0, y: -3}
+  - {x: 0.25, y: -2.199986}
+  - {x: 0, y: -2.199986}
   - {x: 0.25, y: 1}
   - {x: 0, y: 1}
-  - {x: 2.25, y: -3}
-  - {x: 0, y: -3}
+  - {x: 2.25, y: -2.199986}
+  - {x: 0, y: -2.199986}
   - {x: 2.25, y: 1}
   - {x: 0, y: 1}
   - {x: 0, y: 1}
@@ -248,7 +251,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 2608
+  m_VersionIndex: 3192
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -268,9 +271,9 @@ MonoBehaviour:
   m_Shape:
     rid: 1271288831985320270
   m_ShapeRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_UnmodifiedMeshVersion: 2608
-  m_Size: {x: 0.25, y: 4, z: 2.25}
-  m_LocalCenter: {x: -0.375, y: 1.4749933, z: 0.875}
+  m_UnmodifiedMeshVersion: 3183
+  m_Size: {x: 0.25, y: 3.199986, z: 2.25}
+  m_LocalCenter: {x: -0.375, y: 1.0749863, z: 0.875}
   references:
     version: 2
     RefIds:
@@ -302,7 +305,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 2100000, guid: e1804956045cd234a950ca69ae87dbe1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -356,3 +359,109 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!54 &8785442786149863488
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6548098364176133317}
+  serializedVersion: 5
+  m_Mass: 40
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &372863211711878241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6548098364176133317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9161ef5a47814f85a66fdf563461c8ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BreakablePartitionToolkit.Runtime::VirtualRescue.Destruction.BreakablePartitionAuthoring
+  _fragmentCount: 36
+  _fractureXAxis: 1
+  _fractureYAxis: 0
+  _fractureZAxis: 1
+  _detectFloatingFragments: 0
+  _insideMaterial: {fileID: 2100000, guid: e1804956045cd234a950ca69ae87dbe1, type: 2}
+  _textureScale: {x: 0.1, y: 0.1}
+  _textureOffset: {x: 0, y: 0}
+  _saveFragmentMeshes: 1
+  _meshOutputFolder: Assets/05_Models/Generated/BreakablePartitions/PartitionEscape
+  _allowedTag: DestructionTool
+  _minimumCollisionForce: 46
+  _impactCooldown: 0.08
+  _destructionRadius: 1.25
+  _directHitRadius: 0.35
+  _impulseMultiplier: 0.08
+  _vertexTolerance: 0.002
+  _minimumSharedVertices: 3
+  _anchorMargin: 0.08
+  _anchorLeft: 1
+  _anchorRight: 1
+  _anchorTop: 1
+  _anchorBottom: 1
+  _collapseDelay: 0.15
+  _randomCollapseDelay: 0.1
+  _downwardImpulse: 0.25
+  _generatedRoot: {fileID: 0}
+--- !u!114 &854591901516658405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6548098364176133317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 605444303d16d4544bb76342ce272af3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: BreakablePartitionToolkit.Runtime::Prefracture
+  triggerOptions:
+    triggerType: 0
+    minimumCollisionForce: 46
+    filterCollisionsByTag: 1
+    triggerAllowedTags:
+    - DestructionTool
+    triggerKey: 0
+  fractureOptions:
+    fragmentCount: 46
+    xAxis: 0
+    yAxis: 1
+    zAxis: 1
+    detectFloatingFragments: 0
+    asynchronous: 0
+    insideMaterial: {fileID: 2100000, guid: e1804956045cd234a950ca69ae87dbe1, type: 2}
+    textureScale: {x: 0.1, y: 0.1}
+    textureOffset: {x: 0, y: 0}
+  callbackOptions:
+    onFracture:
+      m_PersistentCalls:
+        m_Calls: []
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  prefractureOptions:
+    unfreezeAll: 0
+    saveFragmentsToDisk: 1
+    saveLocation: Assets/05_Models/Generated/BreakablePartitions/PartitionEscape
