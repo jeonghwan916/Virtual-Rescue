@@ -129,6 +129,8 @@ GameObject:
   m_Component:
   - component: {fileID: 346131513}
   - component: {fileID: 346131514}
+  - component: {fileID: 346131516}
+  - component: {fileID: 346131517}
   - component: {fileID: 346131515}
   m_Layer: 0
   m_Name: EntireHouseSituationController
@@ -169,6 +171,7 @@ MonoBehaviour:
   _alarmAudioSource: {fileID: 2020893908}
   _broadCastAudioSource: {fileID: 1717758930}
   _isAlarmStarted: 0
+  _trapDoorTrigger: {fileID: 346131517}
 --- !u!65 &346131515
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -190,6 +193,36 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &346131516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 346131511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 178c1d3282764a8f9826ad5f56da6505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationDoorLockOverride
+  _situationController: {fileID: 346131514}
+  _doorIds: []
+--- !u!114 &346131517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 346131511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb5cd1c398234da9830426b1c941dbfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationTrapDoorTrigger
+  _situationController: {fileID: 346131514}
+  _doorIds:
+  - Porch_Main
+  - Porch_Sub
 --- !u!1 &1535285841
 GameObject:
   m_ObjectHideFlags: 0

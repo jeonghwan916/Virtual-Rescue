@@ -68,6 +68,7 @@ Core 씬의 경로는 `Assets/01_Scenes/Situation/LoopBase.unity`다. 날짜가 
 - `SituationSelector`
 - `SituationSceneLoader`
 - `RadioController`
+- `DoorRegistry`
 
 인스펙터 설정:
 
@@ -79,6 +80,7 @@ Core 씬의 경로는 `Assets/01_Scenes/Situation/LoopBase.unity`다. 날짜가 
 - `DaySceneCoordinator.Radio Controller`에 하루 시작 방송을 담당할 `RadioController`를 연결한다.
 - `DayOutcomeController`에 `DayFlowController`와 `SituationSceneLoader`를 연결한다.
 - `RadioController.Radio Audio Source`에 라디오 방송을 재생할 AudioSource를 연결한다.
+- `GameFlow` 오브젝트에 `DoorRegistry`를 하나만 둔다.
 - 상황을 항상 발생시키는 테스트에서는 `SituationSelector.No Situation Chance`를 `0`으로 설정한다.
 
 ### 기본 집 모듈 씬
@@ -430,9 +432,114 @@ flowchart TD
 - 평소 소화기 대신 넘어진 소화기로 대체
 - 평소 멀티탭 대신 과열된 멀티탭으로 대체
 - 평소 창문 대신 연기가 새는 창문으로 대체
-- 평소 문 대신 잠긴 문 상태 오브젝트로 대체
+- 문 자체를 다른 모델로 교체해야 하는 경우에만 대체 오브젝트 방식을 사용한다.
 
-## 8. 주요 인터페이스
+## 8. 상황별 문 상태 제어
+
+상황 선택만 랜덤으로 수행하고, 선택된 상황에서 잠기거나 함정이 되는 문은 상황별로 고정된 Door ID를 사용한다. 상황 활성화 후 문을 다시 무작위로 선택하지 않는다.
+
+기본 원칙:
+
+- `ModuleObjectRegistry`는 기본 오브젝트 활성화 상태만 관리하며 문 상태 제어에 사용하지 않는다.
+- Core 씬인 `LoopBase`에는 `DoorRegistry`를 정확히 하나 둔다.
+- `S_Env` 등 기본 집 모듈의 제어 대상 문에는 `DoorRegistryItem`을 붙이고 고유한 Door ID를 입력한다.
+- Door ID는 씬이나 오브젝트 이름을 런타임에 검색하기 위한 값이 아니라 Registry의 Dictionary 키로만 사용한다.
+- 상황 씬은 `Find()`, 이름 검색 또는 씬 계층 순회 없이 `DoorRegistry.TryGetDoor()`로 문을 조회한다.
+- Registry 등록과 해제는 모듈 씬의 로드 및 언로드 시 한 번씩 수행하고, 상황 적용 중에는 매 프레임 탐색하지 않는다.
+- 같은 Door ID가 중복 등록되면 먼저 등록된 문을 유지하고 중복 항목은 등록하지 않는다.
+- 잠금과 함정은 서로 독립된 상태다. `SetLocked()`는 연무와 화재 효과를 변경하지 않고, `SetTrapped()`만 함정 상태와 연무를 변경한다.
+- 같은 문을 한 상황의 잠금 목록과 함정 목록에 동시에 넣지 않는다. 잠긴 문은 열 수 없으므로 함정 개방 이벤트도 발생하지 않는다.
+
+예시 ID:
+
+- `Kitchen_Door`
+- `Vestibule_Entrance_Door`
+- `Bedroom_Hall_Door`
+- `Fire_Exit_Door`
+
+### `DoorRegistry` - 구현 완료
+
+- `LoopBase`에 하나만 배치하는 전역 문 Registry다.
+- `Dictionary<string, DoorRegistryItem>`으로 등록된 문을 보관한다.
+- `TryGetDoor(doorId, out controller)`로 캐시된 `FireExitDoorController`를 반환한다.
+- 같은 ID의 중복 등록을 차단하고 모듈 씬 언로드 시 등록을 해제한다.
+
+### `DoorRegistryItem` - 구현 완료
+
+- 상태 제어 대상인 `FireExitDoorController` 오브젝트에 붙인다.
+- Inspector에서 고유한 Door ID와 `FireExitDoorController` 참조를 설정한다.
+- 같은 오브젝트에 컨트롤러가 있으면 `Reset()`, `Awake()`, `OnValidate()`에서 참조를 자동으로 채운다.
+- 기본 집 모듈 로드 시 `DoorRegistry`에 등록하고 언로드 시 등록을 해제한다.
+
+### `SituationDoorLockOverride` - 구현 완료
+
+- 특정 상황에서 잠글 문이 있는 상황 오버레이 씬에 배치한다.
+- `Door IDs`에는 해당 상황에서 항상 잠겨야 하는 문 ID만 입력한다.
+- `SituationController.Activated` 이벤트에서 ID에 대응하는 문을 조회하고 잠근다.
+- 적용 전에 각 문의 기존 잠금 상태를 저장하고 `ResetPerformed` 또는 컴포넌트 비활성화 시 원래 상태로 복구한다.
+- 같은 ID가 목록에 여러 번 들어 있어도 한 번만 적용한다.
+
+### `SituationTrapDoorTrigger` - 구현 완료
+
+- 함정 문을 사용하는 상황 오버레이 씬에 배치하는 공통 Trigger다.
+- Inspector의 `Door IDs` 배열에 해당 상황에서 함정이 되는 문 ID를 하나 이상 입력한다.
+- 상황 활성화 시 각 Door ID를 `DoorRegistry.TryGetDoor()`로 조회하고 `SetTrapped(true)`와 `Opened` 구독을 적용한다.
+- 배열에 같은 ID가 여러 번 들어 있어도 한 번만 적용한다.
+- 등록된 함정 문 중 하나가 처음 열리면 실제로 열린 문의 `ShowFire()`를 호출하고 `Triggered` 이벤트를 한 번 발행한다.
+- 한 상황에 함정 문이 여러 개 있어도 최초 개방만 처리하며 이후 다른 함정 문의 `Opened` 이벤트는 무시한다.
+- 상황 리셋 또는 비활성화 시 모든 `Opened` 구독을 해제하고 각 문의 기존 함정 상태를 복구한다.
+- 상황 Controller는 `Triggered` 이벤트를 구독하고 `FailSituation()` 등 상황별 결과만 처리한다.
+
+### `FireExitDoorController` 문 상태 API
+
+- `SetLocked(bool)`: 문 잠금 설정 및 잠글 때 닫힘 상태로 복귀. 함정 상태, 연무와 화재 효과는 변경하지 않는다.
+- `IsLocked`: 잠금 Override 적용 전 상태 저장용 조회
+- `SetTrapped(bool)`: 함정 상태에 따라 연무 오브젝트를 활성화 또는 비활성화하고 화재 ParticleSystem을 정지한다.
+- `IsTrapped`: 상황 Controller에서 현재 함정 상태 확인
+- `Opened`: 손잡이가 작동된 뒤 문의 절대 회전각이 `Open Confirmation Angle` 이상이 되는 순간 한 번 발생한다.
+- `Open Confirmation Angle`: 기본값은 4도이며 최소값은 0.1도다. 기본 설정에서도 문을 활짝 열 필요 없이 조금만 열면 `Opened`가 발생한다.
+- `Close Snap Angle`: 기본값은 2도다. 열린 문이 이 각도 이하로 닫혀 다시 닫힘 상태가 된 뒤 재개방하면 `Opened`가 다시 발생할 수 있다.
+- `ShowFire()`: 함정 발동 시 화재 ParticleSystem과 화재 효과음을 재생한다.
+- `SituationTrapDoorTrigger`가 상황당 최초 발동만 허용하므로 같은 문을 닫았다 다시 열어도 상황 실패 이벤트는 중복 발행되지 않는다.
+
+상태별 효과:
+
+| 문 상태 | 조작 가능 | Haze Effect | Fire Effect |
+| --- | --- | --- | --- |
+| Normal | 가능 | 꺼짐 | 정지 |
+| Locked | 불가능 | 변경 없음 | 변경 없음 |
+| Trapped | 가능 | 켜짐 | 문이 열리기 전까지 정지 |
+| Trapped 문 개방 | 가능 | 켜짐 | 열린 문에서 재생 |
+
+### `EntireHouseAlarmSituationController` 적용 상태
+
+- `Scenario_EntireHouse_Alarm` 씬의 `EntireHouseSituationController` 오브젝트에 `SituationTrapDoorTrigger`를 배치했다.
+- `SituationTrapDoorTrigger.Situation Controller`와 `EntireHouseAlarmSituationController.Trap Door Trigger` 참조는 연결되어 있다.
+- `EntireHouseAlarmSituationController`는 Registry 조회와 문 이벤트 구독을 직접 수행하지 않는다.
+- `SituationTrapDoorTrigger.Triggered`를 구독하고 상황이 `Active`일 때 `FailSituation()`만 호출한다.
+- 기존 `OnTriggerEnter()`의 플레이어 감지와 알람·방송 재생 흐름은 유지한다.
+- `FailSituation()` 이후 `DayOutcomeController`와 `DaySceneCoordinator`가 실패 전환, 페이드아웃, 씬 언로드와 1일차 재시작을 처리한다.
+- 현재 `SituationTrapDoorTrigger.Door IDs` 배열은 비어 있으므로 실제 함정 문 ID를 Inspector에서 입력해야 한다.
+- 같은 씬의 `SituationDoorLockOverride`에는 현재 `Porch`가 설정되어 있다. `Porch`가 잠금 대상이라면 함정 배열에는 같은 ID를 넣지 않는다.
+
+Inspector 설정 순서:
+
+1. `LoopBase`의 `GameFlow` 오브젝트에 배치된 `DoorRegistry`가 활성화되어 있는지 확인한다.
+2. `S_Env`의 제어 대상 문에서 `FireExitDoorController`가 붙은 `DoorHinge`에 `DoorRegistryItem`을 추가하고 중복되지 않는 Door ID를 입력한다.
+   프리팹 원본에 같은 ID를 적용하지 않고 씬의 개별 프리팹 인스턴스 Override로 유지한다.
+3. 문 잠금 상황 씬에 `SituationDoorLockOverride`를 추가하고 해당 상황의 `SituationController`와 고정 Door ID 목록을 연결한다.
+4. 함정 상황 씬에 `SituationTrapDoorTrigger`를 추가하고 `Door IDs` 배열과 `Situation Controller`를 설정한다.
+5. 해당 상황 Controller에 Trigger 참조를 연결하고 `Triggered` 이벤트에서 실패 또는 상황별 결과를 처리한다.
+6. 하루 전환 후 잠금, 연무, 화재 효과와 이벤트 구독이 모두 초기화되는지 확인한다.
+
+성능 및 씬 참조 원칙:
+
+- 상황 씬 Inspector에서 `S_Env`의 `FireExitDoorController`를 직접 참조하지 않는다.
+- `DoorRegistryItem`이 환경 씬 로드 시 컨트롤러 참조를 한 번 등록하고 상황 컴포넌트는 Door ID로 Dictionary 조회한다.
+- 조회는 상황 활성화 시 Door ID마다 한 번만 수행하며 `Update()`에서 검색하지 않는다.
+- `Find()`, `FindObjectOfType()`, 오브젝트 이름 검색과 씬 Hierarchy 순회는 사용하지 않는다.
+
+## 9. 주요 인터페이스
 
 - `DayRunState`: 현재 날짜, 사이클 내 발생 이력, 초기화와 클리어 판정
 - `DayFlowController`: 하루 생명주기, 상태 전이, 상황 이력 등록과 직전 하루 결과 보관
@@ -450,10 +557,16 @@ flowchart TD
 - `ModuleObjectRegistry`: 기본 집 모듈 오브젝트를 ID로 등록하고 활성화 상태 변경
 - `ModuleObjectRegistryItem`: 기본 집 모듈 오브젝트를 레지스트리에 등록
 - `SituationObjectOverride`: 상황 시작과 종료 시 기본 오브젝트 숨김·복구 요청
+- `DoorRegistry`: 기본 집 모듈의 문을 고유 ID로 등록하고 컨트롤러 조회 제공
+- `DoorRegistryItem`: 문 ID와 `FireExitDoorController` 참조를 Registry에 등록
+- `SituationDoorLockOverride`: 상황 시작 시 지정 문을 잠그고 종료 시 기존 상태 복구
+- `SituationTrapDoorTrigger`: 여러 함정 문을 설정하고 최초 개방 시 상황 Controller에 이벤트 전달
+- `FireExitDoorController`: 문 잠금·함정 상태, 개방 각도 판정과 문 효과 관리
+- `EntireHouseAlarmSituationController`: 알람 트리거를 유지하고 함정 문 Trigger 발생 시 상황 실패 처리
 
 시스템 간 통신은 매 프레임 상태를 검색하지 않고 명시적 참조와 이벤트로 처리한다.
 
-## 9. 통합 검증 목록
+## 10. 통합 검증 목록
 
 1. `LoopBase` 시작 직후 기본 집 모듈과 현재 테스트용 `ExitScene` 로딩이 시작된다.
 2. 모든 기본 모듈 로드가 끝난 뒤에만 상황을 선택한다.
@@ -488,8 +601,17 @@ flowchart TD
 31. 특정 상황 시작 시 지정한 기본 맵 오브젝트가 비활성화되고 상황 씬의 대체 오브젝트만 보인다.
 32. 상황 종료, 실패, 날짜 전환 또는 상황 씬 언로드 후 비활성화했던 기본 맵 오브젝트가 다시 활성화된다.
 33. 상황 씬은 기본 맵 오브젝트를 `Find()` 계열 API나 씬 계층 이름으로 직접 찾지 않는다.
+34. `DoorRegistryItem`이 설정된 모든 문 ID가 중복 없이 등록된다.
+35. 문 잠금 상황에서 지정된 Door ID만 잠기고 다른 문 상태는 변경되지 않는다.
+36. 상황 종료 또는 날짜 전환 시 문이 상황 적용 전 잠금 상태로 복구된다.
+37. 함정 상황에서 지정된 문만 `IsTrapped` 상태가 되고 문을 열었을 때 한 번만 실패 처리된다.
+38. 함정 상황 종료 후 `Opened` 이벤트 구독이 해제되고 연무가 비활성화되며 화재 ParticleSystem이 정지한다.
+39. 잠긴 문에는 함정 상태를 별도로 적용하지 않는 한 연무와 화재 효과가 나타나지 않는다.
+40. 함정 문은 기본 `Open Confirmation Angle` 4도 이상 열리는 순간 발동하며 완전 개방을 요구하지 않는다.
+41. 함정 문이 여러 개 설정되어도 최초로 열린 문에서만 화재 효과와 `Triggered` 이벤트가 발생한다.
+42. `Scenario_EntireHouse_Alarm`에서 Trigger 발동 시 `FailSituation()`이 호출되고 페이드아웃 후 1일차로 돌아간다.
 
-## 10. 기본 결정
+## 11. 기본 결정
 
 - 게임 루프 스크립트는 `Assets/02_Scripts/00_Loop` 아래에 작성한다.
 - `DayRunState`는 순수 C# 객체로 유지한다.

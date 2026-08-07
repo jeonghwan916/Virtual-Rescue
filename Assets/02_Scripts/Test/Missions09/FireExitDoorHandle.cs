@@ -50,7 +50,8 @@ namespace VirtualRescue.Missions09
         public bool CanOperate =>
             enabled &&
             _doorController != null &&
-            _doorController.enabled;
+            _doorController.enabled &&
+            !_doorController.IsLocked;
 
         private void Reset()
         {
@@ -127,7 +128,7 @@ namespace VirtualRescue.Missions09
 
         private void HandleSelected(SelectEnterEventArgs args)
         {
-            if (args.interactorObject == null)
+            if (!CanOperate || args.interactorObject == null)
             {
                 return;
             }
