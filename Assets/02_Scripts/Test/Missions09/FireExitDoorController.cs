@@ -48,7 +48,7 @@ namespace VirtualRescue.Missions09
         [Header("Trap")]
         [SerializeField] private bool _isTrapped;
         [SerializeField] private GameObject _hazeEffect;
-        [SerializeField] private ParticleSystem _fireEffect;
+        [SerializeField] private GameObject _fireEffect;
         
         [Header("Audio Source")]
         [SerializeField] private AudioSource _audioSource;
@@ -286,7 +286,7 @@ namespace VirtualRescue.Missions09
 
             if (_fireEffect != null)
             {
-                _fireEffect.Stop();
+                _fireEffect.SetActive(false);
             }
         }
 
@@ -484,7 +484,7 @@ namespace VirtualRescue.Missions09
         {
             if (_fireEffect != null)
             {
-                _fireEffect.Play();
+                _fireEffect.SetActive(true);
             }
 
             if (_audioSource != null && _fireSFX != null)
@@ -502,7 +502,7 @@ namespace VirtualRescue.Missions09
 
             if (_fireEffect != null)
             {
-                _fireEffect.Stop();
+                _fireEffect.SetActive(false);
             }
         }
     }

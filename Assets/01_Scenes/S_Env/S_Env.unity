@@ -73373,6 +73373,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7654780533066628829, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_Range
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7654780533066628829, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_Intensity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7654780533559286341, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9188917043531288440, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
       propertyPath: m_Name
       value: Fire_Exit_Door_Interactive
@@ -73402,9 +73414,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d6df3066bb7445fa2375a75b730d602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions09.FireExitDoorController
---- !u!198 &2081756103 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 7654780533559286338, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
+--- !u!1 &2081756103 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7654780533559286341, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
   m_PrefabInstance: {fileID: 2081756100}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2093592207
@@ -74519,6 +74531,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4327016207974719900, guid: d01d17b962a6f6248bc7187acb00b8d2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4327016208530556164, guid: d01d17b962a6f6248bc7187acb00b8d2, type: 3}
+      propertyPath: m_Range
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4327016208530556164, guid: d01d17b962a6f6248bc7187acb00b8d2, type: 3}
+      propertyPath: m_Intensity
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -74529,9 +74553,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2908023170054546457, guid: d01d17b962a6f6248bc7187acb00b8d2, type: 3}
   m_PrefabInstance: {fileID: 6005051878792617491}
   m_PrefabAsset: {fileID: 0}
---- !u!198 &6005051878792617493 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 4327016207974719899, guid: d01d17b962a6f6248bc7187acb00b8d2, type: 3}
+--- !u!1 &6005051878792617493 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4327016207974719900, guid: d01d17b962a6f6248bc7187acb00b8d2, type: 3}
   m_PrefabInstance: {fileID: 6005051878792617491}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7505003408002453982 stripped

@@ -901,7 +901,7 @@ MonoBehaviour:
   _isLocked: 0
   _isTrapped: 0
   _hazeEffect: {fileID: 7217289088190006289}
-  _fireEffect: {fileID: 7654780533559286338}
+  _fireEffect: {fileID: 7654780533559286341}
   _audioSource: {fileID: 8031578467557536090}
   _openSFX: {fileID: 0}
   _closeSFX: {fileID: 0}
@@ -1123,7 +1123,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8172849020266659018, guid: 2af5562ce69fc2d448481a1587a352a5, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8172849020266659021, guid: 2af5562ce69fc2d448481a1587a352a5, type: 3}
       propertyPath: playOnAwake
@@ -1187,9 +1187,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8172849020266659022, guid: 2af5562ce69fc2d448481a1587a352a5, type: 3}
   m_PrefabInstance: {fileID: 1968342105982297743}
   m_PrefabAsset: {fileID: 0}
---- !u!198 &7654780533559286338 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 8172849020266659021, guid: 2af5562ce69fc2d448481a1587a352a5, type: 3}
+--- !u!1 &7654780533559286341 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8172849020266659018, guid: 2af5562ce69fc2d448481a1587a352a5, type: 3}
   m_PrefabInstance: {fileID: 1968342105982297743}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5038960490998620523
