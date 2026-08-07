@@ -16914,7 +16914,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 1513787774}
+  m_Mesh: {fileID: 646422470}
 --- !u!33 &553495631
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -21709,7 +21709,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 352130740}
+  m_Mesh: {fileID: 2052849761}
 --- !u!33 &683285455
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -38099,6 +38099,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7505003409068911528, guid: fccfe68fc5788c343af73505bfa56143, type: 3}
   m_PrefabInstance: {fileID: 1006525529}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1006525531 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2483867232326413644, guid: fccfe68fc5788c343af73505bfa56143, type: 3}
+  m_PrefabInstance: {fileID: 1006525529}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d6df3066bb7445fa2375a75b730d602, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions09.FireExitDoorController
 --- !u!1001 &1012137813
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -73960,6 +73971,89 @@ Transform:
   - {fileID: 132972247}
   m_Father: {fileID: 1865217560}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2145118874
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2145118877}
+  - component: {fileID: 2145118876}
+  - component: {fileID: 2145118875}
+  - component: {fileID: 2145118878}
+  m_Layer: 0
+  m_Name: ExitController_RefugeArea
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2145118875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145118874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 268120370c854cb4cbc0ac70e67ed33e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RefugeAreaTrigger
+  _isEntered: 0
+  _door: {fileID: 1006525531}
+  _exitController: {fileID: 2145118876}
+--- !u!114 &2145118876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145118874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27848dd114834794a4ac04a227e3935a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.ExitController
+  _exitType: 4
+--- !u!4 &2145118877
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145118874}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -19.027, y: 1, z: -6.741}
+  m_LocalScale: {x: 2.39, y: 1, z: 3.8458178}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2145118878
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145118874}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &2145931966
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -74345,3 +74439,4 @@ SceneRoots:
   - {fileID: 349675496}
   - {fileID: 406543639}
   - {fileID: 2040468534}
+  - {fileID: 2145118877}
