@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 5467833}
   - component: {fileID: 5467834}
   - component: {fileID: 5467831}
+  - component: {fileID: 5467840}
   m_Layer: 0
   m_Name: Fire_Extinguisher_ObservationTarget
   m_TagString: Untagged
@@ -547,6 +548,21 @@ MonoBehaviour:
   _handle: {fileID: 1200284134}
   _handlePressedXAngle: -15
   _handleRotationSpeed: 180
+--- !u!114 &5467840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5467830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66c148f00fa84c6486bf8f9740255928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationObjectOverride
+  _situationController: {fileID: 1652314696}
+  _moduleObjectIds:
+  - Kitchen_fireExtinguisher
 --- !u!1 &45988429
 GameObject:
   m_ObjectHideFlags: 0

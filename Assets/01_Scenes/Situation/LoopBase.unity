@@ -1593,6 +1593,7 @@ GameObject:
   - component: {fileID: 2029193219}
   - component: {fileID: 2029193222}
   - component: {fileID: 2029193223}
+  - component: {fileID: 2029193226}
   m_Layer: 0
   m_Name: GameFlow
   m_TagString: Untagged
@@ -1667,6 +1668,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5c4f916093a15124b94cdcedbef627e4, type: 2}
   - {fileID: 11400000, guid: 85cc01455cbf4f54190f49dcc4032cf6, type: 2}
   - {fileID: 11400000, guid: 263fd64c529a5114283f96b2fd96b50b, type: 2}
+  - {fileID: 11400000, guid: 9c00c2ccf27938e4eaab1e525a1ceebf, type: 2}
   _noSituationChance: 0.2
 --- !u!114 &2029193223
 MonoBehaviour:
@@ -1707,6 +1709,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.DayOutcomeController
   _dayFlowController: {fileID: 2029193224}
   _situationSceneLoader: {fileID: 2029193223}
+--- !u!114 &2029193226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029193218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4efc14c3563e42e3a32756d34a0245bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.ModuleObjectRegistry
 --- !u!1 &2032235526
 GameObject:
   m_ObjectHideFlags: 0
