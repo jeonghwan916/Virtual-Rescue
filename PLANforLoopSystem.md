@@ -67,6 +67,7 @@ Core 씬의 경로는 `Assets/01_Scenes/Situation/LoopBase.unity`다. 날짜가 
 - `HomeModuleLoader`
 - `SituationSelector`
 - `SituationSceneLoader`
+- `RadioController`
 
 인스펙터 설정:
 
@@ -74,7 +75,10 @@ Core 씬의 경로는 `Assets/01_Scenes/Situation/LoopBase.unity`다. 날짜가 
 - `DaySceneCoordinator`에 위 컨트롤러, 로더, 정의 에셋 참조를 연결한다.
 - `DaySceneCoordinator.Player Root`에 Core 씬의 `PlayerPrefabs`를 연결한다.
 - `DaySceneCoordinator.Day Start Spawn Point`에 매일 돌아갈 시작 위치를 연결한다.
+- `DaySceneCoordinator.Screen Fader`에 `PlayerPrefabs` 자식 `XRFadeCanvas`의 `ScreenFader`를 연결한다.
+- `DaySceneCoordinator.Radio Controller`에 하루 시작 방송을 담당할 `RadioController`를 연결한다.
 - `DayOutcomeController`에 `DayFlowController`와 `SituationSceneLoader`를 연결한다.
+- `RadioController.Radio Audio Source`에 라디오 방송을 재생할 AudioSource를 연결한다.
 - 상황을 항상 발생시키는 테스트에서는 `SituationSelector.No Situation Chance`를 `0`으로 설정한다.
 
 ### 기본 집 모듈 씬
@@ -236,7 +240,15 @@ flowchart TD
 - `Preparing`, `LoadingHome`, `Playing`, `Transitioning`, `Cleared` 상태를 관리한다.
 - 하루 시작, 날짜 전환, 실패 초기화와 게임 클리어 이벤트를 발행한다.
 - 로딩 중에만 `TryRegisterSituation()`으로 상황 ID 등록을 허용한다.
-- `CurrentDay`, `CurrentState`, `SeenSituationIds`를 외부에 제공한다.
+- `CurrentDay`, `CurrentState`, `SeenSituationIds`, `LastDayResult`를 외부에 제공한다.
+- `CompleteDay(DayResultContext)`와 `FailDay(DayResultContext)`로 이전 하루의 결과 요약을 저장한다.
+
+### 2-1. `DayResultContext` - 구현 완료
+
+- 직전 하루 결과를 라디오, 결과 UI 등 후속 시스템에 전달하기 위한 작은 런타임 컨텍스트다.
+- 현재는 `None`, `Completed`, `Failed` 결과와 `SituationId`, `SituationDefinition` 참조만 보관한다.
+- 실패 원인, 선택한 출구, 제한시간 만료 여부 등이 필요해지면 이 컨텍스트에 필드를 추가해 확장한다.
+- 후속 시스템은 `SituationSceneLoader`나 `DayOutcomeController` 내부 상태를 직접 조회하지 않고 이 컨텍스트를 사용한다.
 
 ### 3. `HomeLayoutDefinition` - 구현 완료
 
@@ -304,8 +316,8 @@ flowchart TD
 - `SituationSceneLoader`가 제공하는 현재 상황 정의와 컨트롤러를 사용한다.
 - 무상황과 0·1단계의 해결 상태 및 출구 규칙을 판정한다.
 - 2단계에서는 허용된 출구 도달을 `TryResolveByExit()`에 전달하고 해결 성공 후 하루를 완료한다.
-- 성공 시 `CompleteDay()`, 실패 시 `FailDay()`를 호출한다.
-- `SituationController.Failed` 이벤트도 `FailDay()`로 연결한다.
+- 성공 시 `CompleteDay(DayResultContext)`, 실패 시 `FailDay(DayResultContext)`를 호출한다.
+- `SituationController.Failed` 이벤트도 현재 상황 ID를 포함한 실패 결과로 `FailDay(DayResultContext)`에 연결한다.
 
 ### 13. `DaySceneCoordinator` - 기본 구현 완료
 
@@ -313,10 +325,20 @@ flowchart TD
 - 집 로드 완료 후 Inspector로 연결된 `PersistentPlayerRoot`를 하루 시작 위치로 이동한다.
 - 집 로드 완료 후 상황을 선택하고 필요한 경우 상황 씬을 로드한다.
 - 상황 활성화 성공 후 상황 ID를 발생 이력에 등록한다.
+- 하루 시작 로딩 중에는 `ScreenFader`로 검정 화면을 유지하고, 모든 준비가 끝난 뒤 페이드인한다.
 - 무상황 또는 상황 준비 완료 후 `NotifyHomeLoaded()`로 플레이 상태에 진입한다.
+- 페이드인 완료 및 Playing 진입 후 2초가 지나면 `RadioController`에 `LastDayResult`를 전달해 하루 시작 방송을 재생한다.
 - 날짜 전환 시 상황 씬을 먼저 언로드하고 집 및 출구 모듈을 그다음 언로드한다.
 - 언로드 완료 후 다음 날 로딩을 시작한다.
 - 준비 실패 시 현재는 오류를 출력하고 `LoadingHome` 상태에 머문다. 실제 게임 적용 전 Error 상태 또는 준비 실패 API가 필요하다.
+
+### 13-1. `RadioController` - 구현 완료
+
+- Inspector로 연결된 `AudioSource`에서 하루 시작 방송 클립을 재생한다.
+- 첫 시작, 무상황 성공, 상황 해결 후 다음 날 진행은 공통 방송 클립 목록에서 무작위로 하나를 선택한다.
+- 실패 후 1일차로 돌아온 경우 `DayResultContext.SituationId`와 일치하는 실패 방송 엔트리의 클립을 재생한다.
+- 실패 방송 엔트리와 매칭되지 않으면 선택적으로 설정한 fallback 실패 방송 클립을 사용한다.
+- 실패 방송 매칭 기준은 씬 이름이나 배열 순서가 아니라 `SituationDefinition.Id`를 사용한다.
 
 ### 14. 테스트 상황 - 기본 프로토타입 구현 완료
 
@@ -369,7 +391,8 @@ flowchart TD
 ## 8. 주요 인터페이스
 
 - `DayRunState`: 현재 날짜, 사이클 내 발생 이력, 초기화와 클리어 판정
-- `DayFlowController`: 하루 생명주기, 상태 전이와 상황 이력 등록
+- `DayFlowController`: 하루 생명주기, 상태 전이, 상황 이력 등록과 직전 하루 결과 보관
+- `DayResultContext`: 직전 하루 결과와 관련 상황 ID 전달
 - `HomeLayoutDefinition`: 기본 집 및 출구 모듈 씬 목록
 - `HomeModuleLoader`: 기본 집 및 출구 모듈 로드·언로드
 - `SituationSelector`: 무상황 또는 상황 하나 선택
@@ -379,6 +402,7 @@ flowchart TD
 - `ExitController`: 플레이어가 선택한 출구 종류 발행
 - `DayOutcomeController`: 상황 상태와 출구 종류를 검증해 하루 결과 결정
 - `DaySceneCoordinator`: 하루 시작과 전환 시 씬 로딩 순서 조율
+- `RadioController`: 직전 하루 결과에 따라 하루 시작 라디오 방송 재생
 
 시스템 간 통신은 매 프레임 상태를 검색하지 않고 명시적 참조와 이벤트로 처리한다.
 
@@ -411,6 +435,9 @@ flowchart TD
 25. 디자이너 작업 완료 전까지 `Hallway&Stair` 씬에 개발용 변경이 발생하지 않는다.
 26. 최종 통합 후 `ExitScene`은 모듈 목록에서 제거되고 출구는 `Hallway&Stair`에 한 번만 존재한다.
 27. 첫날과 다음 날 모두 집 모듈 로드 후 상황 선택 전에 `PlayerPrefabs`가 지정한 하루 시작 위치로 이동한다.
+28. 첫 시작, 무상황 성공, 상황 해결 성공 후 다음 날에는 공통 라디오 방송 중 하나가 재생된다.
+29. 실패 후 1일차로 돌아오면 직전 실패 상황 ID에 매칭된 실패 라디오 방송이 재생된다.
+30. 라디오 방송은 페이드인 완료와 `Playing` 상태 진입 후 2초 뒤에 재생된다.
 
 ## 10. 기본 결정
 
@@ -427,4 +454,6 @@ flowchart TD
 - 출구 요청은 `ExitController`의 정적 이벤트로 전달하고 `DayOutcomeController`가 한 곳에서 판정한다.
 - 상황 해결과 날짜 진행을 분리한다.
 - 씬 로딩과 언로딩은 `DaySceneCoordinator`만 담당한다.
+- 이전 하루 결과는 `DayResultContext`로 보관하고, 후속 연출 시스템은 이 컨텍스트를 통해 결과를 해석한다.
+- 라디오 실패 방송은 `SituationDefinition.Id` 기준으로 매칭하며 배열 순서에 의존하지 않는다.
 - 초기 버전에서는 저장·불러오기, 전체 방 교체 씬과 범용 오브젝트 레지스트리를 구현하지 않는다.

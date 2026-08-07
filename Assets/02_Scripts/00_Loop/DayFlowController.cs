@@ -26,6 +26,7 @@ namespace VirtualRescue.GameFlow
 
         private DayRunState _runState;
         private DayFlowState _currentState = DayFlowState.Preparing;
+        private DayResultContext _lastDayResult = DayResultContext.None;
 
         public event Action<DayFlowState> StateChanged;
         public event Action<int> DayStarted;
@@ -34,6 +35,7 @@ namespace VirtualRescue.GameFlow
 
         public int CurrentDay => _runState?.CurrentDay ?? DayRunState.FirstDay;
         public DayFlowState CurrentState => _currentState;
+        public DayResultContext LastDayResult => _lastDayResult;
         public bool IsGameCleared => _runState?.IsGameCleared ?? false;
         public IReadOnlyCollection<string> SeenSituationIds =>
             _runState?.SeenSituationIds ?? Array.Empty<string>();
@@ -91,11 +93,17 @@ namespace VirtualRescue.GameFlow
 
         public bool CompleteDay()
         {
+            return CompleteDay(DayResultContext.Completed(null));
+        }
+
+        public bool CompleteDay(DayResultContext resultContext)
+        {
             if (_currentState != DayFlowState.Playing)
             {
                 return false;
             }
 
+            _lastDayResult = resultContext;
             SetState(DayFlowState.Transitioning);
             _runState.AdvanceDay();
 
@@ -112,11 +120,17 @@ namespace VirtualRescue.GameFlow
 
         public bool FailDay()
         {
+            return FailDay(DayResultContext.Failed(null));
+        }
+
+        public bool FailDay(DayResultContext resultContext)
+        {
             if (_currentState != DayFlowState.Playing)
             {
                 return false;
             }
 
+            _lastDayResult = resultContext;
             SetState(DayFlowState.Transitioning);
             _runState.ResetRun();
             TransitionRequested?.Invoke(DayTransitionReason.RunFailed, CurrentDay);
