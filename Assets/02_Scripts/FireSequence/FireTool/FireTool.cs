@@ -12,6 +12,10 @@ public abstract class FireTool : MonoBehaviour
     [SerializeField] private float _range = 5f;
     [SerializeField] private LayerMask _fireLayer;
 
+    [Header("Suppressant")]
+    [SerializeField] private FireSuppressantType _suppressantType =
+        FireSuppressantType.GeneralPurpose;
+
     [Header("Audio Source")]
     [SerializeField] private AudioSource _extinguisherSFX;
 
@@ -121,7 +125,7 @@ public abstract class FireTool : MonoBehaviour
 
             if (fire != null)
             {
-                fire.TakeExtinguish(Time.deltaTime);
+                fire.TakeExtinguish(_suppressantType, Time.deltaTime);
             }
         }
     }
