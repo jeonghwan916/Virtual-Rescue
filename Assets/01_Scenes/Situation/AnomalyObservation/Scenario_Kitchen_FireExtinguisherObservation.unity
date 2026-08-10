@@ -562,7 +562,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationObjectOverride
   _situationController: {fileID: 1652314696}
   _moduleObjectIds:
-  - Kitchen_fireExtinguisher
+  - {fileID: 11400000, guid: 3576c647c60d4f689d75e2df2beb5c7b, type: 2}
 --- !u!1 &45988429
 GameObject:
   m_ObjectHideFlags: 0
@@ -11989,7 +11989,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationObjectOverride
   _situationController: {fileID: 1652314696}
   _moduleObjectIds:
-  - Kitchen_fireExtinguisher
+  - {fileID: 11400000, guid: 3576c647c60d4f689d75e2df2beb5c7b, type: 2}
 --- !u!114 &1652314699
 MonoBehaviour:
   m_ObjectHideFlags: 0

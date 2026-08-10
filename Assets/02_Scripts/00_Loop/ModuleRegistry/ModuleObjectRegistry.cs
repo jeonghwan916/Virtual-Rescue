@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -34,9 +33,9 @@ namespace VirtualRescue.GameFlow
             Instance = null;
         }
 
-        public bool TrySetActive(string objectId, bool isActive)
+        public bool TrySetActive(ModuleObjectId objectId, bool isActive)
         {
-            string normalizedId = NormalizeId(objectId);
+            string normalizedId = GetIdValue(objectId);
             if (string.IsNullOrEmpty(normalizedId) ||
                 !_items.TryGetValue(normalizedId, out ModuleObjectRegistryItem item) ||
                 item == null)
@@ -50,38 +49,43 @@ namespace VirtualRescue.GameFlow
 
         internal bool Register(ModuleObjectRegistryItem item)
         {
-            if (item == null || string.IsNullOrEmpty(item.ObjectId))
+            if (item == null || item.ObjectId == null || string.IsNullOrEmpty(item.ObjectIdValue))
             {
                 return false;
             }
 
-            if (_items.TryGetValue(item.ObjectId, out ModuleObjectRegistryItem existingItem) &&
+            if (_items.TryGetValue(item.ObjectIdValue, out ModuleObjectRegistryItem existingItem) &&
                 existingItem != null &&
                 existingItem != item)
             {
                 Debug.LogWarning(
-                    $"Module object ID '{item.ObjectId}' is already registered by " +
+                    $"Module object ID '{item.ObjectIdValue}' is already registered by " +
                     $"'{existingItem.name}'. '{item.name}' was not registered.",
                     item);
                 return false;
             }
 
-            _items[item.ObjectId] = item;
+            _items[item.ObjectIdValue] = item;
             return true;
         }
 
         internal void Unregister(ModuleObjectRegistryItem item)
         {
-            if (item == null || string.IsNullOrEmpty(item.ObjectId))
+            if (item == null || item.ObjectId == null || string.IsNullOrEmpty(item.ObjectIdValue))
             {
                 return;
             }
 
-            if (_items.TryGetValue(item.ObjectId, out ModuleObjectRegistryItem registeredItem) &&
+            if (_items.TryGetValue(item.ObjectIdValue, out ModuleObjectRegistryItem registeredItem) &&
                 registeredItem == item)
             {
-                _items.Remove(item.ObjectId);
+                _items.Remove(item.ObjectIdValue);
             }
+        }
+
+        internal static string GetIdValue(ModuleObjectId objectId)
+        {
+            return objectId != null ? objectId.Id : string.Empty;
         }
 
         internal static string NormalizeId(string objectId)

@@ -5,17 +5,24 @@ namespace VirtualRescue.GameFlow
     [DisallowMultipleComponent]
     public sealed class ModuleObjectRegistryItem : MonoBehaviour
     {
-        [SerializeField] private string _objectId;
+        [SerializeField] private ModuleObjectId _objectId;
         [SerializeField] private GameObject _target;
 
         private ModuleObjectRegistry _registry;
 
-        public string ObjectId => ModuleObjectRegistry.NormalizeId(_objectId);
+        public ModuleObjectId ObjectId => _objectId;
+        public string ObjectIdValue => _objectId != null ? _objectId.Id : string.Empty;
         public GameObject Target => _target != null ? _target : gameObject;
 
         private void Awake()
         {
-            if (string.IsNullOrEmpty(ObjectId))
+            if (_objectId == null)
+            {
+                Debug.LogError($"{name}: Module object ID asset is not assigned.", this);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(ObjectIdValue))
             {
                 Debug.LogError($"{name}: Module object ID is empty.", this);
                 return;
@@ -50,11 +57,6 @@ namespace VirtualRescue.GameFlow
             {
                 target.SetActive(isActive);
             }
-        }
-
-        private void OnValidate()
-        {
-            _objectId = ModuleObjectRegistry.NormalizeId(_objectId);
         }
     }
 }
