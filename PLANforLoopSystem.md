@@ -2,7 +2,7 @@
 
 ## 1. 목표
 
-1일차부터 7일차까지 매일 집 모듈과 출구 모듈을 비동기로 구성하고, 무상황 또는 상황 하나를 진행한다. 7일차를 성공적으로 마쳐 8일차에 도달하면 한 사이클을 클리어한다.
+1일차부터 7일차까지 매일 집 모듈과 출구 모듈을 비동기로 구성하고, 무상황 또는 상황 하나를 진행한다. 7일차를 성공적으로 마치면 8일차 전용 엔딩 상황을 반드시 로드하며, 엔딩 상황에서 엘리베이터를 통해 나간 뒤 한 사이클을 클리어한다.
 
 상황이 선택되면 트리거, 오브젝트, 파티클, 오디오와 판정 로직만 포함한 상황 오버레이 씬을 Additive 방식으로 추가 로드한다. 상황 해결만으로 하루가 끝나지는 않으며, 플레이어가 상황 규칙에 맞는 출구를 사용해야 다음 날로 진행한다.
 
@@ -16,7 +16,9 @@
 → 출구 사용
 → DayOutcomeController가 상황 상태와 출구 종류 판정
 → 성공 시 다음 날 / 실패 시 1일차
-→ 8일차 도달 시 클리어
+→ 7일차 성공 후 8일차 집 모듈과 전용 엔딩 상황 로드
+→ 엔딩 상황에서 엘리베이터 사용 시 클리어
+→ 엔딩 정리 후 지정된 후속 씬으로 전환
 ```
 
 ## 2. 핵심 규칙
@@ -26,7 +28,20 @@
 - 1일차부터 7일차까지를 한 사이클로 취급한다.
 - 다음 날로 진행할 때 현재 사이클의 상황 발생 이력을 유지한다.
 - 실패하면 1일차로 돌아가며 상황 발생 이력을 전부 초기화한다.
-- 7일차 성공 후 8일차에 도달하면 게임을 클리어한다.
+- 7일차 성공 후 8일차에 도달하는 것만으로는 게임을 클리어하지 않는다.
+- 8일차 집 모듈과 전용 엔딩 상황이 정상적으로 로드된 뒤 `Playing` 상태에 진입한다.
+- 엔딩 상황에서 엘리베이터를 사용하면 게임을 클리어하고 지정된 후속 씬으로 전환한다.
+
+### 8일차 엔딩 상황
+
+- 엔딩은 일반 상황 후보가 아니며 `SituationSelector.Candidates`에 등록하지 않는다.
+- `DaySceneCoordinator`가 Inspector로 별도 연결된 엔딩 `SituationDefinition`을 8일차에 직접 로드한다.
+- 8일차에는 무상황 확률과 일반 상황 가중치 선택을 적용하지 않는다.
+- 엔딩 상황은 사이클 내 상황 발생 이력에 등록하지 않는다.
+- 엔딩 씬도 기존 `SituationSceneLoader` 계약을 따르므로 씬 루트의 `SituationSceneRoot` 하나와 해당 루트 또는 자식의 구체적인 `SituationController`가 필요하다.
+- 엔딩 상황은 별도의 해결 상태를 요구하지 않으며, 엔딩 정의와 컨트롤러가 정상 로드된 상태에서 엘리베이터 출구 요청을 받으면 완료된다.
+- 엔딩 중 다른 출구 요청은 실패로 처리해 1일차로 초기화하지 않고 거부한다.
+- 엔딩 완료 후 이동할 후속 씬은 아직 확정하지 않으며, 설정된 씬 이름을 통해 교체할 수 있도록 유지한다.
 
 ### 상황 선택
 
@@ -44,13 +59,16 @@
 | 무상황 | 없음 | 엘리베이터 |
 | 0단계 | 없음 | 상황 해결 후 엘리베이터 |
 | 1단계 | 없음 | 상황 해결 후 엘리베이터 |
-| 2단계 | 양수 제한시간 사용 | 제한시간 내 해당 상황에 설정된 탈출구 도달 |
+| 2단계·시간제한 사용 | SO에 설정된 양수 제한시간 | 제한시간 내 해당 상황에 설정된 탈출구 도달 |
+| 2단계·시간제한 미사용 | 없음 | 해당 상황에 설정된 탈출구 도달 |
 
 - 2단계에서는 엘리베이터를 허용하지 않는다.
+- 2단계의 제한시간 사용 여부는 `SituationDefinition.Uses Time Limit` 플래그로 결정한다.
+- `Uses Time Limit`가 꺼진 2단계 상황은 제한시간 만료 실패와 시간 압박 연출을 사용하지 않는다.
 - 0·1단계 상황은 미해결 상태에서 출구를 사용하면 실패한다.
 - 2단계 상황은 `Active` 상태에서 허용된 출구에 도달하면 그 출구 요청으로 상황을 해결한다.
 - `ResolveSituation()`은 출구 사용이 가능한 상태로 만드는 처리이며 날짜를 직접 변경하지 않는다.
-- 2단계의 출구 해결도 내부적으로 `ResolveSituation()`을 거쳐 타이머를 중지한 뒤 날짜를 변경한다.
+- 시간제한을 사용하는 2단계의 출구 해결은 내부적으로 `ResolveSituation()`을 거쳐 타이머를 중지한 뒤 날짜를 변경한다.
 - 최종 날짜 변경은 `DayOutcomeController`만 `CompleteDay()` 또는 `FailDay()`를 호출해 수행한다.
 
 ## 3. 씬 구성
@@ -67,6 +85,7 @@ Core 씬의 경로는 `Assets/01_Scenes/Situation/LoopBase.unity`다. 날짜가 
 - `HomeModuleLoader`
 - `SituationSelector`
 - `SituationSceneLoader`
+- `Level2TimePressureEffect`
 - `RadioController`
 - `DoorRegistry`
 
@@ -79,6 +98,9 @@ Core 씬의 경로는 `Assets/01_Scenes/Situation/LoopBase.unity`다. 날짜가 
 - `DaySceneCoordinator.Screen Fader`에 `PlayerPrefabs` 자식 `XRFadeCanvas`의 `ScreenFader`를 연결한다.
 - `DaySceneCoordinator.Radio Controller`에 하루 시작 방송을 담당할 `RadioController`를 연결한다.
 - `DayOutcomeController`에 `DayFlowController`와 `SituationSceneLoader`를 연결한다.
+- `GameFlow` 오브젝트에 `Level2TimePressureEffect`를 추가하고 같은 오브젝트의 `DayFlowController`와 `SituationSceneLoader`를 연결한다.
+- `Level2TimePressureEffect.Cough Audio Source`에는 기침 전용 AudioSource를, `Cough Audio Clip`에는 반복 재생할 기침 클립을 연결한다.
+- `Level2TimePressureEffect.Minimum Aperture Size`는 우선 `0.4`로 설정하고 XR 플레이 테스트를 통해 조정한다.
 - `RadioController.Radio Audio Source`에 라디오 방송을 재생할 AudioSource를 연결한다.
 - `GameFlow` 오브젝트에 `DoorRegistry`를 하나만 둔다.
 - 상황을 항상 발생시키는 테스트에서는 `SituationSelector.No Situation Chance`를 `0`으로 설정한다.
@@ -129,7 +151,8 @@ Core 씬의 경로는 `Assets/01_Scenes/Situation/LoopBase.unity`다. 날짜가 
 → Core 씬의 DayOutcomeController가 이벤트 수신
 → 현재 SituationSceneLoader 상태 확인
 → 상황 해결 여부와 SituationDefinition.IsExitAllowed() 검사
-→ DayFlowController.CompleteDay() 또는 FailDay()
+→ 1~7일차는 DayFlowController.CompleteDay() 또는 FailDay()
+→ 8일차 엔딩은 Elevator 요청 시 DayFlowController.CompleteGame()
 ```
 
 - `DayOutcomeController`가 활성화될 때 `ExitController.ExitRequested`를 한 번 구독하고 비활성화될 때 해제한다.
@@ -163,6 +186,15 @@ Core 씬의 경로는 `Assets/01_Scenes/Situation/LoopBase.unity`다. 날짜가 
 
 2단계 Active 또는 Resolved + Elevator 또는 허용되지 않은 출구 요청
 → FailDay()
+
+8일차 엔딩 상황 로드 완료 + Elevator 요청
+→ CompleteGame()
+→ 현재 상황과 집 모듈 언로드
+→ 지정된 후속 씬으로 전환
+
+8일차 엔딩 상황 + 다른 출구 요청
+→ 요청 거부
+→ 날짜와 상황 이력 유지
 ```
 
 ### 전체 게임 루프 다이어그램
@@ -185,10 +217,16 @@ flowchart TD
     I -->|성공| J["CompleteDay()"]
     I -->|실패| K["FailDay()"]
 
-    J --> L{"8일차 도달?"}
-    L -->|예| M["게임 클리어"]
+    J --> L{"다음 날짜가 8일차인가?"}
     L -->|아니요| N["상황 및 집 모듈 언로드"]
     N --> A
+    L -->|예| E8["상황 및 집 모듈 언로드 후<br/>8일차 집 모듈 로드"]
+    E8 --> S8["전용 엔딩 SituationDefinition 직접 로드"]
+    S8 --> P8["8일차 Playing"]
+    P8 --> X8["엘리베이터 사용"]
+    X8 --> C8["CompleteGame()"]
+    C8 --> U8["엔딩 상황과 집 모듈 언로드"]
+    U8 --> D8["지정된 후속 씬으로 전환"]
 
     K --> O["날짜를 1일차로 초기화"]
     O --> P["상황 발생 이력 초기화"]
@@ -200,6 +238,10 @@ flowchart TD
 ```mermaid
 flowchart TD
     A["ExitController.RequestExit()"] --> B{"현재 상황"}
+
+    B -->|8일차 엔딩| E8{"출구 종류"}
+    E8 -->|Elevator| C8["CompleteGame()<br/>엔딩 완료"]
+    E8 -->|그 외| R8["요청 거부<br/>8일차 유지"]
 
     B -->|무상황| NS{"출구 종류"}
     NS -->|Elevator| COMPLETE["CompleteDay()<br/>다음 날 진행"]
@@ -223,7 +265,7 @@ flowchart TD
     L2RESOLVED -->|예| COMPLETE
     L2RESOLVED -->|아니요| FAIL
 
-    TIMER["2단계 제한시간 만료"] --> TFAIL["SituationController.Failed"]
+    TIMER["시간제한을 사용하는 2단계의 제한시간 만료"] --> TFAIL["SituationController.Failed"]
     TFAIL --> FAIL
 ```
 
@@ -233,6 +275,7 @@ flowchart TD
 
 - 현재 날짜와 사이클 내 발생 상황 ID를 관리하는 순수 C# 객체다.
 - `AdvanceDay()`는 발생 이력을 유지한다.
+- `IsEndingDay`는 현재 날짜가 8일차인지 구분하며, 8일차 도달 자체를 클리어로 취급하지 않는다.
 - `ResetRun()`은 날짜를 1일차로 되돌리고 이력을 초기화한다.
 - `HasSeenSituation()`, `TryRegisterSituation()`, `SeenSituationIds`를 제공한다.
 
@@ -243,7 +286,8 @@ flowchart TD
 - 하루 시작, 날짜 전환, 실패 초기화와 게임 클리어 이벤트를 발행한다.
 - 로딩 중에만 `TryRegisterSituation()`으로 상황 ID 등록을 허용한다.
 - `CurrentDay`, `CurrentState`, `SeenSituationIds`, `LastDayResult`를 외부에 제공한다.
-- `CompleteDay(DayResultContext)`와 `FailDay(DayResultContext)`로 이전 하루의 결과 요약을 저장한다.
+- 1~7일차는 `CompleteDay(DayResultContext)`와 `FailDay(DayResultContext)`로 결과를 처리한다.
+- 8일차 엔딩에서만 `CompleteGame(DayResultContext)`를 허용하고 `Cleared` 상태와 게임 클리어 이벤트를 발생시킨다.
 
 ### 2-1. `DayResultContext` - 구현 완료
 
@@ -272,7 +316,9 @@ flowchart TD
 
 - 상황 ID, 단계, 가중치, 최소 등장 날짜와 상황 씬 이름을 보관한다.
 - 0·1단계에서는 제한시간 설정을 무시하고 엘리베이터만 허용한다.
-- 2단계에서만 양수 제한시간과 상황별 허용 출구 목록을 사용한다.
+- 2단계의 제한시간 사용 여부는 `Uses Time Limit` 플래그로 선택한다.
+- `Uses Time Limit`가 활성화된 2단계에서만 양수 제한시간을 사용한다.
+- 2단계의 상황별 허용 출구 목록은 제한시간 사용 여부와 관계없이 적용한다.
 - `UsesTimeLimit`과 `IsExitAllowed()`가 단계별 규칙을 강제한다.
 - 상황 ID는 사이클 내 중복 방지 기준이므로 비어 있거나 중복될 수 없다.
 
@@ -280,7 +326,7 @@ flowchart TD
 
 - 모든 상황별 컨트롤러의 공통 기반 클래스다.
 - `Activate()`, `ResetSituation()`, `Resolved`, `Failed`를 제공한다.
-- 2단계 상황의 제한시간 만료를 처리한다.
+- `UsesTimeLimit`가 활성화된 2단계 상황의 제한시간 만료를 처리한다.
 - `TryResolveByExit()`은 2단계 `Active` 상태와 허용 출구를 다시 검증하고 성공 시 타이머를 중지하며 해결 처리한다.
 - 파생 상황은 조건 충족 시 `ResolveSituation()` 또는 `FailSituation()`까지만 호출한다.
 - `CompleteDay()`와 `FailDay()`를 직접 호출하지 않는다.
@@ -304,6 +350,7 @@ flowchart TD
 - `MinimumDay`로 후보 진입 날짜를 제한하고 `Weight`로 가중 선택한다.
 - 현재 사이클에서 이미 발생한 ID를 후보에서 제외한다.
 - 유효 후보가 없으면 무상황을 반환한다.
+- 8일차 엔딩 정의는 후보 목록에 포함하지 않으며 선택기도 호출하지 않는다.
 
 ### 11. `ExitController` - 구현 완료
 
@@ -320,6 +367,8 @@ flowchart TD
 - 2단계에서는 허용된 출구 도달을 `TryResolveByExit()`에 전달하고 해결 성공 후 하루를 완료한다.
 - 성공 시 `CompleteDay(DayResultContext)`, 실패 시 `FailDay(DayResultContext)`를 호출한다.
 - `SituationController.Failed` 이벤트도 현재 상황 ID를 포함한 실패 결과로 `FailDay(DayResultContext)`에 연결한다.
+- 8일차에는 엔딩 정의와 컨트롤러가 로드되어 있는지 확인하고, 엘리베이터 요청만 `CompleteGame(DayResultContext)`에 연결한다.
+- 8일차의 다른 출구 요청은 루프 실패로 처리하지 않고 거부한다.
 
 ### 13. `DaySceneCoordinator` - 기본 구현 완료
 
@@ -327,11 +376,14 @@ flowchart TD
 - 집 로드 완료 후 Inspector로 연결된 `PersistentPlayerRoot`를 하루 시작 위치로 이동한다.
 - 집 로드 완료 후 상황을 선택하고 필요한 경우 상황 씬을 로드한다.
 - 상황 활성화 성공 후 상황 ID를 발생 이력에 등록한다.
+- 8일차에는 일반 상황 선택을 건너뛰고 Inspector로 별도 연결된 엔딩 정의를 반드시 로드한다.
+- 엔딩 정의는 일반 상황 발생 이력에 등록하지 않는다.
 - 하루 시작 로딩 중에는 `ScreenFader`로 검정 화면을 유지하고, 모든 준비가 끝난 뒤 페이드인한다.
 - 무상황 또는 상황 준비 완료 후 `NotifyHomeLoaded()`로 플레이 상태에 진입한다.
 - 페이드인 완료 및 Playing 진입 후 2초가 지나면 `RadioController`에 `LastDayResult`를 전달해 하루 시작 방송을 재생한다.
 - 날짜 전환 시 상황 씬을 먼저 언로드하고 집 및 출구 모듈을 그다음 언로드한다.
 - 언로드 완료 후 다음 날 로딩을 시작한다.
+- 엔딩 완료 시 엔딩 상황과 집 모듈을 언로드한 뒤 설정된 후속 씬으로 전환한다.
 - 준비 실패 시 현재는 오류를 출력하고 `LoadingHome` 상태에 머문다. 실제 게임 적용 전 Error 상태 또는 준비 실패 API가 필요하다.
 
 ### 13-1. `RadioController` - 구현 완료
@@ -341,6 +393,34 @@ flowchart TD
 - 실패 후 1일차로 돌아온 경우 `DayResultContext.SituationId`와 일치하는 실패 방송 엔트리의 클립을 재생한다.
 - 실패 방송 엔트리와 매칭되지 않으면 선택적으로 설정한 fallback 실패 방송 클립을 사용한다.
 - 실패 방송 매칭 기준은 씬 이름이나 배열 순서가 아니라 `SituationDefinition.Id`를 사용한다.
+
+### 13-2. `Level2TimePressureEffect` - 구현 완료
+
+- 경로는 `Assets/02_Scripts/00_Loop/Effect/Level2TimePressureEffect.cs`다.
+- `DayFlowController.StateChanged`를 구독하고 `Playing` 진입 시점에 효과 적용 여부를 결정한다.
+- Inspector로 연결된 `SituationSceneLoader.CurrentDefinition`과 `CurrentController`를 직접 사용하며 `Find()` 계열 API나 Hierarchy 순회를 사용하지 않는다.
+- 현재 상황이 2단계이고 `SituationDefinition.UsesTimeLimit`가 활성화된 경우에만 동작한다.
+- 진행률은 `1 - RemainingTime / TimeLimitSeconds`로 계산하므로 제한시간이 60초, 999초 등 어떤 값이어도 0%부터 100%까지 동일하게 정규화된다.
+- 비네트 aperture는 전체 제한시간 동안 `1`에서 `Minimum Aperture Size`까지 매 프레임 선형으로 감소한다.
+- 진행률이 50% 이상이 되는 순간 기침 AudioClip을 한 번 시작하고 AudioSource의 반복 재생을 활성화한다.
+- 상황 `Resolved`, `Failed`, `ResetPerformed`, 날짜 전환 또는 컴포넌트 비활성화 시 기침을 중지하고 시간 압박 비네트를 초기화한다.
+- `PlayerPrefabs`가 DDOL로 유지되므로 새로운 상황을 바인딩하기 전에도 이전 시간 압박 값을 반드시 초기화한다.
+- 기존 `PlayerPrefabs` 자식의 XR Toolkit `TunnelingVignette` MeshRenderer와 머티리얼을 재사용한다.
+- `PlayerReferenceHub.VignetteController`를 통해 비네트를 제어하고, 필요할 때 비활성 TunnelingVignette 오브젝트를 자동으로 활성화한다.
+- 기존 연기·손수건 aperture와 시간 압박 aperture 중 더 작은 값을 최종값으로 적용해 두 효과가 서로 덮어쓰지 않게 한다.
+- 비네트 가장자리 부드러움은 기존 `VignetteController.Feathering Effect`로 조절하며 권장 범위는 `0.3~0.4`다.
+- 기침용 AudioSource는 대사나 라디오 AudioSource와 공유하지 않는 전용 소스를 사용한다.
+
+Inspector 연결 순서:
+
+1. `LoopBase` 씬의 `GameFlow` 오브젝트에 `Level2TimePressureEffect`를 추가한다.
+2. `Day Flow Controller`에 같은 `GameFlow` 오브젝트의 `DayFlowController`를 연결한다.
+3. `Situation Scene Loader`에 같은 `GameFlow` 오브젝트의 `SituationSceneLoader`를 연결한다.
+4. `Minimum Aperture Size`를 설정한다. 기본 권장값은 `0.4`다.
+5. `Cough Audio Source`에 `Play On Awake`가 꺼진 기침 전용 AudioSource를 연결한다.
+6. `Cough Audio Clip`에 반복 가능한 기침 클립을 연결한다.
+7. `PlayerPrefabs.PlayerReferenceHub.Vignette Controller`가 기존 `VignetteController`를 참조하는지 확인한다.
+8. XR Toolkit의 별도 Tunneling Vignette Controller 컴포넌트는 값 충돌을 피하기 위해 비활성 상태로 유지한다.
 
 ### 14. 테스트 상황 - 기본 프로토타입 구현 완료
 
@@ -541,7 +621,7 @@ Inspector 설정 순서:
 
 ## 9. 주요 인터페이스
 
-- `DayRunState`: 현재 날짜, 사이클 내 발생 이력, 초기화와 클리어 판정
+- `DayRunState`: 현재 날짜, 사이클 내 발생 이력, 초기화와 엔딩일 판정
 - `DayFlowController`: 하루 생명주기, 상태 전이, 상황 이력 등록과 직전 하루 결과 보관
 - `DayResultContext`: 직전 하루 결과와 관련 상황 ID 전달
 - `HomeLayoutDefinition`: 기본 집 및 출구 모듈 씬 목록
@@ -550,9 +630,10 @@ Inspector 설정 순서:
 - `SituationSceneLoader`: 상황 오버레이 하나 로드·활성화·언로드
 - `SituationSceneRoot`: 로드된 상황 씬의 진입점
 - `SituationController`: 상황 해결·실패 상태와 이벤트
+- `Level2TimePressureEffect`: 시간제한 사용 2단계 상황의 비네트와 기침 연출 및 DDOL 초기화
 - `ExitController`: 플레이어가 선택한 출구 종류 발행
 - `DayOutcomeController`: 상황 상태와 출구 종류를 검증해 하루 결과 결정
-- `DaySceneCoordinator`: 하루 시작과 전환 시 씬 로딩 순서 조율
+- `DaySceneCoordinator`: 하루 시작과 전환 시 씬 로딩 순서 및 엔딩 후 후속 씬 전환 조율
 - `RadioController`: 직전 하루 결과에 따라 하루 시작 라디오 방송 재생
 - `ModuleObjectRegistry`: 기본 집 모듈 오브젝트를 ID로 등록하고 활성화 상태 변경
 - `ModuleObjectRegistryItem`: 기본 집 모듈 오브젝트를 레지스트리에 등록
@@ -582,34 +663,47 @@ Inspector 설정 순서:
 12. 0·1단계 미해결 상태에서 출구를 사용하면 실패한다.
 13. 0·1단계 해결 후 엘리베이터를 사용하면 다음 날로 진행한다.
 14. 0·1단계 해결 후 다른 출구를 사용하면 실패한다.
-15. 2단계에서 설정된 제한시간이 시작되고 만료 시 실패한다.
+15. `Uses Time Limit`가 활성화된 2단계에서 설정된 제한시간이 시작되고 만료 시 실패한다.
 16. 2단계 `Active` 상태에서 제한시간 내 허용된 탈출구를 사용하면 타이머가 중지되고 `Resolved` 처리된 뒤 다음 날로 진행한다.
 17. 2단계에서 엘리베이터 또는 허용되지 않은 출구를 사용하면 실패한다.
 18. `ResolveSituation()`만으로 날짜가 증가하거나 씬이 언로드되지 않는다.
 19. 출구 판정 과정에서 상황 씬이 `ExitController`를 검색하거나 구독하지 않는다.
 20. 날짜 전환 시 상황 씬을 먼저 언로드하고 기본 집 및 현재 테스트용 `ExitScene`을 그다음 언로드한다.
 21. 날짜가 반복되어도 씬, 이벤트 구독과 상황 오브젝트가 중복되지 않는다.
-22. 7일차 성공 후 8일차에 도달하면 추가 날짜 로딩 없이 클리어된다.
-23. `ExitControllerEditor` 버튼으로 XR 입력 없이 동일한 결과 판정을 테스트할 수 있다.
-24. `DayFlowController` Inspector에서 플레이 중 현재 일자를 확인할 수 있다.
-25. 디자이너 작업 완료 전까지 `Hallway&Stair` 씬에 개발용 변경이 발생하지 않는다.
-26. 최종 통합 후 `ExitScene`은 모듈 목록에서 제거되고 출구는 `Hallway&Stair`에 한 번만 존재한다.
-27. 첫날과 다음 날 모두 집 모듈 로드 후 상황 선택 전에 `PlayerPrefabs`가 지정한 하루 시작 위치로 이동한다.
-28. 첫 시작, 무상황 성공, 상황 해결 성공 후 다음 날에는 공통 라디오 방송 중 하나가 재생된다.
-29. 실패 후 1일차로 돌아오면 직전 실패 상황 ID에 매칭된 실패 라디오 방송이 재생된다.
-30. 라디오 방송은 페이드인 완료와 `Playing` 상태 진입 후 2초 뒤에 재생된다.
-31. 특정 상황 시작 시 지정한 기본 맵 오브젝트가 비활성화되고 상황 씬의 대체 오브젝트만 보인다.
-32. 상황 종료, 실패, 날짜 전환 또는 상황 씬 언로드 후 비활성화했던 기본 맵 오브젝트가 다시 활성화된다.
-33. 상황 씬은 기본 맵 오브젝트를 `Find()` 계열 API나 씬 계층 이름으로 직접 찾지 않는다.
-34. `DoorRegistryItem`이 설정된 모든 문 ID가 중복 없이 등록된다.
-35. 문 잠금 상황에서 지정된 Door ID만 잠기고 다른 문 상태는 변경되지 않는다.
-36. 상황 종료 또는 날짜 전환 시 문이 상황 적용 전 잠금 상태로 복구된다.
-37. 함정 상황에서 지정된 문만 `IsTrapped` 상태가 되고 문을 열었을 때 한 번만 실패 처리된다.
-38. 함정 상황 종료 후 `Opened` 이벤트 구독이 해제되고 연무가 비활성화되며 화재 ParticleSystem이 정지한다.
-39. 잠긴 문에는 함정 상태를 별도로 적용하지 않는 한 연무와 화재 효과가 나타나지 않는다.
-40. 함정 문은 기본 `Open Confirmation Angle` 4도 이상 열리는 순간 발동하며 완전 개방을 요구하지 않는다.
-41. 함정 문이 여러 개 설정되어도 최초로 열린 문에서만 화재 효과와 `Triggered` 이벤트가 발생한다.
-42. `Scenario_EntireHouse_Alarm`에서 Trigger 발동 시 `FailSituation()`이 호출되고 페이드아웃 후 1일차로 돌아간다.
+22. 7일차 성공 후 즉시 클리어되지 않고 상황 및 집 모듈을 정리한 뒤 8일차 로딩이 시작된다.
+23. 8일차에는 `SituationSelector`를 호출하지 않고 별도로 연결된 엔딩 정의가 반드시 로드된다.
+24. 엔딩 상황은 일반 상황 발생 이력에 등록되지 않는다.
+25. 엔딩 정의 또는 엔딩 씬 구성이 누락되면 `Playing`으로 진입하지 않고 명시적인 오류를 출력한다.
+26. 8일차에서 엘리베이터를 사용하면 게임을 클리어하고 엔딩 상황과 집 모듈을 정리한 뒤 지정된 후속 씬으로 전환한다.
+27. 8일차에서 다른 출구를 사용해도 1일차로 초기화되지 않는다.
+28. `ExitControllerEditor` 버튼으로 XR 입력 없이 동일한 결과 판정을 테스트할 수 있다.
+29. `DayFlowController` Inspector에서 플레이 중 현재 일자를 확인하고 다음 날 진행 또는 7일차 직접 이동을 테스트할 수 있다.
+30. 디자이너 작업 완료 전까지 `Hallway&Stair` 씬에 개발용 변경이 발생하지 않는다.
+31. 최종 통합 후 `ExitScene`은 모듈 목록에서 제거되고 출구는 `Hallway&Stair`에 한 번만 존재한다.
+32. 첫날과 다음 날 모두 집 모듈 로드 후 상황 선택 전에 `PlayerPrefabs`가 지정한 하루 시작 위치로 이동한다.
+33. 첫 시작, 무상황 성공, 상황 해결 성공 후 다음 날에는 공통 라디오 방송 중 하나가 재생된다.
+34. 실패 후 1일차로 돌아오면 직전 실패 상황 ID에 매칭된 실패 라디오 방송이 재생된다.
+35. 라디오 방송은 페이드인 완료와 `Playing` 상태 진입 후 2초 뒤에 재생된다.
+36. 특정 상황 시작 시 지정한 기본 맵 오브젝트가 비활성화되고 상황 씬의 대체 오브젝트만 보인다.
+37. 상황 종료, 실패, 날짜 전환 또는 상황 씬 언로드 후 비활성화했던 기본 맵 오브젝트가 다시 활성화된다.
+38. 상황 씬은 기본 맵 오브젝트를 `Find()` 계열 API나 씬 계층 이름으로 직접 찾지 않는다.
+39. `DoorRegistryItem`이 설정된 모든 문 ID가 중복 없이 등록된다.
+40. 문 잠금 상황에서 지정된 Door ID만 잠기고 다른 문 상태는 변경되지 않는다.
+41. 상황 종료 또는 날짜 전환 시 문이 상황 적용 전 잠금 상태로 복구된다.
+42. 함정 상황에서 지정된 문만 `IsTrapped` 상태가 되고 문을 열었을 때 한 번만 실패 처리된다.
+43. 함정 상황 종료 후 `Opened` 이벤트 구독이 해제되고 연무가 비활성화되며 화재 ParticleSystem이 정지한다.
+44. 잠긴 문에는 함정 상태를 별도로 적용하지 않는 한 연무와 화재 효과가 나타나지 않는다.
+45. 함정 문은 기본 `Open Confirmation Angle` 4도 이상 열리는 순간 발동하며 완전 개방을 요구하지 않는다.
+46. 함정 문이 여러 개 설정되어도 최초로 열린 문에서만 화재 효과와 `Triggered` 이벤트가 발생한다.
+47. `Scenario_EntireHouse_Alarm`에서 Trigger 발동 시 `FailSituation()`이 호출되고 페이드아웃 후 1일차로 돌아간다.
+48. `Uses Time Limit`가 비활성화된 2단계에서는 `Time Limit Seconds` 값이 있어도 카운트다운과 시간 초과 실패가 발생하지 않는다.
+49. 시간제한을 사용하는 2단계 진입 시 남은 시간 비율에 맞춰 비네트가 전체 구간에서 연속적으로 좁아진다.
+50. 60초와 999초 제한시간 모두 비네트 진행률이 각각의 전체 시간을 기준으로 0%부터 100%까지 계산된다.
+51. 진행률 50% 전에는 기침이 재생되지 않고, 50% 이상이 되는 순간 기침 클립이 한 번 시작되어 반복된다.
+52. 시간제한을 사용하지 않는 2단계, 0·1단계와 무상황에서는 시간 압박 비네트와 기침이 시작되지 않는다.
+53. 상황 성공, 실패, 리셋과 날짜 전환 시 기침이 중지되고 시간 압박 비네트가 초기화된다.
+54. 다음 상황 씬 로드 후 DDOL `PlayerPrefabs`에 이전 상황의 시간 압박 비네트 값이 남지 않는다.
+55. 연기·손수건 비네트와 시간 압박 비네트가 동시에 적용되면 두 aperture 중 더 좁은 값이 보인다.
 
 ## 11. 기본 결정
 
@@ -618,6 +712,7 @@ Inspector 설정 순서:
 - XR Player와 전역 게임 흐름 오브젝트는 Core 씬에 유지한다.
 - 테스트 단계에서는 기본 집과 임시 `ExitScene`을 `HomeLayoutDefinition`을 통해 매일 Additive로 함께 로드한다.
 - 상황은 기본 모듈 로딩이 모두 끝난 뒤 선택한다.
+- 8일차 엔딩은 일반 상황 선택에서 제외하고 `DaySceneCoordinator`의 별도 정의 참조로 직접 로드한다.
 - 상황은 맵 지형이 없는 오버레이 씬 하나로 로드한다.
 - 무상황 전용 오버레이 씬은 만들지 않는다.
 - 출구는 상황 씬에 두지 않는다. 현재는 임시 `ExitScene`에 두고, 최종적으로는 `Hallway&Stair` 씬에 통합한다.
@@ -626,7 +721,10 @@ Inspector 설정 순서:
 - 출구 요청은 `ExitController`의 정적 이벤트로 전달하고 `DayOutcomeController`가 한 곳에서 판정한다.
 - 상황 해결과 날짜 진행을 분리한다.
 - 씬 로딩과 언로딩은 `DaySceneCoordinator`만 담당한다.
+- 엔딩 완료 후 전환 대상은 특정 씬으로 고정하지 않고 설정된 후속 씬으로 유지한다.
 - 이전 하루 결과는 `DayResultContext`로 보관하고, 후속 연출 시스템은 이 컨텍스트를 통해 결과를 해석한다.
 - 라디오 실패 방송은 `SituationDefinition.Id` 기준으로 매칭하며 배열 순서에 의존하지 않는다.
+- 2단계 제한시간은 `SituationDefinition.Uses Time Limit` 플래그로 상황별 선택 적용한다.
+- 시간 압박 비네트와 기침은 제한시간을 사용하는 2단계에서만 동작하고 날짜 전환 전에 초기화한다.
 - 기본 집 오브젝트 대체가 필요한 상황은 `ModuleObjectRegistry`를 통해 원본 오브젝트를 숨기고 상황 씬의 대체 오브젝트를 사용한다.
 - 초기 버전에서는 저장·불러오기와 전체 방 교체 씬을 구현하지 않는다.

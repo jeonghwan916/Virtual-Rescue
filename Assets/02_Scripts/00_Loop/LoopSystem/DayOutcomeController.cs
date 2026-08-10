@@ -58,6 +58,11 @@ namespace VirtualRescue.GameFlow
             SituationDefinition definition = _situationSceneLoader.CurrentDefinition;
             SituationController controller = _situationSceneLoader.CurrentController;
 
+            if (_dayFlowController.IsEndingDay)
+            {
+                return TryCompleteEnding(exitType, definition, controller);
+            }
+
             if (definition == null && controller == null)
             {
                 return exitType == ExitType.Elevator
@@ -175,6 +180,30 @@ namespace VirtualRescue.GameFlow
             }
 
             return Fail("Day flow rejected a successful day result.");
+        }
+
+        private bool TryCompleteEnding(
+            ExitType exitType,
+            SituationDefinition definition,
+            SituationController controller)
+        {
+            if (definition == null || controller == null)
+            {
+                return Fail("Ending situation must be loaded before requesting an exit.");
+            }
+
+            if (exitType != ExitType.Elevator)
+            {
+                return Fail("Only the elevator can complete the ending day.");
+            }
+
+            if (_dayFlowController.CompleteGame(
+                    DayResultContext.Completed(definition)))
+            {
+                return true;
+            }
+
+            return Fail("Day flow rejected the ending result.");
         }
 
         private bool FailDay(SituationDefinition definition)
