@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class FireObject : MonoBehaviour
@@ -29,10 +30,23 @@ public class FireObject : MonoBehaviour
     [SerializeField] private int _extinguishStageCount = 4;
     [SerializeField] private bool _disableWhenExtinguished = true;
 
+    [Header("Temporary Suppression")]
+    [SerializeField] private FireSuppressantType[] _temporaryOnlySuppressants =
+        Array.Empty<FireSuppressantType>();
+    [Range(0f, 0.99f)]
+    [SerializeField] private float _maximumTemporarySuppression = 0.75f;
+    [Min(0f)]
+    [SerializeField] private float _temporaryRecoveryDelay = 0.15f;
+    [Min(0.01f)]
+    [SerializeField] private float _temporaryRecoveryDuration = 3f;
+
     private ParticleInitialState[] _particleInitialStates;
     private float _accumulatedExtinguishTime;
+    private float _temporarySuppressionTime;
+    private float _lastTemporarySuppressionTime = float.NegativeInfinity;
     private int _currentStage;
     private bool _isExtinguished;
+    private Coroutine _temporaryRecoveryRoutine;
 
     // 불이 꺼졌을때의 후속 동작이 필요하다면 여기 이벤트 구독하면 됨
     public event Action OnExtinguished;
@@ -95,28 +109,126 @@ public class FireObject : MonoBehaviour
 
     public void TakeExtinguish(float deltaTime)
     {
-        if (_isExtinguished || deltaTime <= 0f) return;
+        TakeExtinguish(FireSuppressantType.GeneralPurpose, deltaTime);
+    }
+
+    public void TakeExtinguish(
+        FireSuppressantType suppressantType,
+        float deltaTime)
+    {
+        if (_isExtinguished || deltaTime <= 0f)
+        {
+            return;
+        }
+
+        if (IsTemporaryOnlySuppressant(suppressantType))
+        {
+            ApplyTemporarySuppression(deltaTime);
+            return;
+        }
 
         _accumulatedExtinguishTime += deltaTime;
 
-        float duration = Mathf.Max(_extinguishDuration, 0.01f);
+        float duration = GetExtinguishDuration();
+
+        if (_accumulatedExtinguishTime >= duration)
+        {
+            _accumulatedExtinguishTime = duration;
+            RefreshVisualStage();
+            Extinguish();
+            return;
+        }
+
+        RefreshVisualStage();
+    }
+
+    private void ApplyTemporarySuppression(float deltaTime)
+    {
+        float maximumSuppressionTime = GetMaximumTemporarySuppressionTime();
+
+        _temporarySuppressionTime = Mathf.Min(
+            _temporarySuppressionTime + deltaTime,
+            maximumSuppressionTime);
+        _lastTemporarySuppressionTime = Time.time;
+        RefreshVisualStage();
+
+        if (_temporaryRecoveryRoutine == null)
+        {
+            _temporaryRecoveryRoutine = StartCoroutine(
+                TemporaryRecoveryRoutine());
+        }
+    }
+
+    private IEnumerator TemporaryRecoveryRoutine()
+    {
+        while (!_isExtinguished && _temporarySuppressionTime > 0f)
+        {
+            bool canRecover =
+                Time.time - _lastTemporarySuppressionTime >=
+                _temporaryRecoveryDelay;
+
+            if (canRecover)
+            {
+                float recoveryRate =
+                    GetMaximumTemporarySuppressionTime() /
+                    Mathf.Max(_temporaryRecoveryDuration, 0.01f);
+                _temporarySuppressionTime = Mathf.MoveTowards(
+                    _temporarySuppressionTime,
+                    0f,
+                    recoveryRate * Time.deltaTime);
+                RefreshVisualStage();
+            }
+
+            yield return null;
+        }
+
+        _temporaryRecoveryRoutine = null;
+    }
+
+    private void RefreshVisualStage()
+    {
+        float duration = GetExtinguishDuration();
         int stageCount = Mathf.Max(_extinguishStageCount, 1);
         float secondsPerStage = duration / stageCount;
+        float visualSuppressionTime = Mathf.Max(
+            _accumulatedExtinguishTime,
+            _temporarySuppressionTime);
 
-        int nextStage = Mathf.FloorToInt(_accumulatedExtinguishTime / secondsPerStage);
+        int nextStage = Mathf.FloorToInt(
+            visualSuppressionTime / secondsPerStage);
         nextStage = Mathf.Clamp(nextStage, 0, stageCount);
 
-        if (nextStage == _currentStage) return;
+        if (nextStage == _currentStage)
+        {
+            return;
+        }
 
         _currentStage = nextStage;
 
         float intensity = 1f - ((float)_currentStage / stageCount);
         ApplyIntensity(intensity);
+    }
 
-        if (_currentStage >= stageCount)
+    private bool IsTemporaryOnlySuppressant(
+        FireSuppressantType suppressantType)
+    {
+        if (_temporaryOnlySuppressants == null)
         {
-            Extinguish();
+            return false;
         }
+
+        return Array.IndexOf(_temporaryOnlySuppressants, suppressantType) >= 0;
+    }
+
+    private float GetExtinguishDuration()
+    {
+        return Mathf.Max(_extinguishDuration, 0.01f);
+    }
+
+    private float GetMaximumTemporarySuppressionTime()
+    {
+        return GetExtinguishDuration() *
+               Mathf.Clamp01(_maximumTemporarySuppression);
     }
 
     private void ApplyIntensity(float intensity)
@@ -180,6 +292,31 @@ public class FireObject : MonoBehaviour
         {
             gameObject.SetActive(false);
         }
+    }
+
+    private void OnDisable()
+    {
+        if (_temporaryRecoveryRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(_temporaryRecoveryRoutine);
+        _temporaryRecoveryRoutine = null;
+    }
+
+    private void OnValidate()
+    {
+        _extinguishDuration = Mathf.Max(_extinguishDuration, 0.01f);
+        _extinguishStageCount = Mathf.Max(_extinguishStageCount, 1);
+        _maximumTemporarySuppression = Mathf.Clamp(
+            _maximumTemporarySuppression,
+            0f,
+            0.99f);
+        _temporaryRecoveryDelay = Mathf.Max(0f, _temporaryRecoveryDelay);
+        _temporaryRecoveryDuration = Mathf.Max(
+            0.01f,
+            _temporaryRecoveryDuration);
     }
 
     #region 플레이어 불 진입 (피해 피드백)
