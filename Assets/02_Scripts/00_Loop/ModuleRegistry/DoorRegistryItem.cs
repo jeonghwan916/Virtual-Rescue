@@ -6,12 +6,13 @@ namespace VirtualRescue.GameFlow
     [DisallowMultipleComponent]
     public sealed class DoorRegistryItem : MonoBehaviour
     {
-        [SerializeField] private string _doorId;
+        [SerializeField] private DoorId _doorId;
         [SerializeField] private FireExitDoorController _doorController;
 
         private DoorRegistry _registry;
 
-        public string DoorId => DoorRegistry.NormalizeId(_doorId);
+        public DoorId DoorId => _doorId;
+        public string DoorIdValue => _doorId != null ? _doorId.Id : string.Empty;
         public FireExitDoorController DoorController => _doorController;
 
         private void Reset()
@@ -26,7 +27,13 @@ namespace VirtualRescue.GameFlow
                 _doorController = GetComponent<FireExitDoorController>();
             }
 
-            if (string.IsNullOrEmpty(DoorId))
+            if (_doorId == null)
+            {
+                Debug.LogError($"{name}: Door ID asset is not assigned.", this);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(DoorIdValue))
             {
                 Debug.LogError($"{name}: Door ID is empty.", this);
                 return;
@@ -64,8 +71,6 @@ namespace VirtualRescue.GameFlow
 
         private void OnValidate()
         {
-            _doorId = DoorRegistry.NormalizeId(_doorId);
-
             if (_doorController == null)
             {
                 _doorController = GetComponent<FireExitDoorController>();

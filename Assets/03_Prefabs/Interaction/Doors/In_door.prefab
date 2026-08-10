@@ -982,7 +982,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3bc39b5f84c4b568f379266f8908c41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.DoorRegistryItem
-  _doorId: 
+  _doorId: {fileID: 0}
   _doorController: {fileID: 2483867232326413644}
 --- !u!114 &2483867232326413644
 MonoBehaviour:
