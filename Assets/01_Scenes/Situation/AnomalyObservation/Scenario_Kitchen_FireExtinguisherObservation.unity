@@ -11927,6 +11927,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1652314697}
   - component: {fileID: 1652314696}
+  - component: {fileID: 1652314698}
+  - component: {fileID: 1652314700}
+  - component: {fileID: 1652314699}
   m_Layer: 0
   m_Name: KitchenFireExtinguisherObservation
   m_TagString: Untagged
@@ -11972,6 +11975,49 @@ Transform:
   - {fileID: 5467832}
   m_Father: {fileID: 2016171723}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1652314698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652314695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66c148f00fa84c6486bf8f9740255928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationObjectOverride
+  _situationController: {fileID: 1652314696}
+  _moduleObjectIds:
+  - Kitchen_fireExtinguisher
+--- !u!114 &1652314699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652314695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb5cd1c398234da9830426b1c941dbfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationTrapDoorTrigger
+  _situationController: {fileID: 1652314696}
+  _doorIds: []
+--- !u!114 &1652314700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652314695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 178c1d3282764a8f9826ad5f56da6505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationDoorLockOverride
+  _situationController: {fileID: 1652314696}
+  _doorIds: []
 --- !u!1 &1659995217
 GameObject:
   m_ObjectHideFlags: 0
