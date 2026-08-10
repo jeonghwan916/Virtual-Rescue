@@ -376,7 +376,7 @@ PrefabInstance:
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _dialogueCsv
       value: 
-      objectReference: {fileID: 4900000, guid: 84f8b42b6078f0147830b21d072d3d78, type: 3}
+      objectReference: {fileID: 4900000, guid: 602a7fe8012e9a842b6c436d70c11b81, type: 3}
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _speakerText
       value: 
@@ -390,9 +390,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 569674678}
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
+      propertyPath: _audioBasePath
+      value: Audio/04_FireHydrant/Ver1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _dialogueTextCsv
       value: 
-      objectReference: {fileID: 4900000, guid: 2ce82be12b0d739438da8c77e50862cd, type: 3}
+      objectReference: {fileID: 4900000, guid: b27a547650fc4c24ab9bc61befa3ac62, type: 3}
     - target: {fileID: 7167137039038344234, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -845,12 +849,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1118684290}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 20.364, y: 1.594, z: 14.53}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1689898651}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &1530777834
 GameObject:
@@ -1028,7 +1032,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1118684291}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1784495575 stripped
@@ -1188,7 +1193,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1865116862}
-  - {fileID: 1118684291}
   - {fileID: 1689898651}
   - {fileID: 569674675}
   - {fileID: 446156342}

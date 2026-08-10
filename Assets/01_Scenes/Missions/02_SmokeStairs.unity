@@ -789,6 +789,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1325325927}
     - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
+      propertyPath: _audioBasePath
+      value: Audio/Dialogue/
+      objectReference: {fileID: 0}
+    - target: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
       propertyPath: _dialogueTextCsv
       value: 
       objectReference: {fileID: 4900000, guid: 62cd0e3aed3c8f641bf18fba648e3a35, type: 3}
