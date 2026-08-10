@@ -36,7 +36,8 @@ namespace VirtualRescue.GameFlow
         public int CurrentDay => _runState?.CurrentDay ?? DayRunState.FirstDay;
         public DayFlowState CurrentState => _currentState;
         public DayResultContext LastDayResult => _lastDayResult;
-        public bool IsGameCleared => _runState?.IsGameCleared ?? false;
+        public bool IsEndingDay => _runState?.IsEndingDay ?? false;
+        public bool IsGameCleared => _currentState == DayFlowState.Cleared;
         public IReadOnlyCollection<string> SeenSituationIds =>
             _runState?.SeenSituationIds ?? Array.Empty<string>();
 
@@ -55,7 +56,7 @@ namespace VirtualRescue.GameFlow
 
         public bool TryStartDay()
         {
-            if (_currentState != DayFlowState.Preparing || IsGameCleared)
+            if (_currentState != DayFlowState.Preparing)
             {
                 return false;
             }
@@ -98,22 +99,46 @@ namespace VirtualRescue.GameFlow
 
         public bool CompleteDay(DayResultContext resultContext)
         {
-            if (_currentState != DayFlowState.Playing)
+            if (_currentState != DayFlowState.Playing || IsEndingDay)
+            {
+                return false;
+            }
+
+            if (!_runState.AdvanceDay())
             {
                 return false;
             }
 
             _lastDayResult = resultContext;
             SetState(DayFlowState.Transitioning);
-            _runState.AdvanceDay();
+            TransitionRequested?.Invoke(DayTransitionReason.DayCompleted, CurrentDay);
+            return true;
+        }
 
-            if (_runState.IsGameCleared)
+        public bool CompleteGame(DayResultContext resultContext)
+        {
+            if (_currentState != DayFlowState.Playing || !IsEndingDay)
             {
-                SetState(DayFlowState.Cleared);
-                GameCleared?.Invoke();
-                return true;
+                return false;
             }
 
+            _lastDayResult = resultContext;
+            SetState(DayFlowState.Cleared);
+            GameCleared?.Invoke();
+            return true;
+        }
+
+        public bool TransitionToDayForDebug(int targetDay)
+        {
+            if (_currentState != DayFlowState.Playing ||
+                targetDay == CurrentDay ||
+                !_runState.TrySetCurrentDay(targetDay))
+            {
+                return false;
+            }
+
+            _lastDayResult = DayResultContext.None;
+            SetState(DayFlowState.Transitioning);
             TransitionRequested?.Invoke(DayTransitionReason.DayCompleted, CurrentDay);
             return true;
         }

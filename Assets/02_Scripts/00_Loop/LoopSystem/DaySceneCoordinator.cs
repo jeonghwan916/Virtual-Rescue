@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using VirtualRescue.Effects;
 using VirtualRescue.GameFlow;
+using VirtualRescue.Loading;
 using VirtualRescue.Player;
 
 public class DaySceneCoordinator : MonoBehaviour
@@ -31,6 +33,11 @@ public class DaySceneCoordinator : MonoBehaviour
     [Header("Situation")]
     [SerializeField] private SituationSelector _situationSelector;
     [SerializeField] private SituationSceneLoader _situationSceneLoader;
+    [SerializeField] private SituationDefinition _endingSituationDefinition;
+
+    [Header("Clear Transition")]
+    [SerializeField] private string _lobbySceneName = "LobbyScene";
+    [SerializeField] private string _loadingSceneName = "LoadingScene";
 
     private bool _isProcessing;
 
@@ -86,15 +93,30 @@ public class DaySceneCoordinator : MonoBehaviour
 
             _playerRoot.ApplySpawn(_dayStartSpawnPoint);
 
-            bool selectionSucceeded = _situationSelector.TrySelect(
-                currentDay,
-                _dayFlowController.SeenSituationIds,
-                out SituationDefinition selectedSituation);
+            bool isEndingDay = currentDay == DayRunState.ClearDay;
+            SituationDefinition selectedSituation;
 
-            if (!selectionSucceeded)
+            if (isEndingDay)
             {
-                ReportError(_situationSelector.LastError);
-                return;
+                selectedSituation = _endingSituationDefinition;
+                if (selectedSituation == null)
+                {
+                    ReportError("Ending situation definition is not assigned.");
+                    return;
+                }
+            }
+            else
+            {
+                bool selectionSucceeded = _situationSelector.TrySelect(
+                    currentDay,
+                    _dayFlowController.SeenSituationIds,
+                    out selectedSituation);
+
+                if (!selectionSucceeded)
+                {
+                    ReportError(_situationSelector.LastError);
+                    return;
+                }
             }
 
             if (selectedSituation != null)
@@ -108,7 +130,7 @@ public class DaySceneCoordinator : MonoBehaviour
                     return;
                 }
 
-                bool registered =
+                bool registered = isEndingDay ||
                     _dayFlowController.TryRegisterSituation(selectedSituation);
 
                 if (!registered)
@@ -195,7 +217,34 @@ public class DaySceneCoordinator : MonoBehaviour
 
         try
         {
-            await UnloadCurrentDayAsync();
+            if (string.IsNullOrWhiteSpace(_lobbySceneName) ||
+                string.IsNullOrWhiteSpace(_loadingSceneName))
+            {
+                ReportError("Lobby scene name and loading scene name are required.");
+                return;
+            }
+
+            await RunFadeAsync(_screenFader?.FadeOut(_fadeOutDuration));
+
+            if (!await UnloadCurrentDayAsync())
+            {
+                return;
+            }
+
+            LoadingRequest.Set(_lobbySceneName, -1, null);
+
+            AsyncOperation operation = SceneManager.LoadSceneAsync(
+                _loadingSceneName,
+                LoadSceneMode.Single);
+
+            if (operation == null)
+            {
+                LoadingRequest.Clear();
+                ReportError($"Failed to load loading scene: {_loadingSceneName}");
+                return;
+            }
+
+            await AwaitOperationAsync(operation);
         }
         catch (Exception exception)
         {
@@ -265,6 +314,18 @@ public class DaySceneCoordinator : MonoBehaviour
 
         TaskCompletionSource<bool> completionSource = new();
         StartCoroutine(RunFadeCoroutine(fadeRoutine, completionSource));
+        return completionSource.Task;
+    }
+
+    private static Task AwaitOperationAsync(AsyncOperation operation)
+    {
+        if (operation.isDone)
+        {
+            return Task.CompletedTask;
+        }
+
+        TaskCompletionSource<bool> completionSource = new();
+        operation.completed += _ => completionSource.TrySetResult(true);
         return completionSource.Task;
     }
 

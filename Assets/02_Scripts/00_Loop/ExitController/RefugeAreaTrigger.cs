@@ -37,6 +37,18 @@ public class RefugeAreaTrigger : MonoBehaviour
 
     private void OnRefugeAreaDoorHasClosed()
     {
-        if (_isEntered) _exitController.RequestExit();
+        if (!_isEntered)
+        {
+            return;
+        }
+
+        Level2ExitAccessPolicy policy = Level2ExitAccessPolicy.Instance;
+        if (policy == null ||
+            !policy.CanUseLevel2Exit(ExitType.RefugeArea))
+        {
+            return;
+        }
+
+        _exitController.RequestExit();
     }
 }

@@ -1,15 +1,18 @@
+using System.Collections.Generic;
 using UnityEngine;
-using VirtualRescue.GameFlow;
+using VirtualRescue.Situations.FireSuppression;
 
 namespace VirtualRescue.Situations.PowerStripFire
 {
     [DisallowMultipleComponent]
-    public sealed class PowerStripFireSituationController : SituationController
+    public sealed class PowerStripFireSituationController :
+        FireSuppressionSituationController
     {
         [Header("References")]
         [SerializeField] private FireObject _fireObject;
 
-        protected override void OnActivated()
+        protected override void PrepareActiveFireObjects(
+            List<FireObject> activeFireObjects)
         {
             if (_fireObject == null)
             {
@@ -17,46 +20,7 @@ namespace VirtualRescue.Situations.PowerStripFire
                 return;
             }
 
-            _fireObject.OnExtinguished -= HandleFireExtinguished;
-            _fireObject.OnExtinguished += HandleFireExtinguished;
-        }
-
-        protected override void OnResolved()
-        {
-            UnsubscribeFireEvent();
-        }
-
-        protected override void OnFailed()
-        {
-            UnsubscribeFireEvent();
-        }
-
-        protected override void OnReset()
-        {
-            UnsubscribeFireEvent();
-        }
-
-        private void OnDisable()
-        {
-            UnsubscribeFireEvent();
-        }
-
-        private void HandleFireExtinguished()
-        {
-            if (!ResolveSituation())
-            {
-                Debug.LogError(
-                    "The power strip fire situation could not be resolved.",
-                    this);
-            }
-        }
-
-        private void UnsubscribeFireEvent()
-        {
-            if (_fireObject != null)
-            {
-                _fireObject.OnExtinguished -= HandleFireExtinguished;
-            }
+            activeFireObjects.Add(_fireObject);
         }
     }
 }
