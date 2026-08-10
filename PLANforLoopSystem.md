@@ -160,6 +160,9 @@ Core 씬의 경로는 `Assets/01_Scenes/Situation/LoopBase.unity`다. 날짜가 
 - 상황 씬 로드 시 `ExitController`를 검색하거나 상황별 구독을 추가하지 않는다.
 - 따라서 출구 판정 흐름에는 `Find()`, `FindObjectOfType()`, `FindAnyObjectByType()` 등의 전역 탐색이 필요하지 않다.
 - 정적 이벤트는 플레이 세션 시작 시 초기화해 Domain Reload 비활성 환경에서 이전 구독이 남지 않도록 한다.
+- 비상계단과 대피공간처럼 2단계 전용인 출구는 `Level2ExitAccessPolicy`로 물리적 접근 또는 `RequestExit()` 호출을 먼저 차단한다.
+- `RefugeAreaTrigger`는 플레이어가 대피공간 안에 있고 `CanUseLevel2Exit(RefugeArea)`가 참일 때만 `RequestExit()`을 호출한다.
+- 정책의 사전 차단과 별개로 `DayOutcomeController`의 기존 출구 검증은 최종 방어선으로 유지한다.
 
 판정 규칙:
 
@@ -536,6 +539,7 @@ Inspector 연결 순서:
 - `Vestibule_Entrance_Door`
 - `Bedroom_Hall_Door`
 - `Fire_Exit_Door`
+- `Exit_Stairs`
 
 ### `DoorRegistry` - 구현 완료
 
@@ -558,6 +562,26 @@ Inspector 연결 순서:
 - `SituationController.Activated` 이벤트에서 ID에 대응하는 문을 조회하고 잠근다.
 - 적용 전에 각 문의 기존 잠금 상태를 저장하고 `ResetPerformed` 또는 컴포넌트 비활성화 시 원래 상태로 복구한다.
 - 같은 ID가 목록에 여러 번 들어 있어도 한 번만 적용한다.
+
+### `Level2ExitAccessPolicy` - 구현 완료
+
+- `LoopBase`의 `GameFlow` 오브젝트에 정확히 하나 배치하는 2단계 전용 출구 접근 정책이다.
+- Inspector에서 같은 오브젝트의 `DayFlowController`, `SituationSceneLoader`를 연결하고 `Stair Door Id`를 `Exit_Stairs`로 설정한다.
+- `DayFlowController.StateChanged`를 구독하고 `Playing` 진입 시 계단 접근 제한을 적용하며, `Playing` 이외 상태로 전환되면 자신이 덮어쓴 잠금 상태를 복구한다.
+- 무상황, 0단계, 1단계는 모두 2단계 전용 출구를 사용할 수 없는 상태로 처리한다.
+- 2단계 상황이어도 `SituationDefinition.Level2AllowedExits`에 해당 `ExitType`이 포함되어야 `CanUseLevel2Exit()`이 참을 반환한다.
+- 비상계단이 허용되지 않으면 `DoorRegistry.TryGetDoor("Exit_Stairs")`로 문을 한 번 조회하고 `SetLocked(true)`를 적용한다.
+- 잠금 적용 전에 기존 `IsLocked` 값을 저장하고 하루 전환 또는 컴포넌트 비활성화 시 원래 상태로 복구한다.
+- 비상계단이 허용되는 상황에서는 문 상태를 강제로 해제하지 않는다. 다른 상황 컴포넌트가 의도적으로 적용한 잠금을 덮어쓰지 않는다.
+- `Instance`를 통해 환경 모듈의 Trigger가 additive 씬 간 Inspector 직접 참조 없이 정책을 조회한다.
+- 정책 인스턴스나 `SituationSceneLoader`가 없으면 2단계 출구 사용을 허용하지 않는 fail-closed 방식으로 처리한다.
+
+### `RefugeAreaTrigger` 2단계 출구 제한 - 구현 완료
+
+- 기존 플레이어 진입 상태와 대피공간 문 `Closed` 이벤트 구독 방식은 유지한다.
+- 문이 닫혔을 때 `Level2ExitAccessPolicy.Instance`와 `CanUseLevel2Exit(ExitType.RefugeArea)`를 먼저 확인한다.
+- 정책이 없거나 출구가 허용되지 않으면 `ExitController.RequestExit()`을 호출하지 않는다.
+- `RefugeAreaTrigger`는 정책 Singleton을 사용하므로 Inspector에 정책 참조를 추가로 연결하지 않는다.
 
 ### `SituationTrapDoorTrigger` - 구현 완료
 
@@ -605,12 +629,18 @@ Inspector 연결 순서:
 Inspector 설정 순서:
 
 1. `LoopBase`의 `GameFlow` 오브젝트에 배치된 `DoorRegistry`가 활성화되어 있는지 확인한다.
-2. `S_Env`의 제어 대상 문에서 `FireExitDoorController`가 붙은 `DoorHinge`에 `DoorRegistryItem`을 추가하고 중복되지 않는 Door ID를 입력한다.
+2. 같은 `GameFlow` 오브젝트에 `Level2ExitAccessPolicy`를 하나 추가한다.
+   - `Day Flow Controller`: 같은 오브젝트의 `DayFlowController`
+   - `Situation Scene Loader`: 같은 오브젝트의 `SituationSceneLoader`
+   - `Stair Door Id`: `Exit_Stairs`
+3. `S_Env`의 비상계단 문에서 `FireExitDoorController`가 붙은 `DoorHinge`에 `DoorRegistryItem`을 추가하고 Door ID를 `Exit_Stairs`로 입력한다.
+4. `S_Env`의 다른 제어 대상 문에도 `DoorRegistryItem`을 추가하고 중복되지 않는 Door ID를 입력한다.
    프리팹 원본에 같은 ID를 적용하지 않고 씬의 개별 프리팹 인스턴스 Override로 유지한다.
-3. 문 잠금 상황 씬에 `SituationDoorLockOverride`를 추가하고 해당 상황의 `SituationController`와 고정 Door ID 목록을 연결한다.
-4. 함정 상황 씬에 `SituationTrapDoorTrigger`를 추가하고 `Door IDs` 배열과 `Situation Controller`를 설정한다.
-5. 해당 상황 Controller에 Trigger 참조를 연결하고 `Triggered` 이벤트에서 실패 또는 상황별 결과를 처리한다.
-6. 하루 전환 후 잠금, 연무, 화재 효과와 이벤트 구독이 모두 초기화되는지 확인한다.
+5. 비상계단 또는 대피공간을 사용하는 2단계 `SituationDefinition`의 `Level2 Allowed Exits`에 각각 `EmergencyStairs` 또는 `RefugeArea`를 추가한다.
+6. 문 잠금 상황 씬에 `SituationDoorLockOverride`를 추가하고 해당 상황의 `SituationController`와 고정 Door ID 목록을 연결한다.
+7. 함정 상황 씬에 `SituationTrapDoorTrigger`를 추가하고 `Door IDs` 배열과 `Situation Controller`를 설정한다.
+8. 해당 상황 Controller에 Trigger 참조를 연결하고 `Triggered` 이벤트에서 실패 또는 상황별 결과를 처리한다.
+9. 하루 전환 후 잠금, 연무, 화재 효과와 이벤트 구독이 모두 초기화되는지 확인한다.
 
 성능 및 씬 참조 원칙:
 
@@ -618,6 +648,8 @@ Inspector 설정 순서:
 - `DoorRegistryItem`이 환경 씬 로드 시 컨트롤러 참조를 한 번 등록하고 상황 컴포넌트는 Door ID로 Dictionary 조회한다.
 - 조회는 상황 활성화 시 Door ID마다 한 번만 수행하며 `Update()`에서 검색하지 않는다.
 - `Find()`, `FindObjectOfType()`, 오브젝트 이름 검색과 씬 Hierarchy 순회는 사용하지 않는다.
+- `Level2ExitAccessPolicy`는 매 프레임 검사하지 않고 `DayFlowController.StateChanged` 시점에만 계단 문을 조회하고 잠금 상태를 변경한다.
+- `RefugeAreaTrigger`의 정책 검사는 대피공간 문 `Closed` 이벤트가 발생한 순간에만 수행한다.
 
 ## 9. 주요 인터페이스
 
@@ -641,6 +673,8 @@ Inspector 설정 순서:
 - `DoorRegistry`: 기본 집 모듈의 문을 고유 ID로 등록하고 컨트롤러 조회 제공
 - `DoorRegistryItem`: 문 ID와 `FireExitDoorController` 참조를 Registry에 등록
 - `SituationDoorLockOverride`: 상황 시작 시 지정 문을 잠그고 종료 시 기존 상태 복구
+- `Level2ExitAccessPolicy`: 2단계 및 SO 허용 목록을 기준으로 비상계단 잠금과 전용 출구 접근 여부 관리
+- `RefugeAreaTrigger`: 플레이어가 대피공간 내부에서 문을 닫았을 때 정책이 허용한 경우에만 출구 요청
 - `SituationTrapDoorTrigger`: 여러 함정 문을 설정하고 최초 개방 시 상황 Controller에 이벤트 전달
 - `FireExitDoorController`: 문 잠금·함정 상태, 개방 각도 판정과 문 효과 관리
 - `EntireHouseAlarmSituationController`: 알람 트리거를 유지하고 함정 문 Trigger 발생 시 상황 실패 처리
@@ -704,6 +738,14 @@ Inspector 설정 순서:
 53. 상황 성공, 실패, 리셋과 날짜 전환 시 기침이 중지되고 시간 압박 비네트가 초기화된다.
 54. 다음 상황 씬 로드 후 DDOL `PlayerPrefabs`에 이전 상황의 시간 압박 비네트 값이 남지 않는다.
 55. 연기·손수건 비네트와 시간 압박 비네트가 동시에 적용되면 두 aperture 중 더 좁은 값이 보인다.
+56. 무상황, 0단계와 1단계에서 `Exit_Stairs` 문이 잠기고 조작으로 열리지 않는다.
+57. 2단계이면서 `Level2 Allowed Exits`에 `EmergencyStairs`가 포함된 상황에서는 정책이 계단 문의 기존 잠금 상태를 강제로 변경하지 않는다.
+58. 2단계여도 `EmergencyStairs`가 허용 목록에 없으면 `Exit_Stairs` 문이 잠긴다.
+59. 무상황, 0단계와 1단계에서 플레이어가 대피공간 내부에서 문을 닫아도 `ExitRequested` 이벤트가 발생하지 않는다.
+60. 2단계이면서 `RefugeArea`가 허용 목록에 포함된 경우에만 대피공간 문 닫힘으로 `RequestExit()`이 호출된다.
+61. 정책 컴포넌트가 없거나 필수 참조가 누락된 경우 대피공간 출구 요청은 발생하지 않는다.
+62. 하루 전환 후 정책이 적용하기 전에 존재하던 계단 문의 잠금 상태가 복구된다.
+63. 계단 접근 제한은 `Update()` 또는 씬 전체 탐색 없이 하루 상태 변경 시 Dictionary 조회 한 번으로 적용된다.
 
 ## 11. 기본 결정
 

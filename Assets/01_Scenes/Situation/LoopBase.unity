@@ -1418,6 +1418,7 @@ GameObject:
   - component: {fileID: 2029193223}
   - component: {fileID: 2029193226}
   - component: {fileID: 2029193227}
+  - component: {fileID: 2029193228}
   m_Layer: 0
   m_Name: GameFlow
   m_TagString: Untagged
@@ -1560,6 +1561,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 719718513c03466a85060cfe78680b8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.DoorRegistry
+--- !u!114 &2029193228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029193218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0dcb29fcd7a1de4eb952ad112226f51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.Level2ExitAccessPolicy
+  _dayFlowController: {fileID: 2029193224}
+  _situationSceneLoader: {fileID: 2029193223}
+  _stairDoorId: Exit_Stairs
 --- !u!1 &2032235526
 GameObject:
   m_ObjectHideFlags: 0
