@@ -3,7 +3,7 @@ using UnityEngine;
 namespace VirtualRescue.Situations.AnomalyObservation
 {
     [DisallowMultipleComponent]
-    public sealed class AnomalyTextureTarget : MonoBehaviour
+    public class AnomalyTextureTarget : MonoBehaviour
     {
         private const string DefaultTexturePropertyName = "_BaseMap";
 
@@ -46,12 +46,12 @@ namespace VirtualRescue.Situations.AnomalyObservation
             }
         }
 
-        public bool TryApplyAnomalyTexture()
+        public virtual bool TryApplyAnomalyTexture()
         {
             return TryApplyTexture(_anomalyTexture, "anomaly");
         }
 
-        public bool TryApplyNormalTexture()
+        public virtual bool TryApplyNormalTexture()
         {
             return TryApplyTexture(_normalTexture, "normal");
         }
