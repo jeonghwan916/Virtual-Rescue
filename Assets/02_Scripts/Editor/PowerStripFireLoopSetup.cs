@@ -222,6 +222,7 @@ namespace VirtualRescue.EditorTools
             serializedDefinition.FindProperty("_weight").intValue = 1;
             serializedDefinition.FindProperty("_minimumDay").intValue = 1;
             serializedDefinition.FindProperty("_sceneName").stringValue = SceneName;
+            serializedDefinition.FindProperty("_usesTimeLimit").boolValue = false;
             serializedDefinition.FindProperty("_timeLimitSeconds").floatValue = 60f;
             serializedDefinition.FindProperty("_level2AllowedExits").arraySize = 0;
             serializedDefinition.ApplyModifiedPropertiesWithoutUndo();

@@ -2201,7 +2201,6 @@ GameObject:
   - component: {fileID: 6112536044164091862}
   - component: {fileID: 63541371448437958}
   - component: {fileID: 2134974418178743606}
-  - component: {fileID: 8435234750447527083}
   m_Layer: 0
   m_Name: XRFadeCanvas
   m_TagString: Untagged
@@ -2318,20 +2317,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Effects.ScreenFader
   _canvasGroup: {fileID: 63541371448437958}
   _useUnscaledTime: 1
---- !u!114 &8435234750447527083
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2108599044956769989}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8bba01d09e914ef48a86fe4083f9c56f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Effects.StartScreenFader
-  _screenFader: {fileID: 2134974418178743606}
-  _fadeDuration: 1.5
 --- !u!1 &2209198761940339095
 GameObject:
   m_ObjectHideFlags: 0
@@ -3343,6 +3328,7 @@ GameObject:
   - component: {fileID: 4884508726519088848}
   - component: {fileID: 1875390971827512562}
   - component: {fileID: 1987788752140345138}
+  - component: {fileID: 8612577875790123793}
   - component: {fileID: 7884228769781634763}
   m_Layer: 2
   m_Name: XR Origin (XR Rig)
@@ -3480,6 +3466,23 @@ MonoBehaviour:
   m_AimAssistRequiredSpeed: 0.25
   m_AimAssistPercent: 0.8
   m_AimAssistMaxSpeedPercent: 10
+--- !u!114 &8612577875790123793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3182963722351224577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e074ce03df64d5f9ac7f7ebd528d9ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Effects.Level2TimePressureEffect
+  _dayFlowController: {fileID: 0}
+  _situationSceneLoader: {fileID: 0}
+  _minimumApertureSize: 0.4
+  _coughAudioSource: {fileID: 7884228769781634763}
+  _coughAudioClip: {fileID: 8300000, guid: 034868bbc3eebc94abf24e3afbd54ab6, type: 3}
 --- !u!82 &7884228769781634763
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9111,7 +9114,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8429981633443581377, guid: 6c8af5c8012f01440af6cb2bc3eb987c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8429981633443581382, guid: 6c8af5c8012f01440af6cb2bc3eb987c, type: 3}
       propertyPath: m_LocalPosition.x
