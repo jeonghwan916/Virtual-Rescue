@@ -11,17 +11,28 @@ namespace VirtualRescue.GameFlow
         private readonly HashSet<string> _seenSituationIds = new(StringComparer.Ordinal);
 
         public int CurrentDay { get; private set; } = FirstDay;
-        public bool IsGameCleared => CurrentDay >= ClearDay;
+        public bool IsEndingDay => CurrentDay == ClearDay;
         public IReadOnlyCollection<string> SeenSituationIds => _seenSituationIds;
 
         public bool AdvanceDay()
         {
-            if (IsGameCleared)
+            if (CurrentDay >= ClearDay)
             {
                 return false;
             }
 
             CurrentDay++;
+            return true;
+        }
+
+        public bool TrySetCurrentDay(int day)
+        {
+            if (day < FirstDay || day > ClearDay)
+            {
+                return false;
+            }
+
+            CurrentDay = day;
             return true;
         }
 

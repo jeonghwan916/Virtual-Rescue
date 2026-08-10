@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9b63cae76bd4a88b288e457d16b3564, type: 3}
-  m_Name: SituationDefinition_EntireHouse_Alarm
+  m_Name: Ending
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationDefinition
-  _id: entirehouse.alarm
-  _level: 2
+  _id: ending.scene
+  _level: 0
   _weight: 1
   _minimumDay: 1
-  _sceneName: Scenario_EntireHouse_Alarm
+  _sceneName: EndingScene
   _usesTimeLimit: 0
   _timeLimitSeconds: 60
-  _level2AllowedExits: 04000000
+  _level2AllowedExits: 

@@ -29,6 +29,7 @@ namespace VirtualRescue.GameFlow
         [SerializeField] private string _sceneName = string.Empty;
 
         [Header("Level 2 Rules")]
+        [SerializeField] private bool _usesTimeLimit;
         [Min(0f)]
         [SerializeField] private float _timeLimitSeconds = 60f;
         [SerializeField] private List<ExitType> _level2AllowedExits = new();
@@ -38,7 +39,8 @@ namespace VirtualRescue.GameFlow
         public int Weight => _weight;
         public int MinimumDay => _minimumDay;
         public string SceneName => _sceneName;
-        public bool UsesTimeLimit => _level == SituationLevel.Level2;
+        public bool UsesTimeLimit =>
+            _level == SituationLevel.Level2 && _usesTimeLimit;
         public float TimeLimitSeconds => UsesTimeLimit ? _timeLimitSeconds : 0f;
         public IReadOnlyList<ExitType> Level2AllowedExits => _level2AllowedExits;
 
@@ -75,10 +77,10 @@ namespace VirtualRescue.GameFlow
                 return;
             }
 
-            if (_timeLimitSeconds <= 0f)
+            if (UsesTimeLimit && _timeLimitSeconds <= 0f)
             {
                 Debug.LogWarning(
-                    $"{name}: Level 2 situation requires a positive time limit.",
+                    $"{name}: Timed Level 2 situation requires a positive time limit.",
                     this);
             }
 
