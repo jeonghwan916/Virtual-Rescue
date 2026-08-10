@@ -42,6 +42,21 @@ namespace VirtualRescue.Missions09
         [SerializeField] private float _openConfirmationAngle = 4f;
         [SerializeField] private float _closeSnapAngle = 2f;
 
+        [Header("Lock")]
+        [SerializeField] private bool _isLocked;
+        
+        [Header("Trap")]
+        [SerializeField] private bool _isTrapped;
+        [SerializeField] private GameObject _hazeEffect;
+        [SerializeField] private GameObject _fireEffect;
+        
+        [Header("Audio Source")]
+        [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioClip _openSFX;
+        [SerializeField] private AudioClip _closeSFX;
+        [SerializeField] private AudioClip _fireSFX;
+        
+
         private DoorState _state = DoorState.Locked;
         private Quaternion _closedLocalRotation;
         private float _currentAngle;
@@ -59,7 +74,11 @@ namespace VirtualRescue.Missions09
 
         public bool IsOpen => _state == DoorState.Open;
         public bool IsClosed => _state == DoorState.Locked || _state == DoorState.WaitingForHandleReset;
+        public bool IsLocked => _isLocked;
+        public bool IsTrapped => _isTrapped;
         public float CurrentAngle => _currentAngle;
+        
+        
 
         private void Reset()
         {
@@ -77,6 +96,7 @@ namespace VirtualRescue.Missions09
             _currentAngle = 0f;
             _state = DoorState.Locked;
             ApplyRotation();
+            ApplyInitialTrapState();
             ValidateReferences();
         }
 
@@ -136,7 +156,7 @@ namespace VirtualRescue.Missions09
 
         public void BeginHandleInteraction(FireExitDoorHandle handle, Transform driver)
         {
-            if (!IsRegisteredHandle(handle) || driver == null)
+            if (_isLocked || !IsRegisteredHandle(handle) || driver == null)
             {
                 return;
             }
@@ -160,7 +180,7 @@ namespace VirtualRescue.Missions09
 
         public void NotifyHandleActuated(FireExitDoorHandle handle)
         {
-            if (!IsRegisteredHandle(handle))
+            if (_isLocked || !IsRegisteredHandle(handle))
             {
                 return;
             }
@@ -206,7 +226,7 @@ namespace VirtualRescue.Missions09
 
         private void HandleDoorSelected(SelectEnterEventArgs args)
         {
-            if (args.interactorObject == null)
+            if (_isLocked || args.interactorObject == null)
             {
                 return;
             }
@@ -232,6 +252,42 @@ namespace VirtualRescue.Missions09
             _panelInteractor = null;
             _panelDriver = null;
             ResetDriverTracking();
+        }
+
+        public void SetLocked(bool isLocked)
+        {
+            if (_isLocked == isLocked)
+            {
+                return;
+            }
+
+            _isLocked = isLocked;
+
+            if (!_isLocked)
+            {
+                return;
+            }
+
+            _panelInteractor = null;
+            _panelDriver = null;
+            _activeHandle = null;
+            _handleDriver = null;
+            EnterClosedState(false);
+        }
+
+        public void SetTrapped(bool isTrapped)
+        {
+            _isTrapped = isTrapped;
+
+            if (_hazeEffect != null)
+            {
+                _hazeEffect.SetActive(_isTrapped);
+            }
+
+            if (_fireEffect != null)
+            {
+                _fireEffect.SetActive(false);
+            }
         }
 
         private void UpdateDriverTracking(Transform driver)
@@ -307,6 +363,11 @@ namespace VirtualRescue.Missions09
             {
                 _state = DoorState.Open;
                 Opened?.Invoke();
+                
+                if (_audioSource != null || _openSFX != null)
+                {
+                    _audioSource.PlayOneShot(_openSFX);
+                }
                 return;
             }
 
@@ -327,6 +388,11 @@ namespace VirtualRescue.Missions09
             if (invokeClosedEvent)
             {
                 Closed?.Invoke();
+                
+                if (_audioSource != null || _closeSFX != null)
+                {
+                    _audioSource.PlayOneShot(_closeSFX);
+                }
             }
         }
 
@@ -404,6 +470,40 @@ namespace VirtualRescue.Missions09
             _minimumInputDegrees = Mathf.Max(0f, _minimumInputDegrees);
             _openConfirmationAngle = Mathf.Max(0.1f, _openConfirmationAngle);
             _closeSnapAngle = Mathf.Clamp(_closeSnapAngle, 0.01f, _openConfirmationAngle);
+        }
+
+        public void ShowHaze()
+        {
+            if (_hazeEffect != null)
+            {
+                _hazeEffect.SetActive(true);
+            }
+        }
+
+        public void ShowFire()
+        {
+            if (_fireEffect != null)
+            {
+                _fireEffect.SetActive(true);
+            }
+
+            if (_audioSource != null && _fireSFX != null)
+            {
+                _audioSource.PlayOneShot(_fireSFX);
+            }
+        }
+
+        private void ApplyInitialTrapState()
+        {
+            if (_hazeEffect != null)
+            {
+                _hazeEffect.SetActive(_isTrapped);
+            }
+
+            if (_fireEffect != null)
+            {
+                _fireEffect.SetActive(false);
+            }
         }
     }
 }
