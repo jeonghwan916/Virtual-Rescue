@@ -11,7 +11,7 @@ namespace VirtualRescue.GameFlow
         [SerializeField] private SituationSceneLoader _situationSceneLoader;
 
         [Header("Emergency Stairs")]
-        [SerializeField] private string _stairDoorId = "Exit_Stairs";
+        [SerializeField] private DoorId _stairDoorId;
 
         private FireExitDoorController _stairDoor;
         private bool _stairDoorWasLocked;
@@ -82,11 +82,6 @@ namespace VirtualRescue.GameFlow
             }
         }
 
-        private void OnValidate()
-        {
-            _stairDoorId = DoorRegistry.NormalizeId(_stairDoorId);
-        }
-
         public bool CanUseLevel2Exit(ExitType exitType)
         {
             SituationDefinition definition =
@@ -130,8 +125,9 @@ namespace VirtualRescue.GameFlow
 
             if (!registry.TryGetDoor(_stairDoorId, out FireExitDoorController door))
             {
+                string stairDoorId = DoorRegistry.GetIdValue(_stairDoorId);
                 Debug.LogError(
-                    $"{name}: Stair door ID '{_stairDoorId}' is not registered.",
+                    $"{name}: Stair door ID '{stairDoorId}' is not registered.",
                     this);
                 return;
             }

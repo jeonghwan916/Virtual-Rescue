@@ -1576,7 +1576,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.Level2ExitAccessPolicy
   _dayFlowController: {fileID: 2029193224}
   _situationSceneLoader: {fileID: 2029193223}
-  _stairDoorId: Exit_Stairs
+  _stairDoorId: {fileID: 11400000, guid: a6765963fe1f48eb8e3b0e630fafbce6, type: 2}
 --- !u!1 &2032235526
 GameObject:
   m_ObjectHideFlags: 0

@@ -221,8 +221,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationTrapDoorTrigger
   _situationController: {fileID: 346131514}
   _doorIds:
-  - Porch_Main
-  - Porch_Sub
+  - {fileID: 11400000, guid: 3a191bc2bf9b49e8babf9bc5544ec724, type: 2}
+  - {fileID: 11400000, guid: 42911ca602654d07a22a0e7eaf2e2985, type: 2}
 --- !u!1 &1535285841
 GameObject:
   m_ObjectHideFlags: 0
