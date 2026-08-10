@@ -413,10 +413,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4627490440975555220}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.7071067, w: 0.7071068}
-  m_LocalPosition: {x: 0.013771816, y: 0.35543114, z: -0.017187893}
-  m_LocalScale: {x: 0.0018218448, y: 0.0009109224, z: 0.0018218448}
-  m_ConstrainProportionsScale: 0
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.0138, y: 0.3735, z: -0.0172}
+  m_LocalScale: {x: 1, y: 0.5, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 892517224870621210}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -753,7 +753,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       propertyPath: m_Name
-      value: Fire_Extinguisher 1
+      value: Fire_Extinguisher
       objectReference: {fileID: 0}
     - target: {fileID: 1245631690656365181, guid: e71db5e2afd3bcc4abc33a8de45b94bb, type: 3}
       propertyPath: m_LocalRotation.w
@@ -994,6 +994,7 @@ MonoBehaviour:
   _fireLayer:
     serializedVersion: 2
     m_Bits: 512
+  _suppressantType: 0
   _extinguisherSFX: {fileID: 6300505069019379894}
   _grabInteractable: {fileID: 2054465549187120571}
   _isFiring: 0
@@ -1536,7 +1537,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3

@@ -21,18 +21,21 @@ namespace VirtualRescue.EditorTools
             "Assets/02_Scripts/00_Loop/Situation/SituationDefinition_SO";
         private const string FirePrefabPath =
             "Assets/03_Prefabs/Particles/Fire/Fire_Small_Effect.prefab";
-        private const string ExtinguisherPrefabPath =
-            "Assets/03_Prefabs/Interaction/Fire_Extinguisher.prefab";
+        private const string AbcExtinguisherPrefabPath =
+            "Assets/03_Prefabs/Interaction/Fire_Extinguisher_ABC.prefab";
+        private const string ClassKExtinguisherPrefabPath =
+            "Assets/03_Prefabs/Interaction/Fire_Extinguisher_K.prefab";
+        private const string OilFireLayerName = "OilFire";
         private const string StoveObjectName = "Prop_SurfaceStove_01";
         private const string SceneName = "Scenario_Kitchen_OilFire";
         private const string DefinitionAssetName =
             "SituationDefinition_Kitchen_OilFire";
         private const string SituationId = "kitchen.oil_fire";
 
-        private static readonly Vector3 NormalExtinguisherPosition =
-            new(-2.5f, 0.1f, 7f);
-        private static readonly Vector3 IncompatibleExtinguisherPosition =
-            new(-1.75f, 0.1f, 7f);
+        private static readonly Vector3 AbcExtinguisherPosition =
+            new(-2.86f, 0.1f, 7.198f);
+        private static readonly Vector3 ClassKExtinguisherPosition =
+            new(-2.44f, 0.1f, 7.198f);
 
         [MenuItem("Tools/Virtual Rescue/Setup Kitchen Oil Fire Loop")]
         public static void Execute()
@@ -113,13 +116,20 @@ namespace VirtualRescue.EditorTools
         {
             GameObject firePrefab =
                 AssetDatabase.LoadAssetAtPath<GameObject>(FirePrefabPath);
-            GameObject extinguisherPrefab =
-                AssetDatabase.LoadAssetAtPath<GameObject>(ExtinguisherPrefabPath);
+            GameObject abcExtinguisherPrefab =
+                AssetDatabase.LoadAssetAtPath<GameObject>(
+                    AbcExtinguisherPrefabPath);
+            GameObject classKExtinguisherPrefab =
+                AssetDatabase.LoadAssetAtPath<GameObject>(
+                    ClassKExtinguisherPrefabPath);
 
-            if (firePrefab == null || extinguisherPrefab == null)
+            if (firePrefab == null ||
+                abcExtinguisherPrefab == null ||
+                classKExtinguisherPrefab == null)
             {
                 throw new InvalidOperationException(
-                    "The fire or extinguisher prefab could not be loaded.");
+                    "The fire, ABC extinguisher, or Class K extinguisher " +
+                    "prefab could not be loaded.");
             }
 
             Scene scene = EditorSceneManager.NewScene(
@@ -136,6 +146,9 @@ namespace VirtualRescue.EditorTools
             fireObject.name = "KitchenOilFireEffect";
             fireObject.transform.SetParent(scenarioObject.transform, true);
             fireObject.transform.position = firePosition;
+            SetLayerRecursively(
+                fireObject,
+                GetRequiredLayer(OilFireLayerName));
 
             FireObject oilFire = fireObject.GetComponent<FireObject>();
 
@@ -147,25 +160,21 @@ namespace VirtualRescue.EditorTools
 
             ConfigureOilFire(oilFire);
 
-            GameObject normalExtinguisher = CreateExtinguisher(
-                extinguisherPrefab,
+            GameObject abcExtinguisher = CreateExtinguisher(
+                abcExtinguisherPrefab,
                 scene,
                 scenarioObject.transform,
-                "Fire_Extinguisher_GeneralPurpose",
-                NormalExtinguisherPosition,
-                FireSuppressantType.GeneralPurpose,
-                false);
-            normalExtinguisher.transform.rotation = Quaternion.identity;
+                "Fire_Extinguisher_ABC",
+                AbcExtinguisherPosition);
+            abcExtinguisher.transform.rotation = Quaternion.identity;
 
-            GameObject incompatibleExtinguisher = CreateExtinguisher(
-                extinguisherPrefab,
+            GameObject classKExtinguisher = CreateExtinguisher(
+                classKExtinguisherPrefab,
                 scene,
                 scenarioObject.transform,
-                "Fire_Extinguisher_OilIncompatible",
-                IncompatibleExtinguisherPosition,
-                FireSuppressantType.OilFireIncompatible,
-                true);
-            incompatibleExtinguisher.transform.rotation = Quaternion.identity;
+                "Fire_Extinguisher_K",
+                ClassKExtinguisherPosition);
+            classKExtinguisher.transform.rotation = Quaternion.identity;
 
             KitchenOilFireSituationController controller =
                 scenarioObject.AddComponent<KitchenOilFireSituationController>();
@@ -192,9 +201,7 @@ namespace VirtualRescue.EditorTools
             Scene scene,
             Transform parent,
             string objectName,
-            Vector3 position,
-            FireSuppressantType suppressantType,
-            bool unpackCompletely)
+            Vector3 position)
         {
             GameObject extinguisher = (GameObject)PrefabUtility.InstantiatePrefab(
                 extinguisherPrefab,
@@ -202,28 +209,6 @@ namespace VirtualRescue.EditorTools
             extinguisher.name = objectName;
             extinguisher.transform.SetParent(parent, true);
             extinguisher.transform.position = position;
-
-            if (unpackCompletely)
-            {
-                PrefabUtility.UnpackPrefabInstance(
-                    extinguisher,
-                    PrefabUnpackMode.Completely,
-                    InteractionMode.AutomatedAction);
-            }
-
-            FireExtinguisher fireExtinguisher =
-                extinguisher.GetComponentInChildren<FireExtinguisher>(true);
-
-            if (fireExtinguisher == null)
-            {
-                throw new InvalidOperationException(
-                    "The extinguisher prefab does not contain FireExtinguisher.");
-            }
-
-            SerializedObject serializedExtinguisher = new(fireExtinguisher);
-            serializedExtinguisher.FindProperty("_suppressantType").enumValueIndex =
-                (int)suppressantType;
-            serializedExtinguisher.ApplyModifiedPropertiesWithoutUndo();
             return extinguisher;
         }
 
@@ -234,12 +219,34 @@ namespace VirtualRescue.EditorTools
                 serializedFire.FindProperty("_temporaryOnlySuppressants");
             temporarySuppressants.arraySize = 1;
             temporarySuppressants.GetArrayElementAtIndex(0).enumValueIndex =
-                (int)FireSuppressantType.OilFireIncompatible;
+                (int)FireSuppressantType.GeneralPurpose;
             serializedFire.FindProperty("_maximumTemporarySuppression").floatValue =
                 0.75f;
             serializedFire.FindProperty("_temporaryRecoveryDelay").floatValue = 0.15f;
             serializedFire.FindProperty("_temporaryRecoveryDuration").floatValue = 3f;
             serializedFire.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static int GetRequiredLayer(string layerName)
+        {
+            int layer = LayerMask.NameToLayer(layerName);
+
+            if (layer < 0)
+            {
+                throw new InvalidOperationException(
+                    $"The required layer '{layerName}' is not configured.");
+            }
+
+            return layer;
+        }
+
+        private static void SetLayerRecursively(GameObject rootObject, int layer)
+        {
+            foreach (Transform transform in
+                     rootObject.GetComponentsInChildren<Transform>(true))
+            {
+                transform.gameObject.layer = layer;
+            }
         }
 
         private static SituationDefinition CreateOrUpdateDefinition()
