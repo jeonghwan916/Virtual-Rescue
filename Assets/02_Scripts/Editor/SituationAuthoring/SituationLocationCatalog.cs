@@ -52,7 +52,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         public const string SceneRoot = "Assets/01_Scenes/Situation";
         public const string ControllerRoot = "Assets/02_Scripts/10_Situations";
         public const string DefinitionRoot =
-            "Assets/02_Scripts/00_Loop/Situation/SituationDefinition_SO";
+            "Assets/02_Scripts/00_Core/Loop/Situation/" +
+            "SituationDefinition_SO";
 
         public static string GetSceneFolder(
             string locationFolderName,

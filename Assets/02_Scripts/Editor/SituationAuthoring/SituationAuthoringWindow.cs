@@ -17,11 +17,6 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             Validate
         }
 
-        private const string FirePrefabPath =
-            "Assets/03_Prefabs/Particles/Fire/Fire_Small_Effect.prefab";
-        private const string ExtinguisherPrefabPath =
-            "Assets/03_Prefabs/Interaction/Fire_Extinguisher.prefab";
-
         [SerializeField] private Tab _tab;
         [SerializeField] private Vector2 _scrollPosition;
 
@@ -758,12 +753,6 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                             _buildingTarget));
                 }
             }
-
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                DrawKnownPrefabButton("Add Small Fire", FirePrefabPath);
-                DrawKnownPrefabButton("Add Extinguisher", ExtinguisherPrefabPath);
-            }
         }
 
         private void DrawValidate()
@@ -1051,22 +1040,6 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             if (GUILayout.Button($"Add {typeof(T).Name}", GUILayout.Width(180f)))
             {
                 assets.Add(null);
-            }
-        }
-
-        private void DrawKnownPrefabButton(string label, string assetPath)
-        {
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
-            using (new EditorGUI.DisabledScope(
-                       prefab == null || _buildingTarget == null))
-            {
-                if (GUILayout.Button(label))
-                {
-                    RunBuildingBlockAction(() =>
-                        SituationBuildingBlockService.AddPrefab(
-                            prefab,
-                            _buildingTarget));
-                }
             }
         }
 
