@@ -6,7 +6,7 @@ namespace VirtualRescue.GameFlow
     [DisallowMultipleComponent]
     public sealed class ModuleObjectRegistry : MonoBehaviour
     {
-        private readonly Dictionary<string, ModuleObjectRegistryItem> _items = new();
+        private readonly Dictionary<string, List<ModuleObjectRegistryItem>> _items = new();
 
         public static ModuleObjectRegistry Instance { get; private set; }
 
@@ -37,14 +37,32 @@ namespace VirtualRescue.GameFlow
         {
             string normalizedId = GetIdValue(objectId);
             if (string.IsNullOrEmpty(normalizedId) ||
-                !_items.TryGetValue(normalizedId, out ModuleObjectRegistryItem item) ||
-                item == null)
+                !_items.TryGetValue(normalizedId, out List<ModuleObjectRegistryItem> items))
             {
                 return false;
             }
 
-            item.SetTargetActive(isActive);
-            return true;
+            bool handled = false;
+
+            for (int i = items.Count - 1; i >= 0; i--)
+            {
+                ModuleObjectRegistryItem item = items[i];
+                if (item == null)
+                {
+                    items.RemoveAt(i);
+                    continue;
+                }
+
+                item.SetTargetActive(isActive);
+                handled = true;
+            }
+
+            if (items.Count == 0)
+            {
+                _items.Remove(normalizedId);
+            }
+
+            return handled;
         }
 
         internal bool Register(ModuleObjectRegistryItem item)
@@ -54,18 +72,17 @@ namespace VirtualRescue.GameFlow
                 return false;
             }
 
-            if (_items.TryGetValue(item.ObjectIdValue, out ModuleObjectRegistryItem existingItem) &&
-                existingItem != null &&
-                existingItem != item)
+            if (!_items.TryGetValue(item.ObjectIdValue, out List<ModuleObjectRegistryItem> items))
             {
-                Debug.LogWarning(
-                    $"Module object ID '{item.ObjectIdValue}' is already registered by " +
-                    $"'{existingItem.name}'. '{item.name}' was not registered.",
-                    item);
-                return false;
+                items = new List<ModuleObjectRegistryItem>();
+                _items.Add(item.ObjectIdValue, items);
             }
 
-            _items[item.ObjectIdValue] = item;
+            if (!items.Contains(item))
+            {
+                items.Add(item);
+            }
+
             return true;
         }
 
@@ -76,8 +93,14 @@ namespace VirtualRescue.GameFlow
                 return;
             }
 
-            if (_items.TryGetValue(item.ObjectIdValue, out ModuleObjectRegistryItem registeredItem) &&
-                registeredItem == item)
+            if (!_items.TryGetValue(item.ObjectIdValue, out List<ModuleObjectRegistryItem> items))
+            {
+                return;
+            }
+
+            items.Remove(item);
+
+            if (items.Count == 0)
             {
                 _items.Remove(item.ObjectIdValue);
             }
