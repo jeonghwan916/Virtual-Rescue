@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 14046763}
   - component: {fileID: 14046761}
   m_Layer: 0
-  m_Name: TemporaryDryerHandle
+  m_Name: TemporaryHairStraightenerHandle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -299,7 +299,7 @@ GameObject:
   - component: {fileID: 710209658}
   - component: {fileID: 710209657}
   m_Layer: 0
-  m_Name: DryerTowelHazard
+  m_Name: HairStraightenerHazard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -316,7 +316,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4c3f7c7787e84f018b61a7f21912cdf8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Situations.DryerTowelHazard.DryerTowelHazardSituationController
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Situations.HairStraightenerHazard.HairStraightenerHazardSituationController
   _state: 0
   _remainingTime: 0
   _powerSocket: {fileID: 1089949838}
@@ -431,7 +431,7 @@ GameObject:
   - component: {fileID: 1415929559}
   - component: {fileID: 1415929557}
   m_Layer: 0
-  m_Name: TemporaryDryerBody
+  m_Name: TemporaryHairStraightenerBody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -607,7 +607,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6530941933192280516, guid: aa7bd01a57960304796ecbe2ed8e71fe, type: 3}
       propertyPath: m_Name
-      value: DryerPowerCord
+      value: HairStraightenerPowerCord
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -649,7 +649,7 @@ GameObject:
   - component: {fileID: 1989221342}
   - component: {fileID: 1989221341}
   m_Layer: 0
-  m_Name: DryerPlaceholder
+  m_Name: HairStraightenerPlaceholder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
