@@ -4,10 +4,10 @@ using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using VirtualRescue.GameFlow;
 
-namespace VirtualRescue.Situations.DryerTowelHazard
+namespace VirtualRescue.Situations.HairStraightenerHazard
 {
     [DisallowMultipleComponent]
-    public sealed class DryerTowelHazardSituationController : SituationController
+    public sealed class HairStraightenerHazardSituationController : SituationController
     {
         [Header("References")]
         [SerializeField] private XRSocketInteractor _powerSocket;
@@ -22,7 +22,9 @@ namespace VirtualRescue.Situations.DryerTowelHazard
 
             if (_powerSocket == null)
             {
-                Debug.LogError("A dryer power socket must be assigned.", this);
+                Debug.LogError(
+                    "A hair straightener power socket must be assigned.",
+                    this);
                 return;
             }
 
@@ -114,7 +116,7 @@ namespace VirtualRescue.Situations.DryerTowelHazard
             if (!ResolveSituation())
             {
                 Debug.LogError(
-                    "The dryer towel hazard situation could not be resolved.",
+                    "The hair straightener hazard situation could not be resolved.",
                     this);
             }
         }
