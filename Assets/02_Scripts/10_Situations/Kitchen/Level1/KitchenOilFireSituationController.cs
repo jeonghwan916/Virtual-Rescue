@@ -1,4 +1,4 @@
-햣 using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using VirtualRescue.Situations.FireSuppression;
 
