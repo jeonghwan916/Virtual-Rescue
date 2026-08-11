@@ -10,6 +10,8 @@ Unity 상단 메뉴에서 다음 항목을 선택합니다.
 Tools > Virtual Rescue > Situation Authoring
 ```
 
+Wizard 상단 오른쪽의 `?` 버튼을 누르면 언제든 이 사용 설명서를 열 수 있습니다.
+
 ## 새 상황 만들기
 
 `New Situation` 탭에서 작업합니다.

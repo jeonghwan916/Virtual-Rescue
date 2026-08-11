@@ -9,6 +9,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 {
     public sealed class SituationAuthoringWindow : EditorWindow
     {
+        private const string ReadmePath = "Docs/README-SituationAuthoring.md";
+
         private enum Tab
         {
             NewSituation,
@@ -16,11 +18,6 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             BuildingBlocks,
             Validate
         }
-
-        private const string FirePrefabPath =
-            "Assets/03_Prefabs/Particles/Fire/Fire_Small_Effect.prefab";
-        private const string ExtinguisherPrefabPath =
-            "Assets/03_Prefabs/Interaction/Fire_Extinguisher.prefab";
 
         [SerializeField] private Tab _tab;
         [SerializeField] private Vector2 _scrollPosition;
@@ -131,9 +128,27 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         {
             DrawPendingCreation();
 
-            _tab = (Tab)GUILayout.Toolbar(
-                (int)_tab,
-                new[] { "New", "Edit Existing", "Building Blocks", "Validate" });
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                _tab = (Tab)GUILayout.Toolbar(
+                    (int)_tab,
+                    new[]
+                    {
+                        "New",
+                        "Edit Existing",
+                        "Building Blocks",
+                        "Validate"
+                    });
+                if (GUILayout.Button(
+                        new GUIContent(
+                            "?",
+                            "Situation Authoring 사용 설명서 열기"),
+                        GUILayout.Width(26f)))
+                {
+                    OpenReadme();
+                }
+            }
+
             EditorGUILayout.Space(6f);
 
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
@@ -160,6 +175,22 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             }
 
             EditorGUILayout.EndScrollView();
+        }
+
+        private static void OpenReadme()
+        {
+            string absolutePath =
+                SituationAuthoringUtility.ToAbsolutePath(ReadmePath);
+            if (!System.IO.File.Exists(absolutePath))
+            {
+                EditorUtility.DisplayDialog(
+                    "사용 설명서를 찾을 수 없음",
+                    $"다음 경로에 문서가 없습니다.\n{absolutePath}",
+                    "확인");
+                return;
+            }
+
+            EditorUtility.OpenWithDefaultApp(absolutePath);
         }
 
         private void DrawPendingCreation()
@@ -758,12 +789,6 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                             _buildingTarget));
                 }
             }
-
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                DrawKnownPrefabButton("Add Small Fire", FirePrefabPath);
-                DrawKnownPrefabButton("Add Extinguisher", ExtinguisherPrefabPath);
-            }
         }
 
         private void DrawValidate()
@@ -1051,22 +1076,6 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             if (GUILayout.Button($"Add {typeof(T).Name}", GUILayout.Width(180f)))
             {
                 assets.Add(null);
-            }
-        }
-
-        private void DrawKnownPrefabButton(string label, string assetPath)
-        {
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
-            using (new EditorGUI.DisabledScope(
-                       prefab == null || _buildingTarget == null))
-            {
-                if (GUILayout.Button(label))
-                {
-                    RunBuildingBlockAction(() =>
-                        SituationBuildingBlockService.AddPrefab(
-                            prefab,
-                            _buildingTarget));
-                }
             }
         }
 

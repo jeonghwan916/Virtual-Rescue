@@ -23,6 +23,12 @@ namespace VirtualRescue.EditorTools.SituationAuthoring.Tests
                 Is.EqualTo(
                     "Assets/02_Scripts/10_Situations/Kitchen/Level1/" +
                     "KitchenTestSituationController.cs"));
+            Assert.That(
+                request.DefinitionPath,
+                Is.EqualTo(
+                    "Assets/02_Scripts/00_Core/Loop/Situation/" +
+                    "SituationDefinition_SO/" +
+                    "SituationDefinition_Kitchen_Test.asset"));
         }
 
         [Test]
