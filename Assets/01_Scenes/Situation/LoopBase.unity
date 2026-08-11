@@ -1290,9 +1290,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RadioController
   _radioAudioSource: {fileID: 1953336288}
-  _commonBroadcastAudioClips: []
-  _failBroadcastEntries: []
+  _commonBroadcastAudioClips:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _failBroadcastEntries:
+  - _situationId: 
+    _clip: {fileID: 0}
+  - _situationId: 
+    _clip: {fileID: 0}
+  - _situationId: 
+    _clip: {fileID: 0}
+  - _situationId: 
+    _clip: {fileID: 0}
+  - _situationId: 
+    _clip: {fileID: 0}
+  - _situationId: 
+    _clip: {fileID: 0}
+  - _situationId: 
+    _clip: {fileID: 0}
+  - _situationId: 
+    _clip: {fileID: 0}
+  - _situationId: 
+    _clip: {fileID: 0}
+  - _situationId: 
+    _clip: {fileID: 0}
   _fallbackFailBroadcastClip: {fileID: 0}
+  _musicClip: {fileID: 0}
 --- !u!1 &2008656506
 GameObject:
   m_ObjectHideFlags: 0
