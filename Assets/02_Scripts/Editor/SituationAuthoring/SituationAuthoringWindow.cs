@@ -694,15 +694,10 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
             DrawIdSelection(
                 "Module Object IDs",
+                "Assets/02_Scripts/00_Core/Loop/ModuleRegistry/ModuleObjectIds",
                 _availableModuleIds,
                 _selectedModuleIds,
                 ref _moduleIdScroll);
-            DrawIdSelection(
-                "Door IDs",
-                _availableDoorIds,
-                _selectedDoorIds,
-                ref _doorIdScroll);
-
             using (new EditorGUI.DisabledScope(
                        _buildingController == null || _buildingTarget == null))
             {
@@ -716,7 +711,22 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                             "_moduleObjectIds",
                             _selectedModuleIds.Cast<UnityEngine.Object>().ToList()));
                 }
+            }
 
+            DrawIdSelection(
+                "Door IDs",
+                "Assets/02_Scripts/00_Core/Loop/ModuleRegistry/DoorIds",
+                _availableDoorIds,
+                _selectedDoorIds,
+                ref _doorIdScroll);
+            if (GUILayout.Button("Door ID 배치도 보기"))
+            {
+                DoorIdReferenceWindow.Open();
+            }
+
+            using (new EditorGUI.DisabledScope(
+                       _buildingController == null || _buildingTarget == null))
+            {
                 if (GUILayout.Button("Add Door Lock Override"))
                 {
                     RunBuildingBlockAction(() =>
@@ -983,12 +993,17 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
         private static void DrawIdSelection<T>(
             string label,
+            string assetFolderPath,
             IReadOnlyList<T> available,
             ISet<T> selected,
             ref Vector2 scroll)
             where T : UnityEngine.Object
         {
             EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
+            EditorGUILayout.SelectableLabel(
+                assetFolderPath,
+                EditorStyles.textField,
+                GUILayout.Height(EditorGUIUtility.singleLineHeight));
             if (available.Count == 0)
             {
                 EditorGUILayout.HelpBox("No ID assets were found.", MessageType.Info);

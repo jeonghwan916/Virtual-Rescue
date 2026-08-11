@@ -74,7 +74,7 @@ Assets/02_Scripts/10_Situations/Balcony/Level2
 
 ## Door ID 배치도 확인하기
 
-`Locked Door IDs`와 `Trap Door IDs` 아래의 `Door ID 배치도 보기` 버튼을 누르면 문 위치 참고 이미지가 별도 창에 표시됩니다.
+`New Situation`의 Door ID 입력 영역 또는 `Building Blocks`의 `Door IDs` 목록 아래에 있는 `Door ID 배치도 보기` 버튼을 누르면 문 위치 참고 이미지가 별도 창에 표시됩니다.
 
 참고 이미지 파일:
 
