@@ -249,7 +249,7 @@ Transform:
   m_GameObject: {fileID: 999281995}
   serializedVersion: 2
   m_LocalRotation: {x: -0.5829907, y: -0, z: -0, w: 0.8124789}
-  m_LocalPosition: {x: 11.247, y: 1.939, z: -6.106}
+  m_LocalPosition: {x: 12.625, y: 1.153, z: -4.637}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -501,6 +501,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1040009928}
   - component: {fileID: 1040009927}
+  - component: {fileID: 1040009929}
   m_Layer: 0
   m_Name: LightweightPartitionEscape
   m_TagString: Untagged
@@ -538,6 +539,21 @@ Transform:
   - {fileID: 999281996}
   m_Father: {fileID: 1890417336}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1040009929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1040009926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66c148f00fa84c6486bf8f9740255928, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationObjectOverride
+  _situationController: {fileID: 1040009927}
+  _moduleObjectIds:
+  - {fileID: 11400000, guid: 64151dfc9ff04fc4cb95bdca3d12b5e0, type: 2}
 --- !u!1001 &1339391921
 PrefabInstance:
   m_ObjectHideFlags: 0
