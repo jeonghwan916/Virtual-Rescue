@@ -1052,6 +1052,53 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5138450775463731756, guid: b711e0f039be022438f22f21ececc7e6, type: 3}
   m_PrefabInstance: {fileID: 337945281}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &355528970
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 355528972}
+  - component: {fileID: 355528971}
+  m_Layer: 0
+  m_Name: Balcony_DescenderBox_Common
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &355528971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355528970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05ce67201c4440d7bb56dbc61c13a647, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.ModuleObjectRegistryItem
+  _objectId: {fileID: 11400000, guid: 7d029e3258cb7464db72ec852a1eb22b, type: 2}
+  _target: {fileID: 1063520119}
+--- !u!4 &355528972
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355528970}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -20.4, y: 1.5, z: -7.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1063520120}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &384124268
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1650,6 +1697,38 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4067398185181582980, guid: 265cc1a6c80ac9d43b5c03d7ab2c5dc8, type: 3}
   m_PrefabInstance: {fileID: 582024362}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &592526965
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 592526966}
+  m_Layer: 0
+  m_Name: Balcony_DescenderLineStand_Common
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &592526966
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 592526965}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -20.084705, y: 1.5, z: -8.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 820454160}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &644414063
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2045,6 +2124,76 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 8608512670100372920, guid: 6488299d3b281f04d81730f6a9fe0206, type: 3}
   m_PrefabInstance: {fileID: 797247090}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &820454159
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 592526966}
+    m_Modifications:
+    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.0000002
+      objectReference: {fileID: 0}
+    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.0000002
+      objectReference: {fileID: 0}
+    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1060105349980562004, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+      propertyPath: m_Name
+      value: Emergency_Descending_Life_Line_Stand
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+--- !u!4 &820454160 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
+  m_PrefabInstance: {fileID: 820454159}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &836549188
 GameObject:
@@ -2600,7 +2749,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05ce67201c4440d7bb56dbc61c13a647, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.ModuleObjectRegistryItem
   _objectId: {fileID: 11400000, guid: 3576c647c60d4f689d75e2df2beb5c7b, type: 2}
   _target: {fileID: 1084900677}
@@ -2747,6 +2896,77 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 3389090521174631171, guid: bfacbef2bd9c7774f89c2e8edbecbda9, type: 3}
   m_PrefabInstance: {fileID: 1029004843}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1063520118
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 355528972}
+    m_Modifications:
+    - target: {fileID: 66586752759214843, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_Name
+      value: Emergency_Descending_Life_Box
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7452878975406928638, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_text
+      value: 15m
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+--- !u!1 &1063520119 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 66586752759214843, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+  m_PrefabInstance: {fileID: 1063520118}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1063520120 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+  m_PrefabInstance: {fileID: 1063520118}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1068695769
 PrefabInstance:
@@ -5590,3 +5810,5 @@ SceneRoots:
   - {fileID: 38594531}
   - {fileID: 995742464}
   - {fileID: 158471538}
+  - {fileID: 355528972}
+  - {fileID: 592526966}
