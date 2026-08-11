@@ -58,9 +58,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         [Header("New Location")]
         [SerializeField] private bool _showAddLocation;
         [SerializeField] private string _newLocationId = string.Empty;
-        [SerializeField] private string _newLocationDisplayName = string.Empty;
-        [SerializeField] private string _newLocationSceneFolder = string.Empty;
-        [SerializeField] private string _newLocationControllerFolder = string.Empty;
+        [SerializeField] private string _newLocationName = string.Empty;
 
         [Header("Building Blocks")]
         [SerializeField] private SituationController _buildingController;
@@ -435,22 +433,14 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 EditorGUILayout.LabelField(
                     "Add New Location",
                     EditorStyles.boldLabel);
-                _newLocationDisplayName = EditorGUILayout.TextField(Required(
-                    "Display Name",
-                    "Location 드롭다운에 표시할 이름입니다."),
-                    _newLocationDisplayName);
+                _newLocationName = EditorGUILayout.TextField(Required(
+                    "Location Name",
+                    "드롭다운 표시와 Scene/Controller 폴더에 공통으로 사용할 이름입니다."),
+                    _newLocationName);
                 _newLocationId = EditorGUILayout.TextField(Required(
                     "Location ID",
                     "Location을 구분하는 소문자 고유 ID입니다. 예: bathroom"),
                     _newLocationId);
-                _newLocationSceneFolder = EditorGUILayout.TextField(Required(
-                    "Scene Folder",
-                    "Situation 씬 루트 아래에 사용할 단일 폴더 이름입니다."),
-                    _newLocationSceneFolder);
-                _newLocationControllerFolder = EditorGUILayout.TextField(Required(
-                    "Controller Folder",
-                    "상황 스크립트 루트 아래에 사용할 단일 폴더 이름입니다."),
-                    _newLocationControllerFolder);
 
                 using (new EditorGUILayout.HorizontalScope())
                 {
@@ -459,9 +449,9 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                         if (SituationLocationCatalogService.TryAdd(
                                 _locationCatalog,
                                 _newLocationId,
-                                _newLocationDisplayName,
-                                _newLocationSceneFolder,
-                                _newLocationControllerFolder,
+                                _newLocationName,
+                                _newLocationName,
+                                _newLocationName,
                                 out SituationLocationEntry entry,
                                 out string error))
                         {
@@ -964,9 +954,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         {
             _showAddLocation = false;
             _newLocationId = string.Empty;
-            _newLocationDisplayName = string.Empty;
-            _newLocationSceneFolder = string.Empty;
-            _newLocationControllerFolder = string.Empty;
+            _newLocationName = string.Empty;
         }
 
         private static void LoadAssets<T>(List<T> destination, string filter)

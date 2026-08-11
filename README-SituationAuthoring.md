@@ -57,13 +57,11 @@ Assets/02_Scripts/10_Situations/Balcony/Level2
 
 1. Location 영역의 `Add New Location`을 누릅니다.
 2. 다음 값을 입력합니다.
-   - `Display Name`: 드롭다운에 표시할 이름. 예: `Room B`
+   - `Location Name`: 드롭다운 표시와 Scene/Controller 폴더에 공통으로 사용할 이름. 예: `RoomB`
    - `Location ID`: 내부 구분용 고유 ID. 예: `room-b`
-   - `Scene Folder`: 씬 폴더 이름. 예: `RoomB`
-   - `Controller Folder`: 스크립트 폴더 이름. 예: `RoomB`
 3. `Save Location`을 누릅니다.
 
-저장된 항목은 `SituationLocationCatalog.asset`에 추가되고 Location 드롭다운에서 바로 선택할 수 있습니다.
+`Location Name`은 Display Name, Scene Folder, Controller Folder에 같은 값으로 저장됩니다. 저장된 항목은 `SituationLocationCatalog.asset`에 추가되고 Location 드롭다운에서 바로 선택할 수 있습니다.
 
 `Location ID`에는 영문 소문자, 숫자, `.`, `_`, `-`만 사용할 수 있습니다. 첫 글자는 영문 소문자 또는 숫자여야 합니다.
 
