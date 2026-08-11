@@ -40,7 +40,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             try
             {
                 SituationAuthoringUtility.EnsureFolder(
-                    request.controllerScriptFolder);
+                    request.ControllerScriptFolder);
                 SituationCreationResumeHandler.Store(request);
 
                 string script = CreateScriptText(request);
@@ -80,6 +80,14 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 return false;
             }
 
+            if (string.IsNullOrWhiteSpace(request.locationId) ||
+                string.IsNullOrWhiteSpace(request.locationSceneFolder) ||
+                string.IsNullOrWhiteSpace(request.locationControllerFolder))
+            {
+                error = "A valid Location Catalog entry is required.";
+                return false;
+            }
+
             if (!SituationAuthoringUtility.IsValidIdentifier(
                     request.controllerClassName))
             {
@@ -95,9 +103,9 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             }
 
             if (!SituationAuthoringUtility.IsProjectAssetFolder(
-                    request.controllerScriptFolder))
+                    request.ControllerScriptFolder))
             {
-                error = "Controller Script Path must be a folder below Assets.";
+                error = "The generated Controller folder must be below Assets.";
                 return false;
             }
 

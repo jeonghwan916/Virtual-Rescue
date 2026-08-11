@@ -143,12 +143,13 @@ Validate Current Situation
 | Display Name | 에디터에서 표시할 상황 이름 | 필수 |
 | Situation ID | 저장 및 라디오 매칭에 사용하는 고유 ID | 필수 |
 | Home Layout | `LoopBase`에서 확인한 기본 집 구성, 읽기 전용 표시 | 자동 |
-| Location | `SituationLocation` enum으로 선택하는 씬 폴더 분류 | 필수 |
+| Location | `SituationLocationCatalog`에서 선택하는 씬 폴더 분류 | 필수 |
 | Level | Level 0, Level 1, Level 2 | 필수 |
+| Scene Folder | `Assets/01_Scenes/Situation/{Location}/{Level}`로 자동 결정 | 자동 |
 | Scene Name | 기본값은 `Scenario_{Location}_{Name}` | 필수 |
 | Controller Class Name | 생성할 `SituationController` 파생 클래스명 | 필수 |
 | Controller Namespace | 생성할 클래스의 namespace | 필수 |
-| Controller Script Path | C# 스크립트를 저장할 폴더 | 필수 |
+| Controller Script Folder | `Assets/02_Scripts/10_Situations/{Location}/{Level}`로 자동 결정 | 자동 |
 | Weight | 무작위 선택 가중치 | 필수 |
 | Minimum Day | 최초 등장 가능 날짜 | 필수 |
 | Register as Candidate | 생성 후 `LoopBase` 후보 배열에 등록할지 선택, 기본값 Off | 선택 |
@@ -178,11 +179,13 @@ Validate Current Situation
 
 #### Location 폴더 규칙
 
-- Location은 자유 문자열이 아니라 `SituationLocation` enum으로 고정한다.
-- 각 enum 값은 상황 씬 루트 아래의 폴더 경로 하나와 대응한다.
+- Location 목록은 `SituationLocationCatalog.asset`에 저장한다.
+- 각 Location은 안정적인 ID, 표시 이름, 씬 폴더명과 Controller 폴더명을 가진다.
 - 선택한 Location 폴더가 아직 없으면 생성 예정 목록에 표시하고 생성 시 자동으로 만든다.
-- 새로운 공간 폴더가 필요하면 `SituationLocation`에 값을 추가하고 경로 매핑 한 곳만 갱신하도록 구현한다.
-- enum 값과 실제 경로의 대응이 없거나 중복되면 Wizard 초기화 단계에서 오류를 표시한다.
+- `Add New Location` 버튼으로 Wizard 안에서 새 공간을 추가하며 C# 수정이나 컴파일은 필요하지 않다.
+- 새 Location은 ID, 표시 이름, 씬 폴더명과 Controller 폴더명을 입력한 뒤 Catalog에 저장한다.
+- Location ID와 씬 폴더가 기존 항목과 중복되거나 폴더명에 잘못된 문자가 있으면 저장을 거부한다.
+- Catalog에서 Location을 삭제하거나 경로를 변경해도 기존 씬과 폴더를 자동 삭제·이동하지 않는다.
 
 ### 6.2 Building Blocks
 
@@ -388,7 +391,8 @@ Assets/02_Scripts/Editor/SituationAuthoring/
 ├─ SituationValidationService.cs
 ├─ SituationFixService.cs
 ├─ SituationValidationResult.cs
-├─ SituationLocation.cs
+├─ SituationLocationCatalog.cs
+├─ SituationLocationCatalogService.cs
 ├─ SituationLocationPathMap.cs
 └─ Inspectors/
    └─ SituationDefinitionEditor.cs
@@ -489,6 +493,8 @@ Assets/02_Scripts/Editor/SituationAuthoring/
 - Controller 클래스명과 namespace가 유효하지 않으면 생성을 거부한다.
 - 같은 경로의 C# 스크립트가 이미 있으면 덮어쓰지 않는다.
 - 생성된 C# 클래스가 `SituationController`를 상속한다.
+- 새 Location이 Catalog에 저장되고 드롭다운에서 즉시 선택된다.
+- 중복 Location ID, 중복 씬 폴더와 잘못된 폴더명을 거부한다.
 - 빈 ID를 거부한다.
 - 중복 ID를 거부한다.
 - 기존 씬과 같은 경로 생성을 거부한다.
@@ -585,7 +591,7 @@ Domain Reload
 ### 17.3 확정된 범위
 
 - 기본 집 미리보기의 기준은 `LoopBase`의 `DaySceneCoordinator`에 연결된 `HomeLayoutDefinition`으로 한다.
-- Location은 `SituationLocation` enum으로 관리하며 새 공간 추가 시 enum과 중앙 경로 매핑을 확장한다.
+- Location은 `SituationLocationCatalog.asset`으로 관리하며 Wizard의 `Add New Location`으로 확장한다.
 - 안전한 자동 수정 기능은 1차 버전에 포함한다.
 - Controller C# 기본 골격 생성과 컴파일 후 작업 재개를 1차 버전에 포함한다.
 - `SituationSelector.Candidates` 등록은 기본값이 Off인 선택 사항으로 제공한다.

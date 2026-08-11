@@ -8,12 +8,13 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
     {
         public string displayName;
         public string situationId;
-        public int location;
+        public string locationId;
+        public string locationSceneFolder;
+        public string locationControllerFolder;
         public int level;
         public string sceneName;
         public string controllerClassName;
         public string controllerNamespace;
-        public string controllerScriptFolder;
         public int weight = 1;
         public int minimumDay = 1;
         public bool registerAsCandidate;
@@ -25,7 +26,6 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         public string[] lockedDoorIdPaths = Array.Empty<string>();
         public string[] trapDoorIdPaths = Array.Empty<string>();
 
-        public SituationLocation Location => (SituationLocation)location;
         public VirtualRescue.GameFlow.SituationLevel Level =>
             (VirtualRescue.GameFlow.SituationLevel)level;
         public string ControllerFullName => string.IsNullOrWhiteSpace(
@@ -33,14 +33,19 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             ? controllerClassName
             : $"{controllerNamespace}.{controllerClassName}";
         public string SceneFolder =>
-            SituationLocationPathMap.GetSceneFolder(Location, Level);
+            SituationLocationPathMap.GetSceneFolder(
+                locationSceneFolder,
+                Level);
         public string ScenePath => $"{SceneFolder}/{sceneName}.unity";
+        public string ControllerScriptFolder =>
+            SituationLocationPathMap.GetControllerFolder(
+                locationControllerFolder,
+                Level);
         public string DefinitionPath =>
             $"{SituationLocationPathMap.DefinitionRoot}/" +
             $"SituationDefinition_{SanitizeFileName(displayName)}.asset";
         public string ControllerScriptPath =>
-            $"{controllerScriptFolder.TrimEnd('/', '\\')}/" +
-            $"{controllerClassName}.cs";
+            $"{ControllerScriptFolder}/{controllerClassName}.cs";
 
         private static string SanitizeFileName(string value)
         {

@@ -26,18 +26,15 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         [SerializeField] private Vector2 _scrollPosition;
 
         [Header("New Situation")]
-        [SerializeField] private string _displayName = "New Situation";
-        [SerializeField] private string _situationId = "new.situation";
-        [SerializeField] private SituationLocation _location =
-            SituationLocation.Room;
+        [SerializeField] private string _displayName = "Location_Situation";
+        [SerializeField] private string _situationId = "location.situation";
+        [SerializeField] private string _selectedLocationId = "room";
         [SerializeField] private SituationLevel _level = SituationLevel.Level0;
         [SerializeField] private string _sceneName = "Scenario_Room_NewSituation";
         [SerializeField] private string _controllerClassName =
             "NewSituationController";
         [SerializeField] private string _controllerNamespace =
             "VirtualRescue.Situations";
-        [SerializeField] private string _controllerScriptFolder =
-            "Assets/02_Scripts/10_Situations/Room";
         [SerializeField] private int _weight = 1;
         [SerializeField] private int _minimumDay = 1;
         [SerializeField] private bool _registerAsCandidate;
@@ -56,6 +53,14 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         [SerializeField] private SituationDefinition _editDefinition;
         [SerializeField] private SituationDefinition _validationDefinition;
         [SerializeField] private HomeLayoutDefinition _homeLayout;
+        [SerializeField] private SituationLocationCatalog _locationCatalog;
+
+        [Header("New Location")]
+        [SerializeField] private bool _showAddLocation;
+        [SerializeField] private string _newLocationId = string.Empty;
+        [SerializeField] private string _newLocationDisplayName = string.Empty;
+        [SerializeField] private string _newLocationSceneFolder = string.Empty;
+        [SerializeField] private string _newLocationControllerFolder = string.Empty;
 
         [Header("Building Blocks")]
         [SerializeField] private SituationController _buildingController;
@@ -87,6 +92,28 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
         private void OnEnable()
         {
+            if (_displayName == "New Situation")
+            {
+                _displayName = "Location_Situation";
+            }
+
+            if (_situationId == "new.situation")
+            {
+                _situationId = "location.situation";
+            }
+
+            _locationCatalog =
+                AssetDatabase.LoadAssetAtPath<SituationLocationCatalog>(
+                    SituationLocationCatalogService.CatalogPath);
+            if (_locationCatalog == null)
+            {
+                EditorApplication.delayCall += InitializeLocationCatalog;
+            }
+            else
+            {
+                EnsureSelectedLocation();
+            }
+
             RefreshIdAssets();
             RefreshHomeLayout();
             if (Selection.activeObject is SituationDefinition definition)
@@ -95,6 +122,11 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 _validationDefinition = definition;
                 _editSerializedDefinition = new SerializedObject(definition);
             }
+        }
+
+        private void OnDisable()
+        {
+            EditorApplication.delayCall -= InitializeLocationCatalog;
         }
 
         private void OnGUI()
@@ -170,66 +202,55 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
             _displayName = EditorGUILayout.TextField(Required(
                 "Display Name",
-                "Name shown in the Hierarchy and used for the Definition file."),
+                "Hierarchy에 표시되며 Definition 파일명에 사용되는 이름입니다."),
                 _displayName);
             _situationId = EditorGUILayout.TextField(Required(
                 "Situation ID",
-                "Stable ID used by history and radio matching. It must be unique."),
+                "상황 기록과 라디오 매칭에 사용하는 고유 ID입니다. 중복될 수 없습니다."),
                 _situationId);
 
             using (new EditorGUI.DisabledScope(true))
             {
                 EditorGUILayout.ObjectField(
-                    Optional("Home Layout", "Read from LoopBase DaySceneCoordinator."),
+                    Optional(
+                        "Home Layout",
+                        "LoopBase의 DaySceneCoordinator에서 자동으로 가져옵니다."),
                     _homeLayout,
                     typeof(HomeLayoutDefinition),
                     false);
             }
 
-            EditorGUI.BeginChangeCheck();
-            _location = (SituationLocation)EditorGUILayout.EnumPopup(
-                Required("Location", "Controls the situation scene folder."),
-                _location);
-            if (EditorGUI.EndChangeCheck())
-            {
-                _controllerScriptFolder =
-                    SituationLocationPathMap.GetDefaultControllerFolder(_location);
-            }
-
             _level = (SituationLevel)EditorGUILayout.EnumPopup(
-                Required("Level", "Controls exit and time-limit rules."),
+                Required("Level", "출구와 제한시간 규칙에 사용할 상황 단계를 선택합니다."),
                 _level);
+            DrawLocationSelector();
+
             _sceneName = EditorGUILayout.TextField(Required(
                 "Scene Name",
-                "Generated scene asset name; use the Scenario_ prefix."),
+                "생성할 씬 에셋 이름입니다. Scenario_ 접두사 사용을 권장합니다."),
                 _sceneName);
             _controllerClassName = EditorGUILayout.TextField(Required(
                 "Controller Class Name",
-                "C# class generated as a SituationController subclass."),
+                "SituationController를 상속하여 생성할 C# 클래스 이름입니다."),
                 _controllerClassName);
             _controllerNamespace = EditorGUILayout.TextField(Required(
                 "Controller Namespace",
-                "C# namespace for the generated Controller."),
+                "생성할 Controller 클래스의 C# 네임스페이스입니다."),
                 _controllerNamespace);
-            _controllerScriptFolder = EditorGUILayout.TextField(Required(
-                "Controller Script Path",
-                "Project-relative folder below Assets."),
-                _controllerScriptFolder);
-
             _weight = EditorGUILayout.IntField(Required(
                 "Weight",
-                "Relative random selection weight; stored even for test-only situations."),
+                "상황 무작위 선택에 사용하는 상대 가중치입니다. 테스트용 상황에도 저장됩니다."),
                 _weight);
             _minimumDay = EditorGUILayout.IntSlider(Required(
                 "Minimum Day",
-                "First day on which the situation may be selected."),
+                "이 상황이 처음 선택될 수 있는 날짜입니다."),
                 _minimumDay,
                 1,
                 7);
             _registerAsCandidate = EditorGUILayout.Toggle(Optional(
                 "Register as Candidate",
-                "When enabled, adds the Definition to LoopBase Candidates. " +
-                "Disabled by default for safe test-only creation."),
+                "활성화하면 생성한 Definition을 LoopBase Candidates에 추가합니다. " +
+                "테스트용 상황 생성을 위해 기본값은 꺼져 있습니다."),
                 _registerAsCandidate);
 
             DrawLevel2Rules();
@@ -237,6 +258,10 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             DrawAssetList("Module Object IDs [Optional]", _newModuleIds);
             DrawAssetList("Locked Door IDs [Optional]", _newLockedDoorIds);
             DrawAssetList("Trap Door IDs [Optional]", _newTrapDoorIds);
+            if (GUILayout.Button("Door ID 배치도 보기"))
+            {
+                DoorIdReferenceWindow.Open();
+            }
 
             EditorGUILayout.Space(8f);
             EditorGUILayout.LabelField("Planned Assets", EditorStyles.boldLabel);
@@ -297,19 +322,19 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             EditorGUILayout.LabelField("Level 2 Rules", EditorStyles.boldLabel);
             _usesTimeLimit = EditorGUILayout.Toggle(Conditional(
                 "Uses Time Limit",
-                "Starts the shared Level 2 countdown."),
+                "공용 Level 2 제한시간 카운트다운을 시작합니다."),
                 _usesTimeLimit);
             if (_usesTimeLimit)
             {
                 _timeLimitSeconds = EditorGUILayout.FloatField(Conditional(
                     "Time Limit Seconds",
-                    "Must be greater than zero when the countdown is enabled."),
+                    "제한시간을 사용할 때는 0보다 큰 값을 입력해야 합니다."),
                     _timeLimitSeconds);
             }
 
             EditorGUILayout.LabelField(Conditional(
                 "Allowed Exits",
-                "At least one non-elevator exit is required."));
+                "엘리베이터가 아닌 출구를 하나 이상 선택해야 합니다."));
             _allowEmergencyStairs = EditorGUILayout.ToggleLeft(
                 "Emergency Stairs",
                 _allowEmergencyStairs);
@@ -324,12 +349,152 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 _allowDescender);
         }
 
+        private void DrawLocationSelector()
+        {
+            EditorGUILayout.LabelField(Required(
+                "Location",
+                "씬과 Controller 저장 폴더를 결정하는 Location 항목입니다."));
+
+            if (_locationCatalog == null || _locationCatalog.Locations.Count == 0)
+            {
+                EditorGUILayout.HelpBox(
+                    "Situation Location Catalog is missing or empty.",
+                    MessageType.Error);
+                if (GUILayout.Button("Create or Reload Catalog"))
+                {
+                    _locationCatalog =
+                        SituationLocationCatalogService.GetOrCreate();
+                    EnsureSelectedLocation();
+                }
+
+                return;
+            }
+
+            string[] displayNames = _locationCatalog.Locations
+                .Select(location => location.DisplayName)
+                .ToArray();
+            int selectedIndex = 0;
+            for (int index = 0; index < _locationCatalog.Locations.Count; index++)
+            {
+                if (string.Equals(
+                        _locationCatalog.Locations[index].Id,
+                        _selectedLocationId,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    selectedIndex = index;
+                    break;
+                }
+            }
+
+            int newIndex = EditorGUILayout.Popup(selectedIndex, displayNames);
+            if (newIndex != selectedIndex ||
+                string.IsNullOrWhiteSpace(_selectedLocationId))
+            {
+                SelectLocation(_locationCatalog.Locations[newIndex]);
+            }
+
+            SituationLocationEntry selected = GetSelectedLocation();
+            if (selected != null)
+            {
+                EditorGUILayout.LabelField(
+                    "Scene Folder",
+                    SituationLocationPathMap.GetSceneFolder(
+                        selected.SceneFolderName,
+                        _level));
+                EditorGUILayout.LabelField(
+                    "Controller Folder",
+                    SituationLocationPathMap.GetControllerFolder(
+                        selected.ControllerFolderName,
+                        _level));
+            }
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                if (GUILayout.Button("Add New Location"))
+                {
+                    _showAddLocation = !_showAddLocation;
+                }
+
+                if (GUILayout.Button("Select Catalog Asset"))
+                {
+                    Selection.activeObject = _locationCatalog;
+                    EditorGUIUtility.PingObject(_locationCatalog);
+                }
+            }
+
+            if (_showAddLocation)
+            {
+                DrawAddLocationForm();
+            }
+        }
+
+        private void DrawAddLocationForm()
+        {
+            using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
+            {
+                EditorGUILayout.LabelField(
+                    "Add New Location",
+                    EditorStyles.boldLabel);
+                _newLocationDisplayName = EditorGUILayout.TextField(Required(
+                    "Display Name",
+                    "Location 드롭다운에 표시할 이름입니다."),
+                    _newLocationDisplayName);
+                _newLocationId = EditorGUILayout.TextField(Required(
+                    "Location ID",
+                    "Location을 구분하는 소문자 고유 ID입니다. 예: bathroom"),
+                    _newLocationId);
+                _newLocationSceneFolder = EditorGUILayout.TextField(Required(
+                    "Scene Folder",
+                    "Situation 씬 루트 아래에 사용할 단일 폴더 이름입니다."),
+                    _newLocationSceneFolder);
+                _newLocationControllerFolder = EditorGUILayout.TextField(Required(
+                    "Controller Folder",
+                    "상황 스크립트 루트 아래에 사용할 단일 폴더 이름입니다."),
+                    _newLocationControllerFolder);
+
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    if (GUILayout.Button("Save Location"))
+                    {
+                        if (SituationLocationCatalogService.TryAdd(
+                                _locationCatalog,
+                                _newLocationId,
+                                _newLocationDisplayName,
+                                _newLocationSceneFolder,
+                                _newLocationControllerFolder,
+                                out SituationLocationEntry entry,
+                                out string error))
+                        {
+                            SelectLocation(entry);
+                            ClearAddLocationForm();
+                            SetMessage(
+                                $"Location '{entry.DisplayName}' was added.",
+                                MessageType.Info);
+                        }
+                        else
+                        {
+                            SetMessage(error, MessageType.Error);
+                            EditorUtility.DisplayDialog(
+                                "Could Not Save Location",
+                                error,
+                                "OK");
+                        }
+                    }
+
+                    if (GUILayout.Button("Cancel"))
+                    {
+                        ClearAddLocationForm();
+                    }
+                }
+            }
+        }
+
         private void DrawEditExisting()
         {
             EditorGUILayout.LabelField("Edit Existing", EditorStyles.boldLabel);
             SituationDefinition previous = _editDefinition;
             _editDefinition = (SituationDefinition)EditorGUILayout.ObjectField(
-                Required("Definition", "Existing situation to edit."),
+                Required("Definition", "수정할 기존 Situation Definition을 선택합니다."),
                 _editDefinition,
                 typeof(SituationDefinition),
                 false);
@@ -493,7 +658,9 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             }
 
             _buildingController = (SituationController)EditorGUILayout.ObjectField(
-                Required("Situation Controller", "Controller in the active scene."),
+                Required(
+                    "Situation Controller",
+                    "현재 씬에 있는 Situation Controller를 선택합니다."),
                 _buildingController,
                 typeof(SituationController),
                 true);
@@ -503,7 +670,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             }
 
             _buildingTarget = (GameObject)EditorGUILayout.ObjectField(
-                Required("Target Object", "Object that receives the component."),
+                Required("Target Object", "컴포넌트를 추가할 대상 오브젝트입니다."),
                 _buildingTarget,
                 typeof(GameObject),
                 true);
@@ -576,7 +743,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             EditorGUILayout.Space(8f);
             EditorGUILayout.LabelField("Prefab Palette", EditorStyles.boldLabel);
             _buildingPrefab = (GameObject)EditorGUILayout.ObjectField(
-                Optional("Prefab", "Prefab to add below the target object."),
+                Optional("Prefab", "대상 오브젝트 아래에 추가할 프리팹입니다."),
                 _buildingPrefab,
                 typeof(GameObject),
                 false);
@@ -603,7 +770,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         {
             EditorGUILayout.LabelField("Validate", EditorStyles.boldLabel);
             _validationDefinition = (SituationDefinition)EditorGUILayout.ObjectField(
-                Required("Definition", "Situation to validate."),
+                Required("Definition", "검증할 Situation Definition을 선택합니다."),
                 _validationDefinition,
                 typeof(SituationDefinition),
                 false);
@@ -684,16 +851,19 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 exits.Add((int)ExitType.Descender);
             }
 
+            SituationLocationEntry location = GetSelectedLocation();
             return new SituationCreationRequest
             {
                 displayName = _displayName,
                 situationId = _situationId,
-                location = (int)_location,
+                locationId = location?.Id ?? string.Empty,
+                locationSceneFolder = location?.SceneFolderName ?? string.Empty,
+                locationControllerFolder =
+                    location?.ControllerFolderName ?? string.Empty,
                 level = (int)_level,
                 sceneName = _sceneName,
                 controllerClassName = _controllerClassName,
                 controllerNamespace = _controllerNamespace,
-                controllerScriptFolder = _controllerScriptFolder,
                 weight = _weight,
                 minimumDay = _minimumDay,
                 registerAsCandidate = _registerAsCandidate,
@@ -733,6 +903,60 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         private void RefreshHomeLayout()
         {
             SituationRegistrationService.TryGetHomeLayout(out _homeLayout);
+        }
+
+        private void InitializeLocationCatalog()
+        {
+            if (this == null)
+            {
+                return;
+            }
+
+            _locationCatalog = SituationLocationCatalogService.GetOrCreate();
+            EnsureSelectedLocation();
+            Repaint();
+        }
+
+        private void EnsureSelectedLocation()
+        {
+            if (_locationCatalog == null || _locationCatalog.Locations.Count == 0)
+            {
+                _selectedLocationId = string.Empty;
+                return;
+            }
+
+            SituationLocationEntry selected = GetSelectedLocation();
+            if (selected == null)
+            {
+                selected = _locationCatalog.Locations[0];
+                SelectLocation(selected);
+            }
+        }
+
+        private SituationLocationEntry GetSelectedLocation()
+        {
+            return SituationLocationCatalogService.FindById(
+                _locationCatalog,
+                _selectedLocationId);
+        }
+
+        private void SelectLocation(SituationLocationEntry location)
+        {
+            if (location == null)
+            {
+                return;
+            }
+
+            _selectedLocationId = location.Id;
+        }
+
+        private void ClearAddLocationForm()
+        {
+            _showAddLocation = false;
+            _newLocationId = string.Empty;
+            _newLocationDisplayName = string.Empty;
+            _newLocationSceneFolder = string.Empty;
+            _newLocationControllerFolder = string.Empty;
         }
 
         private static void LoadAssets<T>(List<T> destination, string filter)
