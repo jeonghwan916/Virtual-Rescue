@@ -200,95 +200,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7710103106133666106, guid: 9494cf0e976c4c84aba6860ce4a7fcb0, type: 3}
   m_PrefabInstance: {fileID: 630356596}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &727615399
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -20.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -8.667498
-      objectReference: {fileID: 0}
-    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 431660149198125294, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1060105349980562004, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_Name
-      value: Emergency_Descending_Life_Line_Stand
-      objectReference: {fileID: 0}
-    - target: {fileID: 2328212527238298302, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.084444046
-      objectReference: {fileID: 0}
-    - target: {fileID: 2328212527238298302, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2328212527238298302, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.082502365
-      objectReference: {fileID: 0}
-    - target: {fileID: 2328212527238298302, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2328212527238298302, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2328212527238298302, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2328212527238298302, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2328212527238298302, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 45cc690df61c511449766964d5b9d61f, type: 3}
 --- !u!1 &999648621
 GameObject:
   m_ObjectHideFlags: 0
@@ -394,6 +305,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1244916424}
   - component: {fileID: 1244916421}
+  - component: {fileID: 1244916425}
   m_Layer: 0
   m_Name: BalconyDescenderObservation
   m_TagString: Untagged
@@ -439,6 +351,21 @@ Transform:
   - {fileID: 630356598}
   m_Father: {fileID: 2016171723}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1244916425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244916420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66c148f00fa84c6486bf8f9740255928, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationObjectOverride
+  _situationController: {fileID: 1244916421}
+  _moduleObjectIds:
+  - {fileID: 11400000, guid: 7d029e3258cb7464db72ec852a1eb22b, type: 2}
 --- !u!1 &2016171721
 GameObject:
   m_ObjectHideFlags: 0
@@ -490,4 +417,3 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 2016171723}
-  - {fileID: 727615399}
