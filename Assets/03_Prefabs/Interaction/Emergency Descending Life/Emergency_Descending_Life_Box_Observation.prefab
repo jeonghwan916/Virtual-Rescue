@@ -1,0 +1,126 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &7727615193458750244
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 66586752759214843, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_Name
+      value: Emergency_Descending_Life_Box_Observation
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839711186785527873, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7452878975406928638, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      propertyPath: m_text
+      value: 0m
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 66586752759214843, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4216510261708825229}
+    - targetCorrespondingSourceObject: {fileID: 66586752759214843, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7055445310914959397}
+  m_SourcePrefab: {fileID: 100100000, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+--- !u!114 &888318411621155290 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7452878975406928638, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+  m_PrefabInstance: {fileID: 7727615193458750244}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &7769432148266746335 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 66586752759214843, guid: cdeec638d63ee8c45b7e1b2547e19a93, type: 3}
+  m_PrefabInstance: {fileID: 7727615193458750244}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4216510261708825229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7769432148266746335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9d8ebaa56794ed1a1ecc808e13f68ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Situations.AnomalyObservation.DescenderLengthObservationTarget
+  _targetRenderer: {fileID: 0}
+  _materialIndex: 0
+  _texturePropertyName: _BaseMap
+  _anomalyTexture: {fileID: 0}
+  _normalTexture: {fileID: 0}
+  _lengthText: {fileID: 888318411621155290}
+  _anomalyLengthText: 0m
+  _normalLengthText: 15m
+--- !u!65 &7055445310914959397
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7769432148266746335}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.21199998, y: 0.35, z: 0.28}
+  m_Center: {x: 0.0009999946, y: 0.16499999, z: 0}

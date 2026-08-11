@@ -148,7 +148,7 @@ namespace VirtualRescue.Situations.AnomalyObservation
             if (!_textureTarget.TryApplyNormalTexture())
             {
                 Debug.LogError(
-                    "Observation completed, but the normal texture could not be applied.",
+                    "Observation completed, but the normal state could not be applied.",
                     this);
                 return;
             }

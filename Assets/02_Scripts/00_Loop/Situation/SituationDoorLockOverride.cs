@@ -22,7 +22,7 @@ namespace VirtualRescue.GameFlow
         }
 
         [SerializeField] private SituationController _situationController;
-        [SerializeField] private string[] _doorIds;
+        [SerializeField] private DoorId[] _doorIds;
 
         private readonly List<DoorLockSnapshot> _snapshots = new();
         private bool _isApplied;
@@ -65,16 +65,6 @@ namespace VirtualRescue.GameFlow
         private void OnValidate()
         {
             FindControllerIfMissing();
-
-            if (_doorIds == null)
-            {
-                return;
-            }
-
-            for (int index = 0; index < _doorIds.Length; index++)
-            {
-                _doorIds[index] = DoorRegistry.NormalizeId(_doorIds[index]);
-            }
         }
 
         private void ApplyLocks()
@@ -100,15 +90,15 @@ namespace VirtualRescue.GameFlow
 
             HashSet<string> appliedIds = new();
 
-            foreach (string configuredId in _doorIds)
+            foreach (DoorId configuredId in _doorIds)
             {
-                string doorId = DoorRegistry.NormalizeId(configuredId);
+                string doorId = DoorRegistry.GetIdValue(configuredId);
                 if (string.IsNullOrEmpty(doorId) || !appliedIds.Add(doorId))
                 {
                     continue;
                 }
 
-                if (!registry.TryGetDoor(doorId, out FireExitDoorController door))
+                if (!registry.TryGetDoor(configuredId, out FireExitDoorController door))
                 {
                     Debug.LogWarning(
                         $"Door ID '{doorId}' is not registered.",

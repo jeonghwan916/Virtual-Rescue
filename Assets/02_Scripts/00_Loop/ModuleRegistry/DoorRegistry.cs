@@ -35,11 +35,11 @@ namespace VirtualRescue.GameFlow
         }
 
         public bool TryGetDoor(
-            string doorId,
+            DoorId doorId,
             out FireExitDoorController doorController)
         {
             doorController = null;
-            string normalizedId = NormalizeId(doorId);
+            string normalizedId = GetIdValue(doorId);
 
             if (string.IsNullOrEmpty(normalizedId) ||
                 !_items.TryGetValue(normalizedId, out DoorRegistryItem item) ||
@@ -55,39 +55,45 @@ namespace VirtualRescue.GameFlow
         internal bool Register(DoorRegistryItem item)
         {
             if (item == null ||
-                string.IsNullOrEmpty(item.DoorId) ||
+                item.DoorId == null ||
+                string.IsNullOrEmpty(item.DoorIdValue) ||
                 item.DoorController == null)
             {
                 return false;
             }
 
-            if (_items.TryGetValue(item.DoorId, out DoorRegistryItem existingItem) &&
+            if (_items.TryGetValue(item.DoorIdValue, out DoorRegistryItem existingItem) &&
                 existingItem != null &&
                 existingItem != item)
             {
                 Debug.LogWarning(
-                    $"Door ID '{item.DoorId}' is already registered by " +
+                    $"Door ID '{item.DoorIdValue}' is already registered by " +
                     $"'{existingItem.name}'. '{item.name}' was not registered.",
                     item);
                 return false;
             }
 
-            _items[item.DoorId] = item;
+            _items[item.DoorIdValue] = item;
             return true;
         }
 
         internal void Unregister(DoorRegistryItem item)
         {
-            if (item == null || string.IsNullOrEmpty(item.DoorId))
+            if (item == null || item.DoorId == null || string.IsNullOrEmpty(item.DoorIdValue))
             {
                 return;
             }
 
-            if (_items.TryGetValue(item.DoorId, out DoorRegistryItem registeredItem) &&
+            if (_items.TryGetValue(item.DoorIdValue, out DoorRegistryItem registeredItem) &&
                 registeredItem == item)
             {
-                _items.Remove(item.DoorId);
+                _items.Remove(item.DoorIdValue);
             }
+        }
+
+        internal static string GetIdValue(DoorId doorId)
+        {
+            return doorId != null ? doorId.Id : string.Empty;
         }
 
         internal static string NormalizeId(string doorId)

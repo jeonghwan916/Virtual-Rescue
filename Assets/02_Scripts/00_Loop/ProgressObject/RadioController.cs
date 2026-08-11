@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using VirtualRescue.GameFlow;
 
@@ -23,6 +24,11 @@ public class RadioController : MonoBehaviour
     [Header("Failed Broad Cast")]
     [SerializeField] private FailBroadcastEntry[] _failBroadcastEntries;
     [SerializeField] private AudioClip _fallbackFailBroadcastClip;
+
+    [Header("Music")]
+    [SerializeField] private AudioClip _musicClip;
+
+    private Coroutine _playRoutine;
     
     public void PlayForResult(DayResultContext resultContext)
     {
@@ -35,14 +41,38 @@ public class RadioController : MonoBehaviour
             $"Clip={clipName}",
             this);
         
-        if (clip == null || _radioAudioSource == null)
+        if (_radioAudioSource == null)
         {
             return;
         }
 
+        if (_playRoutine != null)
+        {
+            StopCoroutine(_playRoutine);
+        }
+
+        _playRoutine = StartCoroutine(PlayBroadcastThenMusic(clip));
+    }
+
+    private IEnumerator PlayBroadcastThenMusic(AudioClip broadcastClip)
+    {
         _radioAudioSource.Stop();
-        _radioAudioSource.clip = clip;
-        _radioAudioSource.Play();
+
+        if (broadcastClip != null)
+        {
+            _radioAudioSource.clip = broadcastClip;
+            _radioAudioSource.Play();
+
+            yield return new WaitWhile(() => _radioAudioSource.isPlaying);
+        }
+
+        if (_musicClip != null)
+        {
+            _radioAudioSource.clip = _musicClip;
+            _radioAudioSource.Play();
+        }
+
+        _playRoutine = null;
     }
 
     private AudioClip SelectClip(DayResultContext resultContext)

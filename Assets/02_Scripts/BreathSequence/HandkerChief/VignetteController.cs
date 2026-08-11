@@ -16,7 +16,8 @@ public class VignetteController : MonoBehaviour
 
     MaterialPropertyBlock propertyBlock;
     Coroutine wipeOutRoutine;
-    float currentApertureSize;
+    float currentApertureSize = 1f;
+    float timePressureApertureSize = 1f;
 
     void Awake()
     {
@@ -102,12 +103,42 @@ public class VignetteController : MonoBehaviour
     {
         currentApertureSize = Mathf.Clamp01(apertureSize);
 
+        ApplyApertureSize();
+    }
+
+    public void SetTimePressureApertureSize(float apertureSize)
+    {
+        timePressureApertureSize = Mathf.Clamp01(apertureSize);
+
+        ApplyApertureSize();
+    }
+
+    public void ResetTimePressureAperture()
+    {
+        timePressureApertureSize = 1f;
+
+        ApplyApertureSize();
+    }
+
+    void ApplyApertureSize()
+    {
+        var apertureSize = Mathf.Min(
+            currentApertureSize,
+            timePressureApertureSize);
+
         if (vignetteRenderer == null)
             return;
 
+        var vignetteObject = vignetteRenderer.gameObject;
+        if (!vignetteObject.activeSelf)
+            vignetteObject.SetActive(true);
+
         vignetteRenderer.GetPropertyBlock(propertyBlock);
-        propertyBlock.SetFloat(ApertureSizeId, currentApertureSize);
+        propertyBlock.SetFloat(ApertureSizeId, apertureSize);
         propertyBlock.SetFloat(FeatheringEffectId, featheringEffect);
         vignetteRenderer.SetPropertyBlock(propertyBlock);
+
+        if (Mathf.Approximately(apertureSize, 1f))
+            vignetteObject.SetActive(false);
     }
 }

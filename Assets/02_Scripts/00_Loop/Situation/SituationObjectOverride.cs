@@ -6,7 +6,7 @@ namespace VirtualRescue.GameFlow
     public sealed class SituationObjectOverride : MonoBehaviour
     {
         [SerializeField] private SituationController _situationController;
-        [SerializeField] private string[] _moduleObjectIds;
+        [SerializeField] private ModuleObjectId[] _moduleObjectIds;
 
         private bool _isApplied;
 
@@ -48,16 +48,6 @@ namespace VirtualRescue.GameFlow
         private void OnValidate()
         {
             FindControllerIfMissing();
-
-            if (_moduleObjectIds == null)
-            {
-                return;
-            }
-
-            for (int i = 0; i < _moduleObjectIds.Length; i++)
-            {
-                _moduleObjectIds[i] = ModuleObjectRegistry.NormalizeId(_moduleObjectIds[i]);
-            }
         }
 
         private void ApplyOverrides()
@@ -100,15 +90,15 @@ namespace VirtualRescue.GameFlow
                 return true;
             }
 
-            foreach (string objectId in _moduleObjectIds)
+            foreach (ModuleObjectId objectId in _moduleObjectIds)
             {
-                string normalizedId = ModuleObjectRegistry.NormalizeId(objectId);
+                string normalizedId = ModuleObjectRegistry.GetIdValue(objectId);
                 if (string.IsNullOrEmpty(normalizedId))
                 {
                     continue;
                 }
 
-                if (registry.TrySetActive(normalizedId, isActive))
+                if (registry.TrySetActive(objectId, isActive))
                 {
                     continue;
                 }

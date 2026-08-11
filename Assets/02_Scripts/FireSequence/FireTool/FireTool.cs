@@ -12,6 +12,13 @@ public abstract class FireTool : MonoBehaviour
     [SerializeField] private float _range = 5f;
     [SerializeField] private LayerMask _fireLayer;
 
+    [Header("Suppressant")]
+    [SerializeField] private FireSuppressantType _suppressantType =
+        FireSuppressantType.GeneralPurpose;
+
+    [Header("Operation")]
+    [SerializeField] private bool _isOperational = true;
+
     [Header("Audio Source")]
     [SerializeField] private AudioSource _extinguisherSFX;
 
@@ -21,6 +28,17 @@ public abstract class FireTool : MonoBehaviour
 
     protected bool IsFiring => _isFiring;
     protected XRGrabInteractable GrabInteractable => _grabInteractable;
+    public bool IsOperational => _isOperational;
+
+    public void SetOperational(bool isOperational)
+    {
+        _isOperational = isOperational;
+
+        if (!_isOperational)
+        {
+            StopFiring();
+        }
+    }
 
     protected virtual void Awake()
     {
@@ -60,6 +78,11 @@ public abstract class FireTool : MonoBehaviour
 
     protected void TryStartFiring()
     {
+        if (!_isOperational)
+        {
+            return;
+        }
+
         if (_isFiring)
             return;
 
@@ -121,7 +144,7 @@ public abstract class FireTool : MonoBehaviour
 
             if (fire != null)
             {
-                fire.TakeExtinguish(Time.deltaTime);
+                fire.TakeExtinguish(_suppressantType, Time.deltaTime);
             }
         }
     }
