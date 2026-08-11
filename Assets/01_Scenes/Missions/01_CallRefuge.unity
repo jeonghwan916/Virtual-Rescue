@@ -274,17 +274,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33fe149c883993241a493776b391e046, type: 3}
---- !u!114 &179855500 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5860604176627569572, guid: 33fe149c883993241a493776b391e046, type: 3}
-  m_PrefabInstance: {fileID: 179855499}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77e7e6d42b62dda4d89ccd89d5506c2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
 --- !u!1001 &266558061
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -480,7 +469,6 @@ GameObject:
   m_Component:
   - component: {fileID: 478704950}
   - component: {fileID: 478704952}
-  - component: {fileID: 478704951}
   m_Layer: 0
   m_Name: Entrance_Trigger
   m_TagString: Untagged
@@ -503,20 +491,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1540365252}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &478704951
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 478704949}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51e4c598b54ed2a449bb8c1eb711a70d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.CallRefuge.CallRefugeQuestTrigger
-  _questManager: {fileID: 1006271138}
-  _questStep: 1
 --- !u!65 &478704952
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -918,17 +892,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5483804995878953647, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
   m_PrefabInstance: {fileID: 829214131}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &829214133 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2483867232326413644, guid: 977da6306eb479f44b37250a94efaa0e, type: 3}
-  m_PrefabInstance: {fileID: 829214131}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d6df3066bb7445fa2375a75b730d602, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions09.FireExitDoorController
 --- !u!1 &1006271134
 GameObject:
   m_ObjectHideFlags: 0
@@ -938,7 +901,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1006271137}
-  - component: {fileID: 1006271138}
   m_Layer: 0
   m_Name: Quest Manager
   m_TagString: Untagged
@@ -961,27 +923,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1540365252}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1006271138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1006271134}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efd0226b3749685409e8fd4f247c80a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.CallRefuge.CallRefugeQuestManager
-  _dialogueManager: {fileID: 179855500}
-  _startDialogueGroup: start
-  _entranceDialogueGroup: entrance
-  _closeDialogueGroup: close
-  _beforecallDialogueGroup: beforecall
-  _aftercallDialogueGroup: aftercall
-  _numPad: {fileID: 1026859468}
-  _fireExitDoorController: {fileID: 829214133}
-  _autoStartWhenNoPlayerReferenceHub: 1
 --- !u!1001 &1026859466
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1428,17 +1369,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5130291086207150845, guid: 763874ca91e5df945abd8cbbb68062fa, type: 3}
   m_PrefabInstance: {fileID: 1026859466}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1026859468 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4214951256103944001, guid: 763874ca91e5df945abd8cbbb68062fa, type: 3}
-  m_PrefabInstance: {fileID: 1026859466}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e227aad835af7f499c35129fe3fcb41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NumPad
 --- !u!1001 &1130020831
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1698,7 +1628,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1579120194}
   - component: {fileID: 1579120196}
-  - component: {fileID: 1579120195}
   m_Layer: 0
   m_Name: Close_Trigger
   m_TagString: Untagged
@@ -1721,20 +1650,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1540365252}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1579120195
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1579120193}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51e4c598b54ed2a449bb8c1eb711a70d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.CallRefuge.CallRefugeQuestTrigger
-  _questManager: {fileID: 1006271138}
-  _questStep: 2
 --- !u!65 &1579120196
 BoxCollider:
   m_ObjectHideFlags: 0
