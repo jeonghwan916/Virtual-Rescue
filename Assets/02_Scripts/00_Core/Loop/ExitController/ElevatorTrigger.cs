@@ -7,8 +7,9 @@ public class ElevatorTrigger : MonoBehaviour
     [SerializeField] private LayerMask handLayerMask;
     private bool _hasTriggered;
     //[SerializeField] private Animator _animator;
-    //[SerializeField] private AudioSource _audioSource;
-    //[SerializeField] private AudioClip _audioClip;
+    [SerializeField] private AudioSource _elevatorAudioSource;
+    [SerializeField] private AudioClip _elevatorButtonClickAudioClip;
+    [SerializeField] private AudioClip _elevatorDingDongAudioClip;
     //[SerializeField] private bool _isTrap;
     //[SerializeField] private ParticleSystem _fireParticle;
 
@@ -41,6 +42,8 @@ public class ElevatorTrigger : MonoBehaviour
     {
 
         // 여기서 원하는 동작 실행
+        _elevatorAudioSource.PlayOneShot(_elevatorButtonClickAudioClip);
+        _elevatorAudioSource.PlayOneShot(_elevatorDingDongAudioClip);
         _exitController.RequestExit();
     }
 

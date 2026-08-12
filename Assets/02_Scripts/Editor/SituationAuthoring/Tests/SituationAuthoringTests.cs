@@ -119,6 +119,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring.Tests
                 locationId = "kitchen",
                 locationSceneFolder = "Kitchen",
                 locationControllerFolder = "Kitchen",
+                roomLocation = (int)RoomLocation.Kitchen,
                 level = (int)SituationLevel.Level1,
                 sceneName = "Scenario_Kitchen_Test",
                 controllerClassName = "KitchenTestSituationController",

@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using VirtualRescue.Effects;
 using VirtualRescue.GameFlow;
 using VirtualRescue.Loading;
+using VirtualRescue.Locations;
 using VirtualRescue.Player;
 
 public class DaySceneCoordinator : MonoBehaviour
@@ -34,6 +35,7 @@ public class DaySceneCoordinator : MonoBehaviour
     [SerializeField] private SituationSelector _situationSelector;
     [SerializeField] private SituationSceneLoader _situationSceneLoader;
     [SerializeField] private SituationDefinition _endingSituationDefinition;
+    [SerializeField] private RoomSituationController _roomSituationController;
 
     [Header("Clear Transition")]
     [SerializeField] private string _lobbySceneName = "LobbyScene";
@@ -77,6 +79,7 @@ public class DaySceneCoordinator : MonoBehaviour
         try
         {
             _screenFader?.ShowBlack();
+            _roomSituationController?.ResetDayState();
 
             bool homeLoaded = await _homeModuleLoader.LoadAsync(_homeLayout);
             if (!homeLoaded)
@@ -144,6 +147,8 @@ public class DaySceneCoordinator : MonoBehaviour
             {
                 Debug.Log($"{currentDay}일차는 무상황입니다.", this);
             }
+
+            _roomSituationController?.Configure(selectedSituation);
 
             await RunFadeAsync(_screenFader?.FadeIn(_fadeInDuration));
 

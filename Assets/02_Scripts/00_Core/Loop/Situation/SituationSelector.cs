@@ -12,9 +12,19 @@ namespace VirtualRescue.GameFlow
         [Range(0f, 1f)]
         [SerializeField] private float _noSituationChance = 0.2f;
 
+        [Range(0f, 1f)]
+        [SerializeField] private float _noSituationChanceReduction = 0.1f;
+
+        private float _currentNoSituationChance;
+
         public IReadOnlyList<SituationDefinition> Candidates => _candidates;
         public float NoSituationChance => _noSituationChance;
         public string LastError { get; private set; } = string.Empty;
+
+        private void Awake()
+        {
+            _currentNoSituationChance = _noSituationChance;
+        }
 
         public bool TrySelect(
             int currentDay,
@@ -71,19 +81,29 @@ namespace VirtualRescue.GameFlow
                 eligibleCandidates.Add(candidate);
             }
 
-            if (eligibleCandidates.Count == 0 ||
-                UnityEngine.Random.value < _noSituationChance)
+            if (eligibleCandidates.Count == 0)
             {
                 return true;
             }
 
+            if (UnityEngine.Random.value < _currentNoSituationChance)
+            {
+                _currentNoSituationChance = Mathf.Max(
+                    0f,
+                    _currentNoSituationChance - _noSituationChanceReduction);
+                return true;
+            }
+
             selectedDefinition = SelectByWeight(eligibleCandidates);
+            _currentNoSituationChance = _noSituationChance;
             return true;
         }
 
         private void OnValidate()
         {
             _noSituationChance = Mathf.Clamp01(_noSituationChance);
+            _noSituationChanceReduction = Mathf.Clamp01(
+                _noSituationChanceReduction);
         }
 
         private static HashSet<string> CreateNormalizedIdSet(
