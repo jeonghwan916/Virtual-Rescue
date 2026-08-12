@@ -121,6 +121,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 request.minimumDay;
             serializedDefinition.FindProperty("_sceneName").stringValue =
                 request.sceneName.Trim();
+            serializedDefinition.FindProperty("_roomLocation").enumValueIndex =
+                request.roomLocation;
             serializedDefinition.FindProperty("_usesTimeLimit").boolValue =
                 request.Level == SituationLevel.Level2 && request.usesTimeLimit;
             serializedDefinition.FindProperty("_timeLimitSeconds").floatValue =

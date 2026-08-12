@@ -26,6 +26,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         [SerializeField] private string _displayName = "Location_Situation";
         [SerializeField] private string _situationId = "location.situation";
         [SerializeField] private string _selectedLocationId = "room";
+        [SerializeField] private RoomLocation _roomLocation = RoomLocation.None;
         [SerializeField] private SituationLevel _level = SituationLevel.Level0;
         [SerializeField] private string _sceneName = "Scenario_Room_NewSituation";
         [SerializeField] private string _controllerClassName =
@@ -253,6 +254,11 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 Required("Level", "출구와 제한시간 규칙에 사용할 상황 단계를 선택합니다."),
                 _level);
             DrawLocationSelector();
+            _roomLocation = (RoomLocation)EditorGUILayout.EnumPopup(
+                Required(
+                    "Room Location",
+                    "상황 입장 대사를 출력할 RoomTrigger 위치입니다."),
+                _roomLocation);
 
             _sceneName = EditorGUILayout.TextField(Required(
                 "Scene Name",
@@ -558,6 +564,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 serializedDefinition.FindProperty("_weight"));
             EditorGUILayout.PropertyField(
                 serializedDefinition.FindProperty("_minimumDay"));
+            EditorGUILayout.PropertyField(
+                serializedDefinition.FindProperty("_roomLocation"));
 
             if ((SituationLevel)levelProperty.enumValueIndex ==
                 SituationLevel.Level2)
@@ -885,6 +893,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 locationSceneFolder = location?.SceneFolderName ?? string.Empty,
                 locationControllerFolder =
                     location?.ControllerFolderName ?? string.Empty,
+                roomLocation = (int)_roomLocation,
                 level = (int)_level,
                 sceneName = _sceneName,
                 controllerClassName = _controllerClassName,
