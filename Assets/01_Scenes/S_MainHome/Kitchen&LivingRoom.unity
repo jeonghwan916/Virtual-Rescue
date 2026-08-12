@@ -3739,13 +3739,35 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2960359685258275440, guid: c33b4d5a5496fe742a54e956c9bd07ee, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1243519418}
   m_SourcePrefab: {fileID: 100100000, guid: c33b4d5a5496fe742a54e956c9bd07ee, type: 3}
 --- !u!4 &1243519416 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2476592622769320138, guid: c33b4d5a5496fe742a54e956c9bd07ee, type: 3}
   m_PrefabInstance: {fileID: 1243519415}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1243519417 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2960359685258275440, guid: c33b4d5a5496fe742a54e956c9bd07ee, type: 3}
+  m_PrefabInstance: {fileID: 1243519415}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1243519418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1243519417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05ce67201c4440d7bb56dbc61c13a647, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.ModuleObjectRegistryItem
+  _objectId: {fileID: 11400000, guid: 151b6d329fe8eb94c9c450d3d86ebaef, type: 2}
+  _target: {fileID: 1243519417}
 --- !u!1001 &1257245701
 PrefabInstance:
   m_ObjectHideFlags: 0

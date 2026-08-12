@@ -1,4 +1,5 @@
 using UnityEngine;
+using VirtualRescue.Situations;
 
 namespace VirtualRescue.Interaction
 {
@@ -32,7 +33,7 @@ namespace VirtualRescue.Interaction
         [ColorUsage(true, true)]
         [SerializeField] private Color _onEmissionColor =
             new Color(4f, 0.1f, 0.02f, 1f);
-
+        
         private MaterialPropertyBlock _propertyBlock;
         private Material _material;
         private int _colorPropertyId;
