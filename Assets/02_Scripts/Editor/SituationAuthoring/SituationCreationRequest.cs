@@ -11,6 +11,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         public string locationId;
         public string locationSceneFolder;
         public string locationControllerFolder;
+        public int roomLocation;
         public int level;
         public string sceneName;
         public string controllerClassName;

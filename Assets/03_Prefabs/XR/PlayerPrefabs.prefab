@@ -4787,6 +4787,7 @@ GameObject:
   - component: {fileID: 7383174844094132801}
   - component: {fileID: 7383174844094132802}
   - component: {fileID: 5775269200674212979}
+  - component: {fileID: 5627994260387438629}
   m_Layer: 0
   m_Name: PlayerPrefabs
   m_TagString: Untagged
@@ -4857,6 +4858,20 @@ MonoBehaviour:
   _audioSource: {fileID: 7884228769781634763}
   _vignetteController: {fileID: 2256658240131441154}
   _playerTransform: {fileID: 5532992026282289034}
+--- !u!114 &5627994260387438629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5040499814158158394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 236988c280a19f645910f15646054940, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Locations.RoomVisitTracker
+  _currentRoomLocation: 0
+  _dialogue: {fileID: 0}
 --- !u!1 &5078464982010922456
 GameObject:
   m_ObjectHideFlags: 0
