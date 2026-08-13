@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingDataAsset: {fileID: 112000010, guid: 84c591f884804434eab9c33bc9d1046c, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -331,10 +331,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 534411134}
     m_Modifications:
+    - target: {fileID: 419210849072602051, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 5c6ca98732cf18d4696f60ab153a0eef, type: 2}
+    - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1728405412337421225, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_Name
       value: Calendar (2)
@@ -342,6 +354,10 @@ PrefabInstance:
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7584154035797623649, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -406,10 +422,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 534411134}
     m_Modifications:
+    - target: {fileID: 419210849072602051, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: e7b48a76dbe611d469761e4db59e6a69, type: 2}
+    - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1728405412337421225, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_Name
       value: Calendar (7)
@@ -417,6 +445,10 @@ PrefabInstance:
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7584154035797623649, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -923,7 +955,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 5
   m_IsActive: 1
 --- !u!4 &534411134
 Transform:
@@ -1171,9 +1203,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1953336287}
     m_Modifications:
+    - target: {fileID: 1004875686872756624, guid: d534ec11954fe9c48af4df245a94c9c3, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2145349876601739398, guid: d534ec11954fe9c48af4df245a94c9c3, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 3713863668505248449, guid: d534ec11954fe9c48af4df245a94c9c3, type: 3}
       propertyPath: m_Name
       value: Radio
+      objectReference: {fileID: 0}
+    - target: {fileID: 3713863668505248449, guid: d534ec11954fe9c48af4df245a94c9c3, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3803079919411596788, guid: d534ec11954fe9c48af4df245a94c9c3, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4089721430307788923, guid: d534ec11954fe9c48af4df245a94c9c3, type: 3}
       propertyPath: m_LocalScale.x
@@ -1226,6 +1274,30 @@ PrefabInstance:
     - target: {fileID: 4089721430307788923, guid: d534ec11954fe9c48af4df245a94c9c3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4389313886612853044, guid: d534ec11954fe9c48af4df245a94c9c3, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5160369823290916736, guid: d534ec11954fe9c48af4df245a94c9c3, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5290726082507267747, guid: d534ec11954fe9c48af4df245a94c9c3, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7285580493937888405, guid: d534ec11954fe9c48af4df245a94c9c3, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7897230249832843239, guid: d534ec11954fe9c48af4df245a94c9c3, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8664757984766073991, guid: d534ec11954fe9c48af4df245a94c9c3, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1449,10 +1521,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 534411134}
     m_Modifications:
+    - target: {fileID: 419210849072602051, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 07c63b3d5fdc0984f84b16ab168781f7, type: 2}
+    - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1728405412337421225, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_Name
       value: Calendar (6)
@@ -1460,6 +1544,10 @@ PrefabInstance:
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7584154035797623649, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1739,10 +1827,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 534411134}
     m_Modifications:
+    - target: {fileID: 419210849072602051, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 78f82a6d1ad2c804ba634355d9068904, type: 2}
+    - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1728405412337421225, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_Name
       value: Calendar (4)
@@ -1750,6 +1850,10 @@ PrefabInstance:
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7584154035797623649, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1825,10 +1929,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 534411134}
     m_Modifications:
+    - target: {fileID: 419210849072602051, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6af4d9d4ebb12174ca1e1606592e72aa, type: 2}
+    - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1728405412337421225, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_Name
       value: Calendar (3)
@@ -1836,6 +1952,10 @@ PrefabInstance:
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7584154035797623649, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1900,10 +2020,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 534411134}
     m_Modifications:
+    - target: {fileID: 419210849072602051, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: c82290ab8fa2d7b45bfff9df5de3b565, type: 2}
+    - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1728405412337421225, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_Name
       value: Calendar (5)
@@ -1911,6 +2043,10 @@ PrefabInstance:
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7584154035797623649, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1975,10 +2111,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 534411134}
     m_Modifications:
+    - target: {fileID: 419210849072602051, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: fe8ed6a31d3c38748a93829a95f060eb, type: 2}
+    - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1728405412337421225, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_Name
       value: Calendar (1)
@@ -1986,6 +2134,10 @@ PrefabInstance:
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7584154035797623649, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2397,6 +2549,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 534411134}
     m_Modifications:
+    - target: {fileID: 419210849072602051, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1728405412337421225, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_Name
       value: Calendar
@@ -2404,6 +2568,10 @@ PrefabInstance:
     - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7064884773426059739, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7584154035797623649, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
       propertyPath: m_LocalPosition.x
