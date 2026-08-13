@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using VirtualRescue.Situations;
 
 namespace VirtualRescue.Interaction
 {
@@ -19,6 +20,8 @@ namespace VirtualRescue.Interaction
         [Tooltip("손목 회전 방향이 반대로 움직이면 활성화")]
         [SerializeField] private bool _invertDirection;
 
+        [SerializeField] private KitchenInductionLeverSituationController _controller;
+        
         private IXRSelectInteractor _activeInteractor;
         private Transform _activeInteractorTransform;
         private Quaternion _previousInteractorRotation;
