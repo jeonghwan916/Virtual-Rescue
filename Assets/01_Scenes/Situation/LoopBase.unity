@@ -2462,32 +2462,43 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RadioController
   _radioAudioSource: {fileID: 1953336288}
   _commonBroadcastAudioClips:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 8300000, guid: 1e4672424fd9f8f418671d34a068d1d0, type: 3}
+  - {fileID: 8300000, guid: 4f63320dd14ba5e44b9cfa80049ee296, type: 3}
+  - {fileID: 8300000, guid: 9992cf2ebc2ec684fa44131aef5d0abb, type: 3}
   _failBroadcastEntries:
-  - _situationId: 
-    _clip: {fileID: 0}
-  - _situationId: 
-    _clip: {fileID: 0}
-  - _situationId: 
-    _clip: {fileID: 0}
-  - _situationId: 
-    _clip: {fileID: 0}
-  - _situationId: 
-    _clip: {fileID: 0}
-  - _situationId: 
-    _clip: {fileID: 0}
-  - _situationId: 
-    _clip: {fileID: 0}
-  - _situationId: 
-    _clip: {fileID: 0}
-  - _situationId: 
-    _clip: {fileID: 0}
-  - _situationId: 
-    _clip: {fileID: 0}
+  - _situationId: balcony.cigarette
+    _clip: {fileID: 8300000, guid: d3b56679c49b61f42b90766a1816bf1f, type: 3}
+  - _situationId: balcony.descender_observation
+    _clip: {fileID: 8300000, guid: 5c3f8561d0f561548a000756b4acfecf, type: 3}
+  - _situationId: entirehouse.alarm
+    _clip: {fileID: 8300000, guid: dea90268312aa564ea1ad67dcf710824, type: 3}
+  - _situationId: entrance.fire_suppression
+    _clip: {fileID: 8300000, guid: 52670dee7114cf141a6e744d39ed5b72, type: 3}
+  - _situationId: hair_straightener.hazard
+    _clip: {fileID: 8300000, guid: 7b35e63d1ca33e343a65e9dbb391d23b, type: 3}
+  - _situationId: kitchen.fire_extinguisher_observation
+    _clip: {fileID: 8300000, guid: e00f6aa1844116f4290fba85d24a0541, type: 3}
+  - _situationId: kitchen.inductionlever
+    _clip: {fileID: 8300000, guid: aba377a00e3184947870a4ee3f4434c6, type: 3}
+  - _situationId: kitchen.oil_fire
+    _clip: {fileID: 8300000, guid: cf55fa42761bbd94195c495b35eaa0db, type: 3}
+  - _situationId: lightweight_partition.escape
+    _clip: {fileID: 8300000, guid: 3d82d49faf5e549448481fa0dd222572, type: 3}
+  - _situationId: power_strip.fire
+    _clip: {fileID: 8300000, guid: f356d8138495faf4abaee2bdc19789e8, type: 3}
+  - _situationId: power_strip.unplug
+    _clip: {fileID: 8300000, guid: 88b7ec76808055846ab6bafce9536537, type: 3}
   _fallbackFailBroadcastClip: {fileID: 0}
   _musicClip: {fileID: 0}
+  _staticAudioSource: {fileID: 0}
+  _staticNoiseClip: {fileID: 8300000, guid: 0695824886d55034d9b47140e137edab, type: 3}
+  _introStaticDuration: 0.7
+  _introStaticOverlapDuration: 0.3
+  _outroStaticDuration: 0.5
+  _staticVolume: 0.7
+  _broadcastFadeInDuration: 3
+  _broadcastFadeOutDuration: 3
+  _broadcastVolume: 1
 --- !u!1001 &1965316944
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2868,9 +2879,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c8c3ff1536f4a31b29b822291df07b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationSelector
-  _candidates:
-  - {fileID: 11400000, guid: b46c7b0b94976784fb209eb0969bf1ac, type: 2}
+  _candidates: []
   _noSituationChance: 0.2
+  _noSituationChanceReduction: 0.1
 --- !u!114 &2029193223
 MonoBehaviour:
   m_ObjectHideFlags: 0
