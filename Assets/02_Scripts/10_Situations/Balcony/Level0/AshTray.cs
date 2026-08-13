@@ -17,8 +17,7 @@ public class AshTray : MonoBehaviour
             other.GetComponent<XRGrabInteractable>().enabled = false;
         }
     }
-
-    /*
+    
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject == _cigarette)
@@ -27,5 +26,4 @@ public class AshTray : MonoBehaviour
             _situationController.OnCigaretteExitedAshtray();
         }
     }
-    */
 }
