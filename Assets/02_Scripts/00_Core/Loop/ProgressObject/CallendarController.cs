@@ -27,7 +27,11 @@ public class CallendarController : MonoBehaviour
         // 모든 집 모듈 + 상황 씬 로딩 + 페이드인까지 끝난 뒤 실행
         if (currentDay != 1)
         {
-            _callendars[0].SetActive(false);
+            for (int i = 0; i < _callendars.Length; i++)
+            {
+                if (_callendars[i].activeSelf) _callendars[i].SetActive(false);
+            }
+            
             if (currentDay == 2) _callendars[1].SetActive(true);
             else if (currentDay == 3) _callendars[2].SetActive(true);
             else if (currentDay == 4) _callendars[3].SetActive(true);
