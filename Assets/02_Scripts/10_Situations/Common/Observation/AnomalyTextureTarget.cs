@@ -69,6 +69,20 @@ namespace VirtualRescue.Situations.AnomalyObservation
             return target == this;
         }
 
+        public virtual bool TryGetObservationHit(
+            Ray ray,
+            float maximumDistance,
+            LayerMask raycastMask,
+            out RaycastHit hit)
+        {
+            return Physics.Raycast(
+                ray,
+                out hit,
+                maximumDistance,
+                raycastMask,
+                QueryTriggerInteraction.Ignore);
+        }
+
         private bool TryApplyTexture(Texture texture, string textureRole)
         {
             if (!TryValidateSettings(texture, textureRole, out int propertyId))
