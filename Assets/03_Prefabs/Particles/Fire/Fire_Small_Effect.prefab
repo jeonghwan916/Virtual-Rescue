@@ -9732,9 +9732,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FireObject
   _fireParticles: []
-  _extinguishDuration: 4
+  _extinguishDuration: 2
   _extinguishStageCount: 4
   _disableWhenExtinguished: 1
+  _temporaryOnlySuppressants: 
+  _maximumTemporarySuppression: 0.75
+  _temporaryRecoveryDelay: 0.15
+  _temporaryRecoveryDuration: 3
 --- !u!135 &6427645639204349642
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -9754,7 +9758,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 0.7
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!82 &1547152690847526177
 AudioSource:
@@ -9769,7 +9773,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 57294301f9bedd547b37747f414c89ea, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -9777,10 +9781,10 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
+  MinDistance: 2
+  MaxDistance: 8
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -9813,7 +9817,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
