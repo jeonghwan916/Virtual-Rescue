@@ -45,6 +45,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             "VirtualRescue.Situations";
         [SerializeField] private int _weight = 1;
         [SerializeField] private int _minimumDay = 1;
+        [SerializeField] private string _resolvedDialogueId = string.Empty;
+        [SerializeField] private string _failedDialogueId = string.Empty;
         [SerializeField] private bool _registerAsCandidate;
         [SerializeField] private bool _usesTimeLimit;
         [SerializeField] private float _timeLimitSeconds = 60f;
@@ -328,6 +330,14 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
             EditorGUILayout.Space(8f);
             EditorGUILayout.LabelField(Tr("Optional"), EditorStyles.boldLabel);
+            _resolvedDialogueId = EditorGUILayout.TextField(Optional(
+                "Resolved Dialogue Id",
+                "상황 해결 시 재생할 Dialogue ID입니다. 비워두면 재생하지 않습니다."),
+                _resolvedDialogueId);
+            _failedDialogueId = EditorGUILayout.TextField(Optional(
+                "Failed Dialogue Id",
+                "상황 실패 시 재생할 Dialogue ID입니다. 비워두면 재생하지 않습니다."),
+                _failedDialogueId);
             _registerAsCandidate = EditorGUILayout.Toggle(Optional(
                 "Register as Candidate",
                 "활성화하면 생성한 Definition을 LoopBase Candidates에 추가합니다. " +
@@ -627,7 +637,11 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             EditorGUILayout.PropertyField(
                 serializedDefinition.FindProperty("_minimumDay"));
             EditorGUILayout.PropertyField(
-                serializedDefinition.FindProperty("_roomLocation"));
+                serializedDefinition.FindProperty("_roomTrigger"));
+            EditorGUILayout.PropertyField(
+                serializedDefinition.FindProperty("_resolvedDialogueId"));
+            EditorGUILayout.PropertyField(
+                serializedDefinition.FindProperty("_failedDialogueId"));
 
             if ((SituationLevel)levelProperty.enumValueIndex ==
                 SituationLevel.Level2)
@@ -1260,6 +1274,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 controllerNamespace = _controllerNamespace,
                 weight = _weight,
                 minimumDay = _minimumDay,
+                resolvedDialogueId = _resolvedDialogueId,
+                failedDialogueId = _failedDialogueId,
                 registerAsCandidate = _registerAsCandidate,
                 usesTimeLimit = _usesTimeLimit,
                 timeLimitSeconds = _timeLimitSeconds,
@@ -1651,6 +1667,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 case "Percentage": return "비율";
                 case "Weight": return "가중치";
                 case "Minimum Day": return "최소 날짜";
+                case "Resolved Dialogue Id": return "해결 대사 ID";
+                case "Failed Dialogue Id": return "실패 대사 ID";
                 case "Register as Candidate": return "후보로 등록";
                 case "Initial Prefabs": return "초기 프리팹";
                 case "Module Object IDs": return "모듈 오브젝트 ID";

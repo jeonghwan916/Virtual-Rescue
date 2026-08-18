@@ -18,6 +18,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         public string controllerNamespace;
         public int weight = 1;
         public int minimumDay = 1;
+        public string resolvedDialogueId;
+        public string failedDialogueId;
         public bool registerAsCandidate;
         public bool usesTimeLimit;
         public float timeLimitSeconds = 60f;

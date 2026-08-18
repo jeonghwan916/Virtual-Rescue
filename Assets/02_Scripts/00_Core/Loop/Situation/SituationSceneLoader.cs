@@ -11,6 +11,9 @@ namespace VirtualRescue.GameFlow
     {
         private Scene _loadedScene;
 
+        public event Action<SituationController, SituationDefinition> SituationLoaded;
+        public event Action SituationUnloaded;
+
         public SituationDefinition CurrentDefinition { get; private set; }
         public SituationSceneRoot CurrentRoot { get; private set; }
         public SituationController CurrentController { get; private set; }
@@ -80,6 +83,7 @@ namespace VirtualRescue.GameFlow
                 CurrentDefinition = definition;
                 CurrentRoot = root;
                 CurrentController = controller;
+                SituationLoaded?.Invoke(CurrentController, CurrentDefinition);
                 return true;
             }
             catch (Exception exception)
@@ -116,6 +120,7 @@ namespace VirtualRescue.GameFlow
             if (!HasLoadedSituation)
             {
                 ClearCurrentSituation();
+                SituationUnloaded?.Invoke();
                 LastError = string.Empty;
                 return true;
             }
@@ -136,6 +141,7 @@ namespace VirtualRescue.GameFlow
 
                 await AwaitOperationAsync(operation);
                 ClearCurrentSituation();
+                SituationUnloaded?.Invoke();
                 return true;
             }
             catch (Exception exception)
