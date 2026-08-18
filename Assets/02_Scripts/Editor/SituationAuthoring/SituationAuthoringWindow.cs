@@ -116,6 +116,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 _situationId = "location.situation";
             }
 
+            ApplyDerivedNames();
+
             _locationCatalog =
                 AssetDatabase.LoadAssetAtPath<SituationLocationCatalog>(
                     SituationLocationCatalogService.CatalogPath);
@@ -260,26 +262,39 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
             EditorGUILayout.Space(8f);
             EditorGUILayout.LabelField(Tr("Name"), EditorStyles.boldLabel);
+            EditorGUI.BeginChangeCheck();
             _displayName = EditorGUILayout.TextField(Required(
                 "Situation Definition Name",
                 "Hierarchy에 표시되며 Definition 파일명에 사용되는 이름입니다."),
                 _displayName);
-            _sceneName = EditorGUILayout.TextField(Required(
-                "Scene Name",
-                "생성할 씬 에셋 이름입니다. Scenario_ 접두사 사용을 권장합니다."),
-                _sceneName);
-            _controllerClassName = EditorGUILayout.TextField(Required(
-                "Controller Class Name",
-                "SituationController를 상속하여 생성할 C# 클래스 이름입니다."),
-                _controllerClassName);
+            if (EditorGUI.EndChangeCheck())
+            {
+                ApplyDerivedNames();
+            }
+
+            using (new EditorGUI.DisabledScope(true))
+            {
+                _sceneName = EditorGUILayout.TextField(Required(
+                    "Scene Name",
+                    "Situation Definition Name에서 자동 생성됩니다."),
+                    _sceneName);
+                _controllerClassName = EditorGUILayout.TextField(Required(
+                    "Controller Class Name",
+                    "Situation Definition Name에서 자동 생성됩니다."),
+                    _controllerClassName);
+            }
+
             _controllerNamespace = EditorGUILayout.TextField(Required(
                 "Controller Namespace",
                 "생성할 Controller 클래스의 C# 네임스페이스입니다."),
                 _controllerNamespace);
-            _situationId = EditorGUILayout.TextField(Required(
-                "Situation ID",
-                "상황 기록과 라디오 매칭에 사용하는 고유 ID입니다. 중복될 수 없습니다."),
-                _situationId);
+            using (new EditorGUI.DisabledScope(true))
+            {
+                _situationId = EditorGUILayout.TextField(Required(
+                    "Situation ID",
+                    "Situation Definition Name에서 자동 생성됩니다."),
+                    _situationId);
+            }
 
             EditorGUILayout.Space(8f);
             EditorGUILayout.LabelField(
@@ -291,7 +306,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             DrawLocationSelector();
             _roomLocation = (RoomLocation)EditorGUILayout.EnumPopup(
                 Required(
-                    "Room Location",
+                    "Room Trigger",
                     "상황 입장 대사를 출력할 RoomTrigger 위치입니다."),
                 _roomLocation);
             DrawRoomLocationWarning();
@@ -418,12 +433,11 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
         private void DrawLocationSelector()
         {
-            EditorGUILayout.LabelField(Required(
-                "Location",
-                "씬과 Controller 저장 폴더를 결정하는 Location 항목입니다."));
-
             if (_locationCatalog == null || _locationCatalog.Locations.Count == 0)
             {
+                EditorGUILayout.LabelField(Required(
+                    "Location",
+                    "씬과 Controller 저장 폴더를 결정하는 Location 항목입니다."));
                 EditorGUILayout.HelpBox(
                     Tr("Situation Location Catalog is missing or empty."),
                     MessageType.Error);
@@ -453,7 +467,12 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 }
             }
 
-            int newIndex = EditorGUILayout.Popup(selectedIndex, displayNames);
+            int newIndex = EditorGUILayout.Popup(
+                Required(
+                    "Location",
+                    "씬과 Controller 저장 폴더를 결정하는 Location 항목입니다."),
+                selectedIndex,
+                displayNames);
             if (newIndex != selectedIndex ||
                 string.IsNullOrWhiteSpace(_selectedLocationId))
             {
@@ -1122,6 +1141,86 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 : $"{normalized}_Common";
         }
 
+        private void ApplyDerivedNames()
+        {
+            string definitionName = SanitizeSituationDefinitionName(_displayName);
+            _sceneName = string.IsNullOrEmpty(definitionName)
+                ? string.Empty
+                : $"Scenario_{definitionName}";
+            _controllerClassName = string.IsNullOrEmpty(definitionName)
+                ? string.Empty
+                : $"{ToPascalIdentifier(definitionName)}SituationController";
+            _situationId = ToSituationId(definitionName);
+        }
+
+        private static string SanitizeSituationDefinitionName(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return string.Empty;
+            }
+
+            string trimmed = value.Trim();
+            foreach (char invalidCharacter in
+                     System.IO.Path.GetInvalidFileNameChars())
+            {
+                trimmed = trimmed.Replace(invalidCharacter, '_');
+            }
+
+            return trimmed.Replace(' ', '_');
+        }
+
+        private static string ToPascalIdentifier(string value)
+        {
+            string[] tokens = SplitSituationName(value);
+            if (tokens.Length == 0)
+            {
+                return string.Empty;
+            }
+
+            string result = string.Concat(tokens.Select(ToIdentifierToken));
+            if (string.IsNullOrEmpty(result))
+            {
+                return string.Empty;
+            }
+
+            return char.IsDigit(result[0])
+                ? $"_{result}"
+                : result;
+        }
+
+        private static string ToIdentifierToken(string token)
+        {
+            string cleaned = new(token
+                .Where(char.IsLetterOrDigit)
+                .ToArray());
+            if (string.IsNullOrEmpty(cleaned))
+            {
+                return string.Empty;
+            }
+
+            return char.ToUpperInvariant(cleaned[0]) +
+                   (cleaned.Length > 1 ? cleaned.Substring(1) : string.Empty);
+        }
+
+        private static string ToSituationId(string value)
+        {
+            string[] tokens = SplitSituationName(value)
+                .Select(token => new string(token
+                    .Where(char.IsLetterOrDigit)
+                    .Select(char.ToLowerInvariant)
+                    .ToArray()))
+                .Where(token => !string.IsNullOrEmpty(token))
+                .ToArray();
+            return string.Join(".", tokens);
+        }
+
+        private static string[] SplitSituationName(string value)
+        {
+            return (value ?? string.Empty)
+                .Split(new[] { '_', '-', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        }
+
         private SituationCreationRequest BuildRequest()
         {
             List<int> exits = new();
@@ -1320,69 +1419,20 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             string key,
             out RoomLocation roomLocation)
         {
-            switch (NormalizeLocationKey(key))
+            string normalizedKey = NormalizeLocationKey(key);
+            foreach (RoomLocation candidate in
+                     Enum.GetValues(typeof(RoomLocation)).Cast<RoomLocation>())
             {
-                case "room":
-                case "rooma":
-                case "bedroom":
-                case "bedrooma":
-                    roomLocation = RoomLocation.RoomA;
+                if (candidate != RoomLocation.None &&
+                    normalizedKey == NormalizeLocationKey(candidate.ToString()))
+                {
+                    roomLocation = candidate;
                     return true;
-                case "roomb":
-                case "bedroomb":
-                case "bedroom2":
-                    roomLocation = RoomLocation.RoomB;
-                    return true;
-                case "roomc":
-                    roomLocation = RoomLocation.RoomC;
-                    return true;
-                case "roomd":
-                    roomLocation = RoomLocation.RoomD;
-                    return true;
-                case "balcony":
-                case "balcony1":
-                    roomLocation = RoomLocation.Balcony1;
-                    return true;
-                case "balcony2":
-                    roomLocation = RoomLocation.Balcony2;
-                    return true;
-                case "kitchen":
-                    roomLocation = RoomLocation.Kitchen;
-                    return true;
-                case "livingroom":
-                    roomLocation = RoomLocation.LivingRoom;
-                    return true;
-                case "clothesroom":
-                case "clothes":
-                    roomLocation = RoomLocation.ClothesRoom;
-                    return true;
-                case "bathroom":
-                case "bathroom1":
-                    roomLocation = RoomLocation.Bathroom1;
-                    return true;
-                case "bathroom2":
-                    roomLocation = RoomLocation.Bathroom2;
-                    return true;
-                case "entrance":
-                    roomLocation = RoomLocation.Entrance;
-                    return true;
-                case "porch":
-                case "vestibule":
-                case "vestibuleroom":
-                    roomLocation = RoomLocation.Porch;
-                    return true;
-                case "hallway":
-                case "hallwaystair":
-                case "hallwayandstair":
-                    roomLocation = RoomLocation.Hallway;
-                    return true;
-                case "entirehouse":
-                    roomLocation = RoomLocation.EntireHouse;
-                    return true;
-                default:
-                    roomLocation = RoomLocation.None;
-                    return false;
+                }
             }
+
+            roomLocation = RoomLocation.None;
+            return false;
         }
 
         private static string NormalizeLocationKey(string value)
@@ -1594,7 +1644,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 case "Level & Location": return "레벨 및 위치";
                 case "Home Layout": return "홈 레이아웃";
                 case "Level": return "레벨";
-                case "Room Location": return "방 위치";
+                case "Room Trigger": return "룸 트리거";
                 case "Scene Name": return "씬 이름";
                 case "Controller Class Name": return "Controller 클래스 이름";
                 case "Controller Namespace": return "Controller 네임스페이스";
