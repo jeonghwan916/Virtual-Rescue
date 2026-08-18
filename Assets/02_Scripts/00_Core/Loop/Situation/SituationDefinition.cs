@@ -27,7 +27,7 @@ namespace VirtualRescue.GameFlow
 
         [Header("Scene")]
         [SerializeField] private string _sceneName = string.Empty;
-        [SerializeField] private RoomLocation _roomLocation = RoomLocation.None;
+        [SerializeField] private RoomLocation _roomTrigger = RoomLocation.None;
 
         [Header("Level 2 Rules")]
         [SerializeField] private bool _usesTimeLimit;
@@ -40,7 +40,7 @@ namespace VirtualRescue.GameFlow
         public int Weight => _weight;
         public int MinimumDay => _minimumDay;
         public string SceneName => _sceneName;
-        public RoomLocation RoomLocation => _roomLocation;
+        public RoomLocation RoomLocation => _roomTrigger;
         public bool UsesTimeLimit =>
             _level == SituationLevel.Level2 && _usesTimeLimit;
         public float TimeLimitSeconds => UsesTimeLimit ? _timeLimitSeconds : 0f;

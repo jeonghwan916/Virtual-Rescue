@@ -192,16 +192,15 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
         private static void AddDefaults(SituationLocationCatalog catalog)
         {
-            foreach (string name in new[]
-                     {
-                         "Balcony",
-                         "EntireHouse",
-                         "Entrance",
-                         "Kitchen",
-                         "LivingRoom",
-                         "Room"
-                     })
+            foreach (RoomLocation roomLocation in
+                     Enum.GetValues(typeof(RoomLocation)).Cast<RoomLocation>())
             {
+                if (roomLocation == RoomLocation.None)
+                {
+                    continue;
+                }
+
+                string name = roomLocation.ToString();
                 catalog.Add(new SituationLocationEntry(
                     ToId(name),
                     name,
