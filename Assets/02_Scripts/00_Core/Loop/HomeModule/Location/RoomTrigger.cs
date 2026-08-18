@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
+using VirtualRescue.GameFlow;
 using VirtualRescue.Player;
 
 namespace VirtualRescue.Locations
@@ -14,10 +14,17 @@ namespace VirtualRescue.Locations
 
         [SerializeField] private string _playerTag = "Player";
 
+        public event Action<RoomTrigger, SituationLevel> SituationEntryDialoguePlayed;
+
         private RoomVisitTracker _visitTracker;
         private string _situationDialogueId;
+        private SituationLevel? _situationLevel;
         private bool _hasPlayedEntryDialogue;
 
+        private bool _entryDialogueSuppressed;
+
+        private bool HasSituationDialogue =>
+            !string.IsNullOrEmpty(_situationDialogueId);
 
         private void Awake()
         {
@@ -47,29 +54,49 @@ namespace VirtualRescue.Locations
 
             _visitTracker.Enter(Location);
 
-            if (_hasPlayedEntryDialogue)
+            if (_entryDialogueSuppressed || _hasPlayedEntryDialogue)
             {
                 return;
             }
 
             _hasPlayedEntryDialogue = true;
-            string dialogueId = string.IsNullOrEmpty(_situationDialogueId)
-                ? Location.ToString()
-                : _situationDialogueId;
+            string dialogueId = HasSituationDialogue
+                ? _situationDialogueId
+                : Location.ToString();
             _visitTracker.DisplayDialogue(dialogueId);
+
+            if (HasSituationDialogue && _situationLevel.HasValue)
+            {
+                SituationEntryDialoguePlayed?.Invoke(
+                    this,
+                    _situationLevel.Value);
+            }
         }
 
-        public void ConfigureSituation(string dialogueId)
+        public void ConfigureSituation(
+            string dialogueId,
+            SituationLevel situationLevel)
         {
             _situationDialogueId = string.IsNullOrWhiteSpace(dialogueId)
                 ? string.Empty
                 : dialogueId.Trim();
+
+            _situationLevel = HasSituationDialogue
+                ? situationLevel
+                : null;
+        }
+
+        public void SuppressEntryDialogue()
+        {
+            _entryDialogueSuppressed = true;
         }
 
         public void ResetDayState()
         {
             _hasPlayedEntryDialogue = false;
+            _entryDialogueSuppressed = false;
             _situationDialogueId = string.Empty;
+            _situationLevel = null;
         }
 
         private void OnTriggerExit(Collider other)

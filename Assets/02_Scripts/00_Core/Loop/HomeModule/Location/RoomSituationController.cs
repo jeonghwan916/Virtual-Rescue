@@ -7,14 +7,37 @@ namespace VirtualRescue.Locations
     public sealed class RoomSituationController : MonoBehaviour
     {
         private RoomTrigger[] _roomTriggers;
+        private bool _roomDialoguesSuppressed;
 
         private void Awake()
         {
             _roomTriggers = GetComponentsInChildren<RoomTrigger>(true);
+
+            foreach (RoomTrigger roomTrigger in _roomTriggers)
+            {
+                roomTrigger.SituationEntryDialoguePlayed +=
+                    HandleSituationEntryDialoguePlayed;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (_roomTriggers == null)
+            {
+                return;
+            }
+
+            foreach (RoomTrigger roomTrigger in _roomTriggers)
+            {
+                roomTrigger.SituationEntryDialoguePlayed -=
+                    HandleSituationEntryDialoguePlayed;
+            }
         }
 
         public void ResetDayState()
         {
+            _roomDialoguesSuppressed = false;
+
             foreach (RoomTrigger roomTrigger in _roomTriggers)
             {
                 roomTrigger.ResetDayState();
@@ -39,7 +62,7 @@ namespace VirtualRescue.Locations
                     continue;
                 }
 
-                roomTrigger.ConfigureSituation(dialogueId);
+                roomTrigger.ConfigureSituation(dialogueId, definition.Level);
                 found = true;
             }
 
@@ -60,6 +83,31 @@ namespace VirtualRescue.Locations
                 SituationLevel.Level2 => "Situation2",
                 _ => string.Empty
             };
+        }
+
+        private void HandleSituationEntryDialoguePlayed(
+            RoomTrigger source,
+            SituationLevel situationLevel)
+        {
+            if (_roomDialoguesSuppressed ||
+                !ShouldSuppressAfterSituationEntry(situationLevel))
+            {
+                return;
+            }
+
+            _roomDialoguesSuppressed = true;
+
+            foreach (RoomTrigger roomTrigger in _roomTriggers)
+            {
+                roomTrigger.SuppressEntryDialogue();
+            }
+        }
+
+        private static bool ShouldSuppressAfterSituationEntry(
+            SituationLevel situationLevel)
+        {
+            return situationLevel == SituationLevel.Level1 ||
+                   situationLevel == SituationLevel.Level2;
         }
     }
 }
