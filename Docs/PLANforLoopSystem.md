@@ -15,7 +15,7 @@
 → 플레이어 탐색 및 상황 해결
 → 출구 사용
 → DayOutcomeController가 상황 상태와 출구 종류 판정
-→ 성공 시 다음 날 / 실패 시 1일차
+→ 성공 시 다음 날 / 실패 시 이전 날
 → 7일차 성공 후 8일차 집 모듈과 전용 엔딩 상황 로드
 → 엔딩 상황에서 엘리베이터 사용 시 클리어
 → 엔딩 정리 후 지정된 후속 씬으로 전환
@@ -27,7 +27,8 @@
 
 - 1일차부터 7일차까지를 한 사이클로 취급한다.
 - 다음 날로 진행할 때 현재 사이클의 상황 발생 이력을 유지한다.
-- 실패하면 1일차로 돌아가며 상황 발생 이력을 전부 초기화한다.
+- 실패하면 이전 날로 돌아간다. 단, 1일차에서 실패한 경우에는 1일차를 다시 시작한다.
+- 실패한 당일에 등록된 상황 ID는 발생 이력에서 제거하고, 이전 날까지의 성공 이력은 유지한다.
 - 7일차 성공 후 8일차에 도달하는 것만으로는 게임을 클리어하지 않는다.
 - 8일차 집 모듈과 전용 엔딩 상황이 정상적으로 로드된 뒤 `Playing` 상태에 진입한다.
 - 엔딩 상황에서 엘리베이터를 사용하면 게임을 클리어하고 지정된 후속 씬으로 전환한다.
@@ -40,7 +41,7 @@
 - 엔딩 상황은 사이클 내 상황 발생 이력에 등록하지 않는다.
 - 엔딩 씬도 기존 `SituationSceneLoader` 계약을 따르므로 씬 루트의 `SituationSceneRoot` 하나와 해당 루트 또는 자식의 구체적인 `SituationController`가 필요하다.
 - 엔딩 상황은 별도의 해결 상태를 요구하지 않으며, 엔딩 정의와 컨트롤러가 정상 로드된 상태에서 엘리베이터 출구 요청을 받으면 완료된다.
-- 엔딩 중 다른 출구 요청은 실패로 처리해 1일차로 초기화하지 않고 거부한다.
+- 엔딩 중 다른 출구 요청은 실패로 처리해 이전 날로 되돌리지 않고 거부한다.
 - 엔딩 완료 후 이동할 후속 씬은 아직 확정하지 않으며, 설정된 씬 이름을 통해 교체할 수 있도록 유지한다.
 
 ### 상황 선택
@@ -231,8 +232,8 @@ flowchart TD
     C8 --> U8["엔딩 상황과 집 모듈 언로드"]
     U8 --> D8["지정된 후속 씬으로 전환"]
 
-    K --> O["날짜를 1일차로 초기화"]
-    O --> P["상황 발생 이력 초기화"]
+    K --> O["날짜를 이전 날로 되돌림<br/>1일차 실패는 1일차 유지"]
+    O --> P["실패한 당일 상황 ID만 이력에서 제거"]
     P --> N
 ```
 
@@ -248,7 +249,7 @@ flowchart TD
 
     B -->|무상황| NS{"출구 종류"}
     NS -->|Elevator| COMPLETE["CompleteDay()<br/>다음 날 진행"]
-    NS -->|그 외| FAIL["FailDay()<br/>1일차로 초기화"]
+    NS -->|그 외| FAIL["FailDay()<br/>이전 날로 되돌림"]
 
     B -->|"0단계 또는 1단계"| L01{"상황 상태"}
     L01 -->|"Active 또는 Failed"| FAIL
@@ -274,19 +275,19 @@ flowchart TD
 
 ## 5. 스크립트 현황과 책임
 
-### 1. `DayRunState` - 구현 완료
+### 1. `DayRunState` - 구현 수정 필요
 
 - 현재 날짜와 사이클 내 발생 상황 ID를 관리하는 순수 C# 객체다.
 - `AdvanceDay()`는 발생 이력을 유지한다.
 - `IsEndingDay`는 현재 날짜가 8일차인지 구분하며, 8일차 도달 자체를 클리어로 취급하지 않는다.
-- `ResetRun()`은 날짜를 1일차로 되돌리고 이력을 초기화한다.
+- `RollbackDay()`는 날짜를 이전 날로 되돌리고 실패한 당일의 상황 ID만 이력에서 제거한다. 1일차 실패 시 날짜는 1일차로 유지한다.
 - `HasSeenSituation()`, `TryRegisterSituation()`, `SeenSituationIds`를 제공한다.
 
-### 2. `DayFlowController` - 기본 구현 완료
+### 2. `DayFlowController` - 구현 수정 필요
 
 - `DayRunState`를 소유한다.
 - `Preparing`, `LoadingHome`, `Playing`, `Transitioning`, `Cleared` 상태를 관리한다.
-- 하루 시작, 날짜 전환, 실패 초기화와 게임 클리어 이벤트를 발행한다.
+- 하루 시작, 날짜 전환, 실패 후 이전 날 복귀와 게임 클리어 이벤트를 발행한다.
 - 로딩 중에만 `TryRegisterSituation()`으로 상황 ID 등록을 허용한다.
 - `CurrentDay`, `CurrentState`, `SeenSituationIds`, `LastDayResult`를 외부에 제공한다.
 - 1~7일차는 `CompleteDay(DayResultContext)`와 `FailDay(DayResultContext)`로 결과를 처리한다.
@@ -362,7 +363,7 @@ flowchart TD
 - 맵, 상황, 결과 판정 컴포넌트를 검색하거나 참조하지 않는다.
 - 성공·실패를 판단하거나 날짜를 변경하지 않는다.
 
-### 12. `DayOutcomeController` - 구현 완료
+### 12. `DayOutcomeController` - 구현 수정 필요
 
 - Core 씬에서 출구 요청을 한 번 구독한다.
 - `SituationSceneLoader`가 제공하는 현재 상황 정의와 컨트롤러를 사용한다.
@@ -373,7 +374,7 @@ flowchart TD
 - 8일차에는 엔딩 정의와 컨트롤러가 로드되어 있는지 확인하고, 엘리베이터 요청만 `CompleteGame(DayResultContext)`에 연결한다.
 - 8일차의 다른 출구 요청은 루프 실패로 처리하지 않고 거부한다.
 
-### 13. `DaySceneCoordinator` - 기본 구현 완료
+### 13. `DaySceneCoordinator` - 구현 수정 필요
 
 - 하루 시작 시 `HomeLayoutDefinition`에 등록된 기본 집 모듈과 현재 테스트용 `ExitScene`을 먼저 로드한다.
 - 집 로드 완료 후 Inspector로 연결된 `PersistentPlayerRoot`를 하루 시작 위치로 이동한다.
@@ -389,11 +390,11 @@ flowchart TD
 - 엔딩 완료 시 엔딩 상황과 집 모듈을 언로드한 뒤 설정된 후속 씬으로 전환한다.
 - 준비 실패 시 현재는 오류를 출력하고 `LoadingHome` 상태에 머문다. 실제 게임 적용 전 Error 상태 또는 준비 실패 API가 필요하다.
 
-### 13-1. `RadioController` - 구현 완료
+### 13-1. `RadioController` - 구현 수정 필요
 
 - Inspector로 연결된 `AudioSource`에서 하루 시작 방송 클립을 재생한다.
 - 첫 시작, 무상황 성공, 상황 해결 후 다음 날 진행은 공통 방송 클립 목록에서 무작위로 하나를 선택한다.
-- 실패 후 1일차로 돌아온 경우 `DayResultContext.SituationId`와 일치하는 실패 방송 엔트리의 클립을 재생한다.
+- 실패 후 이전 날로 돌아온 경우 `DayResultContext.SituationId`와 일치하는 실패 방송 엔트리의 클립을 재생한다. 1일차 실패 시에는 1일차 재시작 방송으로 동일하게 처리한다.
 - 실패 방송 엔트리와 매칭되지 않으면 선택적으로 설정한 fallback 실패 방송 클립을 사용한다.
 - 실패 방송 매칭 기준은 씬 이름이나 배열 순서가 아니라 `SituationDefinition.Id`를 사용한다.
 
@@ -622,7 +623,7 @@ Inspector 연결 순서:
 - `EntireHouseAlarmSituationController`는 Registry 조회와 문 이벤트 구독을 직접 수행하지 않는다.
 - `SituationTrapDoorTrigger.Triggered`를 구독하고 상황이 `Active`일 때 `FailSituation()`만 호출한다.
 - 기존 `OnTriggerEnter()`의 플레이어 감지와 알람·방송 재생 흐름은 유지한다.
-- `FailSituation()` 이후 `DayOutcomeController`와 `DaySceneCoordinator`가 실패 전환, 페이드아웃, 씬 언로드와 1일차 재시작을 처리한다.
+- `FailSituation()` 이후 `DayOutcomeController`와 `DaySceneCoordinator`가 실패 전환, 페이드아웃, 씬 언로드와 이전 날 복귀를 처리한다. 1일차 실패 시에는 1일차를 다시 시작한다.
 - 현재 `SituationTrapDoorTrigger.Door IDs` 배열은 비어 있으므로 실제 함정 문 ID를 Inspector에서 입력해야 한다.
 - 같은 씬의 `SituationDoorLockOverride`에는 현재 `Porch`가 설정되어 있다. `Porch`가 잠금 대상이라면 함정 배열에는 같은 ID를 넣지 않는다.
 
@@ -653,7 +654,7 @@ Inspector 설정 순서:
 
 ## 9. 주요 인터페이스
 
-- `DayRunState`: 현재 날짜, 사이클 내 발생 이력, 초기화와 엔딩일 판정
+- `DayRunState`: 현재 날짜, 사이클 내 발생 이력, 실패 시 이전 날 복귀와 엔딩일 판정
 - `DayFlowController`: 하루 생명주기, 상태 전이, 상황 이력 등록과 직전 하루 결과 보관
 - `DayResultContext`: 직전 하루 결과와 관련 상황 ID 전달
 - `HomeLayoutDefinition`: 기본 집 및 출구 모듈 씬 목록
@@ -690,7 +691,7 @@ Inspector 설정 순서:
 5. 상황 활성화 성공 후에만 ID를 현재 사이클 이력에 등록한다.
 6. 등록된 상황은 같은 사이클의 이후 날짜에 다시 선택되지 않는다.
 7. 무상황은 이력에 남지 않으며 반복될 수 있다.
-8. 실패 후 날짜와 상황 이력이 초기화되고 1일차로 돌아간다.
+8. 실패 후 날짜는 이전 날로 돌아가고 실패한 당일 상황 ID만 이력에서 제거된다. 1일차 실패 시에는 1일차를 다시 시작한다.
 9. 무상황에서 `Elevator` 출구 요청 시 다음 날로 진행한다.
 10. 무상황에서 다른 출구 요청 시 실패한다.
 11. 0·1단계에서 제한시간이 시작되지 않는다.
@@ -709,14 +710,14 @@ Inspector 설정 순서:
 24. 엔딩 상황은 일반 상황 발생 이력에 등록되지 않는다.
 25. 엔딩 정의 또는 엔딩 씬 구성이 누락되면 `Playing`으로 진입하지 않고 명시적인 오류를 출력한다.
 26. 8일차에서 엘리베이터를 사용하면 게임을 클리어하고 엔딩 상황과 집 모듈을 정리한 뒤 지정된 후속 씬으로 전환한다.
-27. 8일차에서 다른 출구를 사용해도 1일차로 초기화되지 않는다.
+27. 8일차에서 다른 출구를 사용해도 이전 날로 되돌아가지 않는다.
 28. `ExitControllerEditor` 버튼으로 XR 입력 없이 동일한 결과 판정을 테스트할 수 있다.
 29. `DayFlowController` Inspector에서 플레이 중 현재 일자를 확인하고 다음 날 진행 또는 7일차 직접 이동을 테스트할 수 있다.
 30. 디자이너 작업 완료 전까지 `Hallway&Stair` 씬에 개발용 변경이 발생하지 않는다.
 31. 최종 통합 후 `ExitScene`은 모듈 목록에서 제거되고 출구는 `Hallway&Stair`에 한 번만 존재한다.
 32. 첫날과 다음 날 모두 집 모듈 로드 후 상황 선택 전에 `PlayerPrefabs`가 지정한 하루 시작 위치로 이동한다.
 33. 첫 시작, 무상황 성공, 상황 해결 성공 후 다음 날에는 공통 라디오 방송 중 하나가 재생된다.
-34. 실패 후 1일차로 돌아오면 직전 실패 상황 ID에 매칭된 실패 라디오 방송이 재생된다.
+34. 실패 후 이전 날로 돌아오면 직전 실패 상황 ID에 매칭된 실패 라디오 방송이 재생된다.
 35. 라디오 방송은 페이드인 완료와 `Playing` 상태 진입 후 2초 뒤에 재생된다.
 36. 특정 상황 시작 시 지정한 기본 맵 오브젝트가 비활성화되고 상황 씬의 대체 오브젝트만 보인다.
 37. 상황 종료, 실패, 날짜 전환 또는 상황 씬 언로드 후 비활성화했던 기본 맵 오브젝트가 다시 활성화된다.
@@ -729,7 +730,7 @@ Inspector 설정 순서:
 44. 잠긴 문에는 함정 상태를 별도로 적용하지 않는 한 연무와 화재 효과가 나타나지 않는다.
 45. 함정 문은 기본 `Open Confirmation Angle` 4도 이상 열리는 순간 발동하며 완전 개방을 요구하지 않는다.
 46. 함정 문이 여러 개 설정되어도 최초로 열린 문에서만 화재 효과와 `Triggered` 이벤트가 발생한다.
-47. `Scenario_EntireHouse_Alarm`에서 Trigger 발동 시 `FailSituation()`이 호출되고 페이드아웃 후 1일차로 돌아간다.
+47. `Scenario_EntireHouse_Alarm`에서 Trigger 발동 시 `FailSituation()`이 호출되고 페이드아웃 후 이전 날로 돌아간다. 1일차 실패 시에는 1일차를 다시 시작한다.
 48. `Uses Time Limit`가 비활성화된 2단계에서는 `Time Limit Seconds` 값이 있어도 카운트다운과 시간 초과 실패가 발생하지 않는다.
 49. 시간제한을 사용하는 2단계 진입 시 남은 시간 비율에 맞춰 비네트가 전체 구간에서 연속적으로 좁아진다.
 50. 60초와 999초 제한시간 모두 비네트 진행률이 각각의 전체 시간을 기준으로 0%부터 100%까지 계산된다.

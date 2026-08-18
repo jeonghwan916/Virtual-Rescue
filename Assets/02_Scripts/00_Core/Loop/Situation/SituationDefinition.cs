@@ -27,7 +27,11 @@ namespace VirtualRescue.GameFlow
 
         [Header("Scene")]
         [SerializeField] private string _sceneName = string.Empty;
-        [SerializeField] private RoomLocation _roomLocation = RoomLocation.None;
+        [SerializeField] private RoomLocation _roomTrigger = RoomLocation.None;
+
+        [Header("Dialogue")]
+        [SerializeField] private string _resolvedDialogueId = string.Empty;
+        [SerializeField] private string _failedDialogueId = string.Empty;
 
         [Header("Level 2 Rules")]
         [SerializeField] private bool _usesTimeLimit;
@@ -40,7 +44,9 @@ namespace VirtualRescue.GameFlow
         public int Weight => _weight;
         public int MinimumDay => _minimumDay;
         public string SceneName => _sceneName;
-        public RoomLocation RoomLocation => _roomLocation;
+        public RoomLocation RoomLocation => _roomTrigger;
+        public string ResolvedDialogueId => _resolvedDialogueId;
+        public string FailedDialogueId => _failedDialogueId;
         public bool UsesTimeLimit =>
             _level == SituationLevel.Level2 && _usesTimeLimit;
         public float TimeLimitSeconds => UsesTimeLimit ? _timeLimitSeconds : 0f;
@@ -62,6 +68,8 @@ namespace VirtualRescue.GameFlow
         {
             _id = _id?.Trim() ?? string.Empty;
             _weight = Mathf.Max(1, _weight);
+            _resolvedDialogueId = _resolvedDialogueId?.Trim() ?? string.Empty;
+            _failedDialogueId = _failedDialogueId?.Trim() ?? string.Empty;
             _minimumDay = Mathf.Clamp(
                 _minimumDay,
                 DayRunState.FirstDay,

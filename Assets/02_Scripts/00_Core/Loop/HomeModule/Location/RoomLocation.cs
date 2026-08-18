@@ -10,9 +10,10 @@ public enum RoomLocation
     Kitchen = 7,
     LivingRoom = 8,
     ClothesRoom = 9,
-    Bathroom1 = 10,
-    Bathroom2 = 11,
+    BathRoom1 = 10,
+    BathRoom2 = 11,
     Entrance = 12,
     Porch = 13,
-    Hallway = 14
+    Hallway = 14,
+    EntireHouse = 15
 }

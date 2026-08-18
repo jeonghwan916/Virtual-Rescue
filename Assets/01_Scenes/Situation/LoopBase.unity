@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000010, guid: 84c591f884804434eab9c33bc9d1046c, type: 2}
+  m_LightingDataAsset: {fileID: 112000010, guid: d1b420b0229ab7640876b6c40b31d237, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -1645,7 +1645,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.5, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &1352641502
 Transform:
@@ -1656,7 +1656,7 @@ Transform:
   m_GameObject: {fileID: 1352641498}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.691, y: 1, z: 14.404}
+  m_LocalPosition: {x: 7.81, y: 1, z: 14.404}
   m_LocalScale: {x: 5.554215, y: 1, z: 3.1142619}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2355,7 +2355,7 @@ MonoBehaviour:
     _clip: {fileID: 8300000, guid: dea90268312aa564ea1ad67dcf710824, type: 3}
   - _situationId: entrance.fire_suppression
     _clip: {fileID: 8300000, guid: 52670dee7114cf141a6e744d39ed5b72, type: 3}
-  - _situationId: hair_straightener.hazard
+  - _situationId: roomc.hairstraightener_hazard
     _clip: {fileID: 8300000, guid: 7b35e63d1ca33e343a65e9dbb391d23b, type: 3}
   - _situationId: kitchen.fire_extinguisher_observation
     _clip: {fileID: 8300000, guid: e00f6aa1844116f4290fba85d24a0541, type: 3}
@@ -2363,11 +2363,11 @@ MonoBehaviour:
     _clip: {fileID: 8300000, guid: aba377a00e3184947870a4ee3f4434c6, type: 3}
   - _situationId: kitchen.oil_fire
     _clip: {fileID: 8300000, guid: cf55fa42761bbd94195c495b35eaa0db, type: 3}
-  - _situationId: lightweight_partition.escape
+  - _situationId: entrance.lightweight_partition_escape
     _clip: {fileID: 8300000, guid: 3d82d49faf5e549448481fa0dd222572, type: 3}
-  - _situationId: power_strip.fire
+  - _situationId: livingroom.power_strip_fire
     _clip: {fileID: 8300000, guid: f356d8138495faf4abaee2bdc19789e8, type: 3}
-  - _situationId: power_strip.unplug
+  - _situationId: livingroom.power_strip_unplug
     _clip: {fileID: 8300000, guid: 88b7ec76808055846ab6bafce9536537, type: 3}
   _fallbackFailBroadcastClip: {fileID: 0}
   _musicClip: {fileID: 0}
@@ -2661,6 +2661,7 @@ GameObject:
   - component: {fileID: 2029193226}
   - component: {fileID: 2029193227}
   - component: {fileID: 2029193228}
+  - component: {fileID: 2029193229}
   m_Layer: 0
   m_Name: GameFlow
   m_TagString: Untagged
@@ -2816,6 +2817,20 @@ MonoBehaviour:
   _dayFlowController: {fileID: 2029193224}
   _situationSceneLoader: {fileID: 2029193223}
   _stairDoorId: {fileID: 11400000, guid: a6765963fe1f48eb8e3b0e630fafbce6, type: 2}
+--- !u!114 &2029193229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029193218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f96bfbe81c844e6db840ac9392638ae5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationDialogueDirector
+  _situationSceneLoader: {fileID: 2029193223}
+  _dialogueManager: {fileID: 1979127967}
 --- !u!1 &2032235526
 GameObject:
   m_ObjectHideFlags: 0
