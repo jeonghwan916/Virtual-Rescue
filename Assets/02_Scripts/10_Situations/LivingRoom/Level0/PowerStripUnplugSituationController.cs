@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
@@ -12,21 +11,25 @@ namespace VirtualRescue.Situations.PowerStripUnplug
     public sealed class PowerStripUnplugSituationController : SituationController
     {
         [Header("Base Power Strip")]
-        [SerializeField] private XRSocketInteractor _firstTStripBaseSocket;
-        [SerializeField] private XRSocketInteractor _secondTStripBaseSocket;
+        [SerializeField] private XRSocketInteractor _adapterASupplySocket;
+        [SerializeField] private XRSocketInteractor _adapterBSupplySocket;
 
-        [Header("T-Shaped Power Strip Cord Sockets")]
-        [SerializeField] private List<XRSocketInteractor> _firstTStripCordSockets = new();
-        [SerializeField] private List<XRSocketInteractor> _secondTStripCordSockets = new();
+        [Header("T-Shaped Power Strip Chain")]
+        [SerializeField] private XRSocketInteractor _adapterAToAdapterCSocket;
+
+        [Header("Appliance Cord Sockets")]
+        [SerializeField] private List<XRSocketInteractor> _adapterAApplianceSockets = new();
+        [SerializeField] private List<XRSocketInteractor> _adapterBApplianceSockets = new();
+        [SerializeField] private List<XRSocketInteractor> _adapterCApplianceSockets = new();
 
         private Coroutine _evaluationRoutine;
-        private bool _hasObservedPoweredConnection;
+        private bool _hasObservedPoweredAppliance;
 
-        public int ConnectedAppliancePathCount => CountConnectedAppliancePaths();
+        public int PoweredAppliancePathCount => CountPoweredAppliancePaths();
 
         protected override void OnActivated()
         {
-            _hasObservedPoweredConnection = false;
+            _hasObservedPoweredAppliance = false;
 
             if (!TryValidateSockets())
             {
@@ -40,7 +43,6 @@ namespace VirtualRescue.Situations.PowerStripUnplug
         protected override void OnResolved()
         {
             StopEvaluation();
-            UnsubscribeSocketEvents();
         }
 
         protected override void OnFailed()
@@ -53,7 +55,7 @@ namespace VirtualRescue.Situations.PowerStripUnplug
         {
             StopEvaluation();
             UnsubscribeSocketEvents();
-            _hasObservedPoweredConnection = false;
+            _hasObservedPoweredAppliance = false;
         }
 
         private void OnDisable()
@@ -74,7 +76,7 @@ namespace VirtualRescue.Situations.PowerStripUnplug
 
         private void ScheduleEvaluation()
         {
-            if (!IsActive)
+            if (!IsActive && !IsResolved)
             {
                 return;
             }
@@ -93,20 +95,30 @@ namespace VirtualRescue.Situations.PowerStripUnplug
 
         private void EvaluateSocketState()
         {
-            if (!IsActive)
+            if (!IsActive && !IsResolved)
             {
                 return;
             }
 
-            int connectedAppliancePathCount = CountConnectedAppliancePaths();
+            int poweredAppliancePathCount = CountPoweredAppliancePaths();
 
-            if (connectedAppliancePathCount > 0)
+            if (IsResolved)
             {
-                _hasObservedPoweredConnection = true;
+                if (poweredAppliancePathCount > 0 && !ReopenResolvedSituation())
+                {
+                    Debug.LogError(
+                        "The resolved power strip unplug situation could not be reopened.",
+                        this);
+                }
+            }
+
+            if (poweredAppliancePathCount > 0)
+            {
+                _hasObservedPoweredAppliance = true;
                 return;
             }
 
-            if (!_hasObservedPoweredConnection)
+            if (!_hasObservedPoweredAppliance)
             {
                 return;
             }
@@ -119,25 +131,32 @@ namespace VirtualRescue.Situations.PowerStripUnplug
             }
         }
 
-        private int CountConnectedAppliancePaths()
+        private int CountPoweredAppliancePaths()
         {
-            return CountConnectedAppliancePaths(
-                _firstTStripBaseSocket != null &&
-                    _firstTStripBaseSocket.hasSelection,
-                CountSelectedSockets(_firstTStripCordSockets),
-                _secondTStripBaseSocket != null &&
-                    _secondTStripBaseSocket.hasSelection,
-                CountSelectedSockets(_secondTStripCordSockets));
-        }
+            int poweredAppliancePathCount = 0;
 
-        private static int CountConnectedAppliancePaths(
-            bool isFirstTStripConnected,
-            int firstCordCount,
-            bool isSecondTStripConnected,
-            int secondCordCount)
-        {
-            return (isFirstTStripConnected ? firstCordCount : 0) +
-                (isSecondTStripConnected ? secondCordCount : 0);
+            if (_adapterASupplySocket != null &&
+                _adapterASupplySocket.hasSelection)
+            {
+                poweredAppliancePathCount += CountSelectedSockets(
+                    _adapterAApplianceSockets);
+
+                if (_adapterAToAdapterCSocket != null &&
+                    _adapterAToAdapterCSocket.hasSelection)
+                {
+                    poweredAppliancePathCount += CountSelectedSockets(
+                        _adapterCApplianceSockets);
+                }
+            }
+
+            if (_adapterBSupplySocket != null &&
+                _adapterBSupplySocket.hasSelection)
+            {
+                poweredAppliancePathCount += CountSelectedSockets(
+                    _adapterBApplianceSockets);
+            }
+
+            return poweredAppliancePathCount;
         }
 
         private static int CountSelectedSockets(
@@ -147,7 +166,7 @@ namespace VirtualRescue.Situations.PowerStripUnplug
 
             foreach (XRSocketInteractor socket in sockets)
             {
-                if (socket != null && socket.hasSelection)
+                if (socket.hasSelection)
                 {
                     selectedSocketCount++;
                 }
@@ -158,20 +177,22 @@ namespace VirtualRescue.Situations.PowerStripUnplug
 
         private bool TryValidateSockets()
         {
-            if (_firstTStripBaseSocket == null ||
-                _secondTStripBaseSocket == null)
+            List<XRSocketInteractor> allSockets = new()
             {
-                Debug.LogError(
-                    "Both base power strip sockets must be assigned.",
-                    this);
-                return false;
-            }
+                _adapterASupplySocket,
+                _adapterBSupplySocket,
+                _adapterAToAdapterCSocket
+            };
 
-            if (!HasThreeValidSockets(_firstTStripCordSockets) ||
-                !HasThreeValidSockets(_secondTStripCordSockets))
+            AddSockets(allSockets, _adapterAApplianceSockets);
+            AddSockets(allSockets, _adapterBApplianceSockets);
+            AddSockets(allSockets, _adapterCApplianceSockets);
+
+            if (allSockets.Count != 9 || allSockets.Contains(null) ||
+                new HashSet<XRSocketInteractor>(allSockets).Count != allSockets.Count)
             {
                 Debug.LogError(
-                    "Each T-shaped power strip must have exactly three valid cord sockets.",
+                    "The power strip unplug situation requires nine unique socket references.",
                     this);
                 return false;
             }
@@ -179,13 +200,16 @@ namespace VirtualRescue.Situations.PowerStripUnplug
             return true;
         }
 
-        private static bool HasThreeValidSockets(
-            IReadOnlyList<XRSocketInteractor> sockets)
+        private static void AddSockets(
+            List<XRSocketInteractor> target,
+            List<XRSocketInteractor> sockets)
         {
-            return sockets != null &&
-                sockets.Count == 3 &&
-                sockets.All(socket => socket != null) &&
-                sockets.Distinct().Count() == sockets.Count;
+            if (sockets == null || sockets.Count != 2)
+            {
+                return;
+            }
+
+            target.AddRange(sockets);
         }
 
         private void SubscribeSocketEvents()
@@ -215,27 +239,29 @@ namespace VirtualRescue.Situations.PowerStripUnplug
 
         private IEnumerable<XRSocketInteractor> GetAllObservedSockets()
         {
-            if (_firstTStripBaseSocket != null)
-            {
-                yield return _firstTStripBaseSocket;
-            }
+            yield return _adapterASupplySocket;
+            yield return _adapterBSupplySocket;
+            yield return _adapterAToAdapterCSocket;
 
-            if (_secondTStripBaseSocket != null)
+            if (_adapterAApplianceSockets != null)
             {
-                yield return _secondTStripBaseSocket;
-            }
-
-            if (_firstTStripCordSockets != null)
-            {
-                foreach (XRSocketInteractor socket in _firstTStripCordSockets)
+                foreach (XRSocketInteractor socket in _adapterAApplianceSockets)
                 {
                     yield return socket;
                 }
             }
 
-            if (_secondTStripCordSockets != null)
+            if (_adapterBApplianceSockets != null)
             {
-                foreach (XRSocketInteractor socket in _secondTStripCordSockets)
+                foreach (XRSocketInteractor socket in _adapterBApplianceSockets)
+                {
+                    yield return socket;
+                }
+            }
+
+            if (_adapterCApplianceSockets != null)
+            {
+                foreach (XRSocketInteractor socket in _adapterCApplianceSockets)
                 {
                     yield return socket;
                 }

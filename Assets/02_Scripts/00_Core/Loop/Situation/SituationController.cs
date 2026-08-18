@@ -122,6 +122,18 @@ namespace VirtualRescue.GameFlow
             return true;
         }
 
+        // 해결 후 위험 상태가 재발하면, 퇴장 전까지 다시 안전 조치를 할 수 있게 한다.
+        protected bool ReopenResolvedSituation()
+        {
+            if (_state != SituationState.Resolved)
+            {
+                return false;
+            }
+
+            _state = SituationState.Active;
+            return true;
+        }
+
         protected virtual void OnActivated()
         {
         }
