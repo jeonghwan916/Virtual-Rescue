@@ -258,36 +258,12 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 Tr("Creates the Controller script first, then resumes scene and Definition creation after Unity compiles."),
                 MessageType.Info);
 
+            EditorGUILayout.Space(8f);
+            EditorGUILayout.LabelField(Tr("Name"), EditorStyles.boldLabel);
             _displayName = EditorGUILayout.TextField(Required(
-                "Display Name",
+                "Situation Definition Name",
                 "Hierarchy에 표시되며 Definition 파일명에 사용되는 이름입니다."),
                 _displayName);
-            _situationId = EditorGUILayout.TextField(Required(
-                "Situation ID",
-                "상황 기록과 라디오 매칭에 사용하는 고유 ID입니다. 중복될 수 없습니다."),
-                _situationId);
-
-            using (new EditorGUI.DisabledScope(true))
-            {
-                EditorGUILayout.ObjectField(
-                    Optional(
-                        "Home Layout",
-                        "LoopBase의 DaySceneCoordinator에서 자동으로 가져옵니다."),
-                    _homeLayout,
-                    typeof(HomeLayoutDefinition),
-                    false);
-            }
-
-            _level = (SituationLevel)EditorGUILayout.EnumPopup(
-                Required("Level", "출구와 제한시간 규칙에 사용할 상황 단계를 선택합니다."),
-                _level);
-            DrawLocationSelector();
-            _roomLocation = (RoomLocation)EditorGUILayout.EnumPopup(
-                Required(
-                    "Room Location",
-                    "상황 입장 대사를 출력할 RoomTrigger 위치입니다."),
-                _roomLocation);
-
             _sceneName = EditorGUILayout.TextField(Required(
                 "Scene Name",
                 "생성할 씬 에셋 이름입니다. Scenario_ 접두사 사용을 권장합니다."),
@@ -300,6 +276,30 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 "Controller Namespace",
                 "생성할 Controller 클래스의 C# 네임스페이스입니다."),
                 _controllerNamespace);
+            _situationId = EditorGUILayout.TextField(Required(
+                "Situation ID",
+                "상황 기록과 라디오 매칭에 사용하는 고유 ID입니다. 중복될 수 없습니다."),
+                _situationId);
+
+            EditorGUILayout.Space(8f);
+            EditorGUILayout.LabelField(
+                Tr("Level & Location"),
+                EditorStyles.boldLabel);
+            _level = (SituationLevel)EditorGUILayout.EnumPopup(
+                Required("Level", "출구와 제한시간 규칙에 사용할 상황 단계를 선택합니다."),
+                _level);
+            DrawLocationSelector();
+            _roomLocation = (RoomLocation)EditorGUILayout.EnumPopup(
+                Required(
+                    "Room Location",
+                    "상황 입장 대사를 출력할 RoomTrigger 위치입니다."),
+                _roomLocation);
+            DrawRoomLocationWarning();
+            DrawSelectedLocationFolders();
+            DrawLocationManagement();
+
+            EditorGUILayout.Space(8f);
+            EditorGUILayout.LabelField(Tr("Percentage"), EditorStyles.boldLabel);
             _weight = EditorGUILayout.IntField(Required(
                 "Weight",
                 "상황 무작위 선택에 사용하는 상대 가중치입니다. 테스트용 상황에도 저장됩니다."),
@@ -310,6 +310,9 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 _minimumDay,
                 1,
                 7);
+
+            EditorGUILayout.Space(8f);
+            EditorGUILayout.LabelField(Tr("Optional"), EditorStyles.boldLabel);
             _registerAsCandidate = EditorGUILayout.Toggle(Optional(
                 "Register as Candidate",
                 "활성화하면 생성한 Definition을 LoopBase Candidates에 추가합니다. " +
@@ -457,21 +460,30 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 SelectLocation(_locationCatalog.Locations[newIndex]);
             }
 
+        }
+
+        private void DrawSelectedLocationFolders()
+        {
             SituationLocationEntry selected = GetSelectedLocation();
-            if (selected != null)
+            if (selected == null)
             {
-                EditorGUILayout.LabelField(
-                    Tr("Scene Folder"),
-                    SituationLocationPathMap.GetSceneFolder(
-                        selected.SceneFolderName,
-                        _level));
-                EditorGUILayout.LabelField(
-                    Tr("Controller Folder"),
-                    SituationLocationPathMap.GetControllerFolder(
-                        selected.ControllerFolderName,
-                        _level));
+                return;
             }
 
+            EditorGUILayout.LabelField(
+                Tr("Scene Folder"),
+                SituationLocationPathMap.GetSceneFolder(
+                    selected.SceneFolderName,
+                    _level));
+            EditorGUILayout.LabelField(
+                Tr("Controller Folder"),
+                SituationLocationPathMap.GetControllerFolder(
+                    selected.ControllerFolderName,
+                    _level));
+        }
+
+        private void DrawLocationManagement()
+        {
             using (new EditorGUILayout.HorizontalScope())
             {
                 if (GUILayout.Button(Tr("Add New Location")))
@@ -1214,6 +1226,10 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 selected = _locationCatalog.Locations[0];
                 SelectLocation(selected);
             }
+            else if (_roomLocation == RoomLocation.None)
+            {
+                ApplyDefaultRoomLocation(selected, false);
+            }
         }
 
         private SituationLocationEntry GetSelectedLocation()
@@ -1231,6 +1247,158 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             }
 
             _selectedLocationId = location.Id;
+            ApplyDefaultRoomLocation(location, true);
+        }
+
+        private void DrawRoomLocationWarning()
+        {
+            SituationLocationEntry location = GetSelectedLocation();
+            if (location == null ||
+                !TryGetDefaultRoomLocation(location, out RoomLocation expected) ||
+                expected == RoomLocation.None ||
+                _roomLocation == expected)
+            {
+                return;
+            }
+
+            EditorGUILayout.HelpBox(
+                string.Format(
+                    Tr("Selected Location usually maps to RoomLocation {0}. Current RoomLocation is {1}."),
+                    expected,
+                    _roomLocation),
+                MessageType.Warning);
+        }
+
+        private void ApplyDefaultRoomLocation(
+            SituationLocationEntry location,
+            bool force)
+        {
+            if (location == null ||
+                !TryGetDefaultRoomLocation(location, out RoomLocation roomLocation) ||
+                roomLocation == RoomLocation.None)
+            {
+                return;
+            }
+
+            if (force || _roomLocation == RoomLocation.None)
+            {
+                _roomLocation = roomLocation;
+            }
+        }
+
+        private static bool TryGetDefaultRoomLocation(
+            SituationLocationEntry location,
+            out RoomLocation roomLocation)
+        {
+            foreach (string key in GetLocationKeys(location))
+            {
+                if (TryMapLocationKeyToRoomLocation(key, out roomLocation))
+                {
+                    return true;
+                }
+            }
+
+            roomLocation = RoomLocation.None;
+            return false;
+        }
+
+        private static IEnumerable<string> GetLocationKeys(
+            SituationLocationEntry location)
+        {
+            if (location == null)
+            {
+                yield break;
+            }
+
+            yield return location.Id;
+            yield return location.DisplayName;
+            yield return location.SceneFolderName;
+            yield return location.ControllerFolderName;
+        }
+
+        private static bool TryMapLocationKeyToRoomLocation(
+            string key,
+            out RoomLocation roomLocation)
+        {
+            switch (NormalizeLocationKey(key))
+            {
+                case "room":
+                case "rooma":
+                case "bedroom":
+                case "bedrooma":
+                    roomLocation = RoomLocation.RoomA;
+                    return true;
+                case "roomb":
+                case "bedroomb":
+                case "bedroom2":
+                    roomLocation = RoomLocation.RoomB;
+                    return true;
+                case "roomc":
+                    roomLocation = RoomLocation.RoomC;
+                    return true;
+                case "roomd":
+                    roomLocation = RoomLocation.RoomD;
+                    return true;
+                case "balcony":
+                case "balcony1":
+                    roomLocation = RoomLocation.Balcony1;
+                    return true;
+                case "balcony2":
+                    roomLocation = RoomLocation.Balcony2;
+                    return true;
+                case "kitchen":
+                    roomLocation = RoomLocation.Kitchen;
+                    return true;
+                case "livingroom":
+                    roomLocation = RoomLocation.LivingRoom;
+                    return true;
+                case "clothesroom":
+                case "clothes":
+                    roomLocation = RoomLocation.ClothesRoom;
+                    return true;
+                case "bathroom":
+                case "bathroom1":
+                    roomLocation = RoomLocation.Bathroom1;
+                    return true;
+                case "bathroom2":
+                    roomLocation = RoomLocation.Bathroom2;
+                    return true;
+                case "entrance":
+                    roomLocation = RoomLocation.Entrance;
+                    return true;
+                case "porch":
+                case "vestibule":
+                case "vestibuleroom":
+                    roomLocation = RoomLocation.Porch;
+                    return true;
+                case "hallway":
+                case "hallwaystair":
+                case "hallwayandstair":
+                    roomLocation = RoomLocation.Hallway;
+                    return true;
+                case "entirehouse":
+                    roomLocation = RoomLocation.EntireHouse;
+                    return true;
+                default:
+                    roomLocation = RoomLocation.None;
+                    return false;
+            }
+        }
+
+        private static string NormalizeLocationKey(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return string.Empty;
+            }
+
+            return value
+                .Trim()
+                .ToLowerInvariant()
+                .Replace("&", "and")
+                .Replace("_", string.Empty)
+                .Replace("-", string.Empty)
+                .Replace(" ", string.Empty);
         }
 
         private void ClearAddLocationForm()
@@ -1419,14 +1587,18 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 case "Cancel Pending Request": return "대기 요청 취소";
                 case "New Situation": return "신규 상황";
                 case "Creates the Controller script first, then resumes scene and Definition creation after Unity compiles.": return "Controller 스크립트를 먼저 생성한 뒤, Unity 컴파일 후 씬과 Definition 생성을 이어서 진행합니다.";
+                case "Name": return "이름";
                 case "Display Name": return "표시 이름";
+                case "Situation Definition Name": return "Situation Definition 이름";
                 case "Situation ID": return "상황 ID";
+                case "Level & Location": return "레벨 및 위치";
                 case "Home Layout": return "홈 레이아웃";
                 case "Level": return "레벨";
                 case "Room Location": return "방 위치";
                 case "Scene Name": return "씬 이름";
                 case "Controller Class Name": return "Controller 클래스 이름";
                 case "Controller Namespace": return "Controller 네임스페이스";
+                case "Percentage": return "비율";
                 case "Weight": return "가중치";
                 case "Minimum Day": return "최소 날짜";
                 case "Register as Candidate": return "후보로 등록";
@@ -1502,6 +1674,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 case "Create Parent In Selected Scenes": return "선택한 씬에 부모 생성";
                 case "Home Layout Module Scenes": return "Home Layout 모듈 씬";
                 case "Scene asset was not found.": return "씬 에셋을 찾을 수 없습니다.";
+                case "Selected Location usually maps to RoomLocation {0}. Current RoomLocation is {1}.": return "선택한 Location은 보통 RoomLocation {0}에 매핑됩니다. 현재 RoomLocation은 {1}입니다.";
                 case "Created {0} parent object(s).": return "부모 오브젝트 {0}개를 생성했습니다.";
                 case "Skipped {0} scene(s) where the parent already exists.": return "이미 부모가 있는 씬 {0}개는 건너뛰었습니다.";
                 case "Missing scenes: {0}": return "찾을 수 없는 씬: {0}";

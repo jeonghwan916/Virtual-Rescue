@@ -14,5 +14,6 @@ public enum RoomLocation
     Bathroom2 = 11,
     Entrance = 12,
     Porch = 13,
-    Hallway = 14
+    Hallway = 14,
+    EntireHouse = 15
 }

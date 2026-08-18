@@ -13,18 +13,30 @@ MonoBehaviour:
   m_Name: SituationLocationCatalog
   m_EditorClassIdentifier: Assembly-CSharp-Editor::VirtualRescue.EditorTools.SituationAuthoring.SituationLocationCatalog
   _locations:
-  - _id: balcony
-    _displayName: Balcony
-    _sceneFolderName: Balcony
-    _controllerFolderName: Balcony
-  - _id: entirehouse
-    _displayName: EntireHouse
-    _sceneFolderName: EntireHouse
-    _controllerFolderName: EntireHouse
-  - _id: entrance
-    _displayName: Entrance
-    _sceneFolderName: Entrance
-    _controllerFolderName: Entrance
+  - _id: rooma
+    _displayName: RoomA
+    _sceneFolderName: RoomA
+    _controllerFolderName: RoomA
+  - _id: roomb
+    _displayName: RoomB
+    _sceneFolderName: RoomB
+    _controllerFolderName: RoomB
+  - _id: roomc
+    _displayName: RoomC
+    _sceneFolderName: RoomC
+    _controllerFolderName: RoomC
+  - _id: roomd
+    _displayName: RoomD
+    _sceneFolderName: RoomD
+    _controllerFolderName: RoomD
+  - _id: balcony1
+    _displayName: Balcony1
+    _sceneFolderName: Balcony1
+    _controllerFolderName: Balcony1
+  - _id: balcony2
+    _displayName: Balcony2
+    _sceneFolderName: Balcony2
+    _controllerFolderName: Balcony2
   - _id: kitchen
     _displayName: Kitchen
     _sceneFolderName: Kitchen
@@ -33,7 +45,31 @@ MonoBehaviour:
     _displayName: LivingRoom
     _sceneFolderName: LivingRoom
     _controllerFolderName: LivingRoom
-  - _id: room
-    _displayName: Room
-    _sceneFolderName: Room
-    _controllerFolderName: Room
+  - _id: clothesroom
+    _displayName: ClothesRoom
+    _sceneFolderName: ClothesRoom
+    _controllerFolderName: ClothesRoom
+  - _id: bathroom1
+    _displayName: BathRoom1
+    _sceneFolderName: BathRoom1
+    _controllerFolderName: BathRoom1
+  - _id: bathroom2
+    _displayName: BathRoom2
+    _sceneFolderName: BathRoom2
+    _controllerFolderName: BathRoom2
+  - _id: entrance
+    _displayName: Entrance
+    _sceneFolderName: Entrance
+    _controllerFolderName: Entrance
+  - _id: porch
+    _displayName: Porch
+    _sceneFolderName: Porch
+    _controllerFolderName: Porch
+  - _id: hallway
+    _displayName: Hallway
+    _sceneFolderName: Hallway
+    _controllerFolderName: Hallway
+  - _id: entirehouse
+    _displayName: EntireHouse
+    _sceneFolderName: EntireHouse
+    _controllerFolderName: EntireHouse
