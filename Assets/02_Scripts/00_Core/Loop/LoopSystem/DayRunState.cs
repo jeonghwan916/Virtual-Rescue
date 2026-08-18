@@ -56,6 +56,19 @@ namespace VirtualRescue.GameFlow
             return _seenSituationIds.Add(situationId.Trim());
         }
 
+        public void RollbackDay(string failedSituationId)
+        {
+            if (!string.IsNullOrWhiteSpace(failedSituationId))
+            {
+                _seenSituationIds.Remove(failedSituationId.Trim());
+            }
+
+            if (CurrentDay > FirstDay)
+            {
+                CurrentDay--;
+            }
+        }
+
         public void ResetRun()
         {
             CurrentDay = FirstDay;

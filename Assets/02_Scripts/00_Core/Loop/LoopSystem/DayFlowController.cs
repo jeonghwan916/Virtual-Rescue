@@ -156,8 +156,8 @@ namespace VirtualRescue.GameFlow
             }
 
             _lastDayResult = resultContext;
+            _runState.RollbackDay(resultContext.SituationId);
             SetState(DayFlowState.Transitioning);
-            _runState.ResetRun();
             TransitionRequested?.Invoke(DayTransitionReason.RunFailed, CurrentDay);
             return true;
         }
