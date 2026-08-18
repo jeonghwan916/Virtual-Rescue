@@ -10,6 +10,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
     public sealed class SituationAuthoringWindow : EditorWindow
     {
         private const string ReadmePath = "Docs/README-SituationAuthoring.md";
+        private const string LanguagePrefsKey =
+            "VirtualRescue.SituationAuthoring.Language";
 
         private enum Tab
         {
@@ -18,6 +20,14 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             BuildingBlocks,
             Validate
         }
+
+        private enum Language
+        {
+            English,
+            Korean
+        }
+
+        private static Language _language = Language.English;
 
         [SerializeField] private Tab _tab;
         [SerializeField] private Vector2 _scrollPosition;
@@ -62,6 +72,9 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         [SerializeField] private SituationController _buildingController;
         [SerializeField] private GameObject _buildingTarget;
         [SerializeField] private GameObject _buildingPrefab;
+        [SerializeField] private SituationDefinition _homeModuleParentDefinition;
+        [SerializeField] private string _homeModuleParentName = string.Empty;
+        [SerializeField] private List<string> _selectedHomeModuleSceneNames = new();
 
         private readonly List<SituationValidationResult> _validationResults = new();
         private readonly List<ModuleObjectId> _availableModuleIds = new();
@@ -70,6 +83,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         private readonly HashSet<DoorId> _selectedDoorIds = new();
         private Vector2 _moduleIdScroll;
         private Vector2 _doorIdScroll;
+        private Vector2 _homeModuleSceneScroll;
         private bool _editRegistrationKnown;
         private bool _editRegistered;
         private int _editRegistrationCount;
@@ -88,6 +102,10 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
         private void OnEnable()
         {
+            _language = (Language)EditorPrefs.GetInt(
+                LanguagePrefsKey,
+                (int)Language.English);
+
             if (_displayName == "New Situation")
             {
                 _displayName = "Location_Situation";
@@ -127,6 +145,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
         private void OnGUI()
         {
+            titleContent = new GUIContent(Tr("Situation Authoring"));
             DrawPendingCreation();
 
             using (new EditorGUILayout.HorizontalScope())
@@ -135,15 +154,25 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                     (int)_tab,
                     new[]
                     {
-                        "New",
-                        "Edit Existing",
-                        "Building Blocks",
-                        "Validate"
+                        Tr("New"),
+                        Tr("Edit Existing"),
+                        Tr("Building Blocks"),
+                        Tr("Validate")
                     });
+                GUILayout.FlexibleSpace();
+                if (GUILayout.Button(
+                        new GUIContent(
+                            _language == Language.English ? "한국어" : "English",
+                            Tr("Switch Language")),
+                        GUILayout.Width(70f)))
+                {
+                    ToggleLanguage();
+                }
+
                 if (GUILayout.Button(
                         new GUIContent(
                             "?",
-                            "Situation Authoring 사용 설명서 열기"),
+                            Tr("Open Situation Authoring guide")),
                         GUILayout.Width(26f)))
                 {
                     OpenReadme();
@@ -207,13 +236,13 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             using (new EditorGUILayout.HorizontalScope())
             {
                 GUI.enabled = !EditorApplication.isCompiling;
-                if (GUILayout.Button("Resume"))
+                if (GUILayout.Button(Tr("Resume")))
                 {
                     SituationCreationResumeHandler.TryResume();
                 }
 
                 GUI.enabled = true;
-                if (GUILayout.Button("Cancel Pending Request"))
+                if (GUILayout.Button(Tr("Cancel Pending Request")))
                 {
                     SituationCreationResumeHandler.Cancel();
                 }
@@ -224,10 +253,9 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
         private void DrawNewSituation()
         {
-            EditorGUILayout.LabelField("New Situation", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Tr("New Situation"), EditorStyles.boldLabel);
             EditorGUILayout.HelpBox(
-                "Creates the Controller script first, then resumes scene and " +
-                "Definition creation after Unity compiles.",
+                Tr("Creates the Controller script first, then resumes scene and Definition creation after Unity compiles."),
                 MessageType.Info);
 
             _displayName = EditorGUILayout.TextField(Required(
@@ -289,17 +317,17 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 _registerAsCandidate);
 
             DrawLevel2Rules();
-            DrawAssetList("Initial Prefabs [Optional]", _initialPrefabs);
-            DrawAssetList("Module Object IDs [Optional]", _newModuleIds);
-            DrawAssetList("Locked Door IDs [Optional]", _newLockedDoorIds);
-            DrawAssetList("Trap Door IDs [Optional]", _newTrapDoorIds);
-            if (GUILayout.Button("Door ID 배치도 보기"))
+            DrawAssetList("Initial Prefabs", _initialPrefabs, true);
+            DrawAssetList("Module Object IDs", _newModuleIds, true);
+            DrawAssetList("Locked Door IDs", _newLockedDoorIds, true);
+            DrawAssetList("Trap Door IDs", _newTrapDoorIds, true);
+            if (GUILayout.Button(Tr("View Door ID Layout")))
             {
                 DoorIdReferenceWindow.Open();
             }
 
             EditorGUILayout.Space(8f);
-            EditorGUILayout.LabelField("Planned Assets", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Tr("Planned Assets"), EditorStyles.boldLabel);
             SituationCreationRequest previewRequest = BuildRequest();
             EditorGUILayout.SelectableLabel(
                 previewRequest.ControllerScriptPath,
@@ -327,15 +355,16 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                        !valid || SituationCreationResumeHandler.HasPending ||
                        EditorApplication.isCompiling))
             {
-                if (GUILayout.Button("Create Situation", GUILayout.Height(32f)))
+                if (GUILayout.Button(
+                        Tr("Create Situation"),
+                        GUILayout.Height(32f)))
                 {
                     if (SituationControllerScriptGenerator.TryBegin(
                             previewRequest,
                             out string creationError))
                     {
                         SetMessage(
-                            "Controller script created. Unity will compile and " +
-                            "resume the remaining work.",
+                            Tr("Controller script created. Unity will compile and resume the remaining work."),
                             MessageType.Info);
                     }
                     else
@@ -354,7 +383,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             }
 
             EditorGUILayout.Space(4f);
-            EditorGUILayout.LabelField("Level 2 Rules", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Tr("Level 2 Rules"), EditorStyles.boldLabel);
             _usesTimeLimit = EditorGUILayout.Toggle(Conditional(
                 "Uses Time Limit",
                 "공용 Level 2 제한시간 카운트다운을 시작합니다."),
@@ -371,16 +400,16 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 "Allowed Exits",
                 "엘리베이터가 아닌 출구를 하나 이상 선택해야 합니다."));
             _allowEmergencyStairs = EditorGUILayout.ToggleLeft(
-                "Emergency Stairs",
+                Tr("Emergency Stairs"),
                 _allowEmergencyStairs);
             _allowRefugeArea = EditorGUILayout.ToggleLeft(
-                "Refuge Area",
+                Tr("Refuge Area"),
                 _allowRefugeArea);
             _allowLightweightPartition = EditorGUILayout.ToggleLeft(
-                "Lightweight Partition",
+                Tr("Lightweight Partition"),
                 _allowLightweightPartition);
             _allowDescender = EditorGUILayout.ToggleLeft(
-                "Descender",
+                Tr("Descender"),
                 _allowDescender);
         }
 
@@ -393,9 +422,9 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             if (_locationCatalog == null || _locationCatalog.Locations.Count == 0)
             {
                 EditorGUILayout.HelpBox(
-                    "Situation Location Catalog is missing or empty.",
+                    Tr("Situation Location Catalog is missing or empty."),
                     MessageType.Error);
-                if (GUILayout.Button("Create or Reload Catalog"))
+                if (GUILayout.Button(Tr("Create or Reload Catalog")))
                 {
                     _locationCatalog =
                         SituationLocationCatalogService.GetOrCreate();
@@ -432,12 +461,12 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             if (selected != null)
             {
                 EditorGUILayout.LabelField(
-                    "Scene Folder",
+                    Tr("Scene Folder"),
                     SituationLocationPathMap.GetSceneFolder(
                         selected.SceneFolderName,
                         _level));
                 EditorGUILayout.LabelField(
-                    "Controller Folder",
+                    Tr("Controller Folder"),
                     SituationLocationPathMap.GetControllerFolder(
                         selected.ControllerFolderName,
                         _level));
@@ -445,12 +474,12 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
             using (new EditorGUILayout.HorizontalScope())
             {
-                if (GUILayout.Button("Add New Location"))
+                if (GUILayout.Button(Tr("Add New Location")))
                 {
                     _showAddLocation = !_showAddLocation;
                 }
 
-                if (GUILayout.Button("Select Catalog Asset"))
+                if (GUILayout.Button(Tr("Select Catalog Asset")))
                 {
                     Selection.activeObject = _locationCatalog;
                     EditorGUIUtility.PingObject(_locationCatalog);
@@ -468,7 +497,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
             {
                 EditorGUILayout.LabelField(
-                    "Add New Location",
+                    Tr("Add New Location"),
                     EditorStyles.boldLabel);
                 _newLocationName = EditorGUILayout.TextField(Required(
                     "Location Name",
@@ -481,7 +510,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
                 using (new EditorGUILayout.HorizontalScope())
                 {
-                    if (GUILayout.Button("Save Location"))
+                    if (GUILayout.Button(Tr("Save Location")))
                     {
                         if (SituationLocationCatalogService.TryAdd(
                                 _locationCatalog,
@@ -495,20 +524,22 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                             SelectLocation(entry);
                             ClearAddLocationForm();
                             SetMessage(
-                                $"Location '{entry.DisplayName}' was added.",
+                                string.Format(
+                                    Tr("Location '{0}' was added."),
+                                    entry.DisplayName),
                                 MessageType.Info);
                         }
                         else
                         {
                             SetMessage(error, MessageType.Error);
                             EditorUtility.DisplayDialog(
-                                "Could Not Save Location",
+                                Tr("Could Not Save Location"),
                                 error,
-                                "OK");
+                                Tr("OK"));
                         }
                     }
 
-                    if (GUILayout.Button("Cancel"))
+                    if (GUILayout.Button(Tr("Cancel")))
                     {
                         ClearAddLocationForm();
                     }
@@ -518,7 +549,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
         private void DrawEditExisting()
         {
-            EditorGUILayout.LabelField("Edit Existing", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Tr("Edit Existing"), EditorStyles.boldLabel);
             SituationDefinition previous = _editDefinition;
             _editDefinition = (SituationDefinition)EditorGUILayout.ObjectField(
                 Required("Definition", "수정할 기존 Situation Definition을 선택합니다."),
@@ -537,7 +568,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             if (_editDefinition == null)
             {
                 EditorGUILayout.HelpBox(
-                    "Select a SituationDefinition.",
+                    Tr("Select a SituationDefinition."),
                     MessageType.Info);
                 return;
             }
@@ -583,14 +614,14 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                     true);
             }
 
-            if (GUILayout.Button("Apply Definition Changes"))
+            if (GUILayout.Button(Tr("Apply Definition Changes")))
             {
                 Undo.RecordObject(_editDefinition, "Edit Situation Definition");
                 serializedDefinition.ApplyModifiedProperties();
                 EditorUtility.SetDirty(_editDefinition);
                 AssetDatabase.SaveAssets();
                 serializedDefinition.Update();
-                SetMessage("Definition changes applied.", MessageType.Info);
+                SetMessage(Tr("Definition changes applied."), MessageType.Info);
             }
 
             EditorGUILayout.Space(8f);
@@ -601,35 +632,35 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             bool inBuild = !string.IsNullOrEmpty(scenePath) &&
                            SituationRegistrationService.IsInBuildSettings(scenePath);
             EditorGUILayout.LabelField(
-                "Build Settings",
-                inBuild ? "Registered" : "Missing or Disabled");
+                Tr("Build Settings"),
+                inBuild ? Tr("Registered") : Tr("Missing or Disabled"));
             if (!inBuild && !string.IsNullOrEmpty(scenePath) &&
-                GUILayout.Button("Add to Build Settings"))
+                GUILayout.Button(Tr("Add to Build Settings")))
             {
                 SituationRegistrationService.AddToBuildSettings(scenePath);
             }
 
             using (new EditorGUILayout.HorizontalScope())
             {
-                if (GUILayout.Button("Open Situation Scene"))
+                if (GUILayout.Button(Tr("Open Situation Scene")))
                 {
                     SituationRegistrationService.OpenSituationScene(
                         _editDefinition);
                 }
 
-                if (GUILayout.Button("Open with Home Layout"))
+                if (GUILayout.Button(Tr("Open with Home Layout")))
                 {
                     if (!SituationRegistrationService.OpenWithHomeLayout(
                             _editDefinition))
                     {
                         SetMessage(
-                            "Could not open the situation with its Home Layout.",
+                            Tr("Could not open the situation with its Home Layout."),
                             MessageType.Error);
                     }
                 }
             }
 
-            if (GUILayout.Button("Validate This Situation"))
+            if (GUILayout.Button(Tr("Validate This Situation")))
             {
                 _validationDefinition = _editDefinition;
                 RunValidation();
@@ -645,25 +676,25 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             }
 
             string status = _editRegistered
-                ? $"Registered ({_editRegistrationCount} entry)"
-                : "Not registered (valid for test-only use)";
-            EditorGUILayout.LabelField("Candidate", status);
+                ? string.Format(Tr("Registered ({0} entry)"), _editRegistrationCount)
+                : Tr("Not registered (valid for test-only use)");
+            EditorGUILayout.LabelField(Tr("Candidate"), status);
 
             using (new EditorGUILayout.HorizontalScope())
             {
-                if (!_editRegistered && GUILayout.Button("Register Candidate"))
+                if (!_editRegistered && GUILayout.Button(Tr("Register Candidate")))
                 {
                     SituationRegistrationService.RegisterCandidate(_editDefinition);
                     RefreshEditRegistration();
                 }
 
-                if (_editRegistered && GUILayout.Button("Unregister Candidate"))
+                if (_editRegistered && GUILayout.Button(Tr("Unregister Candidate")))
                 {
                     SituationRegistrationService.UnregisterCandidate(_editDefinition);
                     RefreshEditRegistration();
                 }
 
-                if (GUILayout.Button("Refresh Status"))
+                if (GUILayout.Button(Tr("Refresh Status")))
                 {
                     RefreshEditRegistration();
                 }
@@ -672,10 +703,9 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
         private void DrawBuildingBlocks()
         {
-            EditorGUILayout.LabelField("Building Blocks", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Tr("Building Blocks"), EditorStyles.boldLabel);
             EditorGUILayout.HelpBox(
-                "Adds common components to the active situation scene. It does " +
-                "not create situation-specific success or failure logic.",
+                Tr("Adds common components to the active situation scene. It does not create situation-specific success or failure logic."),
                 MessageType.Info);
 
             if (_buildingController == null ||
@@ -706,7 +736,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
             using (new EditorGUILayout.HorizontalScope())
             {
-                if (GUILayout.Button("Refresh Scene Controller"))
+                if (GUILayout.Button(Tr("Refresh Scene Controller")))
                 {
                     SituationBuildingBlockService.TryGetCurrentController(
                         out _buildingController);
@@ -715,14 +745,14 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                         : null;
                 }
 
-                if (GUILayout.Button("Refresh ID Assets"))
+                if (GUILayout.Button(Tr("Refresh ID Assets")))
                 {
                     RefreshIdAssets();
                 }
             }
 
             DrawIdSelection(
-                "Module Object IDs",
+                Tr("Module Object IDs"),
                 "Assets/02_Scripts/00_Core/Loop/ModuleRegistry/ModuleObjectIds",
                 _availableModuleIds,
                 _selectedModuleIds,
@@ -730,7 +760,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             using (new EditorGUI.DisabledScope(
                        _buildingController == null || _buildingTarget == null))
             {
-                if (GUILayout.Button("Add Object Override"))
+                if (GUILayout.Button(Tr("Add Object Override")))
                 {
                     RunBuildingBlockAction(() =>
                         SituationBuildingBlockService.AddComponent<
@@ -743,12 +773,12 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             }
 
             DrawIdSelection(
-                "Door IDs",
+                Tr("Door IDs"),
                 "Assets/02_Scripts/00_Core/Loop/ModuleRegistry/DoorIds",
                 _availableDoorIds,
                 _selectedDoorIds,
                 ref _doorIdScroll);
-            if (GUILayout.Button("Door ID 배치도 보기"))
+            if (GUILayout.Button(Tr("View Door ID Layout")))
             {
                 DoorIdReferenceWindow.Open();
             }
@@ -756,7 +786,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             using (new EditorGUI.DisabledScope(
                        _buildingController == null || _buildingTarget == null))
             {
-                if (GUILayout.Button("Add Door Lock Override"))
+                if (GUILayout.Button(Tr("Add Door Lock Override")))
                 {
                     RunBuildingBlockAction(() =>
                         SituationBuildingBlockService.AddComponent<
@@ -767,7 +797,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                             _selectedDoorIds.Cast<UnityEngine.Object>().ToList()));
                 }
 
-                if (GUILayout.Button("Add Trap Door Trigger"))
+                if (GUILayout.Button(Tr("Add Trap Door Trigger")))
                 {
                     RunBuildingBlockAction(() =>
                         SituationBuildingBlockService.AddComponent<
@@ -780,7 +810,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             }
 
             EditorGUILayout.Space(8f);
-            EditorGUILayout.LabelField("Prefab Palette", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Tr("Prefab Palette"), EditorStyles.boldLabel);
             _buildingPrefab = (GameObject)EditorGUILayout.ObjectField(
                 Optional("Prefab", "대상 오브젝트 아래에 추가할 프리팹입니다."),
                 _buildingPrefab,
@@ -789,7 +819,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             using (new EditorGUI.DisabledScope(
                        _buildingPrefab == null || _buildingTarget == null))
             {
-                if (GUILayout.Button("Add Selected Prefab"))
+                if (GUILayout.Button(Tr("Add Selected Prefab")))
                 {
                     RunBuildingBlockAction(() =>
                         SituationBuildingBlockService.AddPrefab(
@@ -797,18 +827,109 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                             _buildingTarget));
                 }
             }
+
+            DrawHomeModuleParents();
+        }
+
+        private void DrawHomeModuleParents()
+        {
+            EditorGUILayout.Space(8f);
+            EditorGUILayout.LabelField(
+                Tr("Home Module Parents"),
+                EditorStyles.boldLabel);
+            EditorGUILayout.HelpBox(
+                Tr("Creates empty root parent objects in selected Home Layout module scenes for situation-specific staging."),
+                MessageType.Info);
+
+            if (_homeLayout == null)
+            {
+                RefreshHomeLayout();
+            }
+
+            _homeModuleParentDefinition =
+                (SituationDefinition)EditorGUILayout.ObjectField(
+                    Optional(
+                        "Situation Definition",
+                        "부모 오브젝트 이름 추천에 사용할 Situation Definition입니다."),
+                    _homeModuleParentDefinition,
+                    typeof(SituationDefinition),
+                    false);
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                _homeModuleParentName = EditorGUILayout.TextField(
+                    Required(
+                        "Parent Object Name",
+                        "Home module 씬 루트에 생성할 빈 부모 오브젝트 이름입니다."),
+                    _homeModuleParentName);
+                if (GUILayout.Button(Tr("Suggest"), GUILayout.Width(90f)))
+                {
+                    _homeModuleParentName = SuggestHomeModuleParentName();
+                }
+            }
+
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                if (GUILayout.Button(Tr("Refresh Home Layout")))
+                {
+                    RefreshHomeLayout();
+                    SyncSelectedHomeModuleSceneNames();
+                }
+
+                using (new EditorGUI.DisabledScope(
+                           _homeLayout == null ||
+                           _homeLayout.ModuleSceneNames.Count == 0))
+                {
+                    if (GUILayout.Button(Tr("Select All")))
+                    {
+                        _selectedHomeModuleSceneNames =
+                            _homeLayout.ModuleSceneNames.ToList();
+                    }
+
+                    if (GUILayout.Button(Tr("Clear Selection")))
+                    {
+                        _selectedHomeModuleSceneNames.Clear();
+                    }
+                }
+            }
+
+            if (_homeLayout == null || _homeLayout.ModuleSceneNames.Count == 0)
+            {
+                EditorGUILayout.HelpBox(
+                    Tr("Home Layout is missing or has no module scenes."),
+                    MessageType.Warning);
+                return;
+            }
+
+            SyncSelectedHomeModuleSceneNames();
+            DrawHomeModuleSceneSelection();
+
+            bool canCreate =
+                !string.IsNullOrWhiteSpace(_homeModuleParentName) &&
+                _selectedHomeModuleSceneNames.Count > 0;
+            using (new EditorGUI.DisabledScope(!canCreate))
+            {
+                if (GUILayout.Button(
+                        Tr("Create Parent In Selected Scenes"),
+                        GUILayout.Height(28f)))
+                {
+                    RunHomeModuleParentCreation();
+                }
+            }
         }
 
         private void DrawValidate()
         {
-            EditorGUILayout.LabelField("Validate", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Tr("Validate"), EditorStyles.boldLabel);
             _validationDefinition = (SituationDefinition)EditorGUILayout.ObjectField(
                 Required("Definition", "검증할 Situation Definition을 선택합니다."),
                 _validationDefinition,
                 typeof(SituationDefinition),
                 false);
 
-            if (GUILayout.Button("Validate Current Situation", GUILayout.Height(28f)))
+            if (GUILayout.Button(
+                    Tr("Validate Current Situation"),
+                    GUILayout.Height(28f)))
             {
                 RunValidation();
             }
@@ -824,8 +945,13 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 result.Severity == SituationValidationSeverity.Warning);
             EditorGUILayout.HelpBox(
                 errors == 0
-                    ? $"Required validation passed. Warnings: {warnings}."
-                    : $"Validation failed. Errors: {errors}, Warnings: {warnings}.",
+                    ? string.Format(
+                        Tr("Required validation passed. Warnings: {0}."),
+                        warnings)
+                    : string.Format(
+                        Tr("Validation failed. Errors: {0}, Warnings: {1}."),
+                        errors,
+                        warnings),
                 errors == 0 ? MessageType.Info : MessageType.Error);
 
             foreach (SituationValidationResult result in _validationResults)
@@ -837,7 +963,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                         EditorStyles.wordWrappedLabel);
                     using (new EditorGUILayout.HorizontalScope())
                     {
-                        if (result.Context != null && GUILayout.Button("Select"))
+                        if (result.Context != null && GUILayout.Button(Tr("Select")))
                         {
                             Selection.activeObject = result.Context;
                             EditorGUIUtility.PingObject(result.Context);
@@ -859,6 +985,129 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                     }
                 }
             }
+        }
+
+        private void DrawHomeModuleSceneSelection()
+        {
+            EditorGUILayout.LabelField(
+                Tr("Home Layout Module Scenes"),
+                EditorStyles.boldLabel);
+            _homeModuleSceneScroll = EditorGUILayout.BeginScrollView(
+                _homeModuleSceneScroll,
+                EditorStyles.helpBox,
+                GUILayout.MinHeight(90f),
+                GUILayout.MaxHeight(160f));
+            foreach (string sceneName in _homeLayout.ModuleSceneNames)
+            {
+                bool wasSelected = _selectedHomeModuleSceneNames.Contains(sceneName);
+                string scenePath = SituationAuthoringUtility.FindScenePath(sceneName);
+                bool sceneExists = !string.IsNullOrEmpty(scenePath);
+                using (new EditorGUI.DisabledScope(!sceneExists))
+                {
+                    bool isSelected = EditorGUILayout.ToggleLeft(
+                        new GUIContent(
+                            sceneName,
+                            sceneExists ? scenePath : Tr("Scene asset was not found.")),
+                        wasSelected);
+                    if (isSelected == wasSelected)
+                    {
+                        continue;
+                    }
+
+                    if (isSelected)
+                    {
+                        _selectedHomeModuleSceneNames.Add(sceneName);
+                    }
+                    else
+                    {
+                        _selectedHomeModuleSceneNames.Remove(sceneName);
+                    }
+                }
+            }
+
+            EditorGUILayout.EndScrollView();
+        }
+
+        private void RunHomeModuleParentCreation()
+        {
+            try
+            {
+                SituationHomeModuleParentService.Result result =
+                    SituationHomeModuleParentService.CreateParents(
+                        _homeModuleParentName,
+                        _selectedHomeModuleSceneNames);
+                SetMessage(FormatHomeModuleParentResult(result), MessageType.Info);
+            }
+            catch (OperationCanceledException exception)
+            {
+                SetMessage(Tr(exception.Message), MessageType.Warning);
+            }
+            catch (Exception exception)
+            {
+                SetMessage(Tr(exception.Message), MessageType.Error);
+            }
+        }
+
+        private string FormatHomeModuleParentResult(
+            SituationHomeModuleParentService.Result result)
+        {
+            List<string> parts = new()
+            {
+                string.Format(
+                    Tr("Created {0} parent object(s)."),
+                    result.CreatedCount)
+            };
+
+            if (result.ExistingCount > 0)
+            {
+                parts.Add(string.Format(
+                    Tr("Skipped {0} scene(s) where the parent already exists."),
+                    result.ExistingCount));
+            }
+
+            if (result.MissingSceneNames.Count > 0)
+            {
+                parts.Add(string.Format(
+                    Tr("Missing scenes: {0}"),
+                    string.Join(", ", result.MissingSceneNames)));
+            }
+
+            return string.Join(" ", parts);
+        }
+
+        private void SyncSelectedHomeModuleSceneNames()
+        {
+            if (_homeLayout == null)
+            {
+                _selectedHomeModuleSceneNames.Clear();
+                return;
+            }
+
+            HashSet<string> available = new(_homeLayout.ModuleSceneNames);
+            _selectedHomeModuleSceneNames.RemoveAll(sceneName =>
+                !available.Contains(sceneName));
+        }
+
+        private string SuggestHomeModuleParentName()
+        {
+            string sceneName = _homeModuleParentDefinition != null
+                ? _homeModuleParentDefinition.SceneName
+                : _sceneName;
+            if (string.IsNullOrWhiteSpace(sceneName))
+            {
+                return _homeModuleParentName;
+            }
+
+            const string prefix = "Scenario_";
+            string normalized = sceneName.Trim();
+            if (normalized.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                normalized = normalized.Substring(prefix.Length);
+            }
+
+            return normalized.EndsWith("_Common", StringComparison.Ordinal)
+                ? normalized
+                : $"{normalized}_Common";
         }
 
         private SituationCreationRequest BuildRequest()
@@ -1028,7 +1277,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 GUILayout.Height(EditorGUIUtility.singleLineHeight));
             if (available.Count == 0)
             {
-                EditorGUILayout.HelpBox("No ID assets were found.", MessageType.Info);
+                EditorGUILayout.HelpBox(Tr("No ID assets were found."), MessageType.Info);
                 return;
             }
 
@@ -1061,11 +1310,18 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             EditorGUILayout.EndScrollView();
         }
 
-        private static void DrawAssetList<T>(string label, List<T> assets)
+        private static void DrawAssetList<T>(
+            string label,
+            List<T> assets,
+            bool optional = false)
             where T : UnityEngine.Object
         {
             EditorGUILayout.Space(4f);
-            EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(
+                optional
+                    ? $"{Tr(label)} [{Tr("Optional")}]"
+                    : Tr(label),
+                EditorStyles.boldLabel);
             for (int index = 0; index < assets.Count; index++)
             {
                 using (new EditorGUILayout.HorizontalScope())
@@ -1082,7 +1338,9 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 }
             }
 
-            if (GUILayout.Button($"Add {typeof(T).Name}", GUILayout.Width(180f)))
+            if (GUILayout.Button(
+                    string.Format(Tr("Add {0}"), typeof(T).Name),
+                    GUILayout.Width(180f)))
             {
                 assets.Add(null);
             }
@@ -1093,7 +1351,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             try
             {
                 action();
-                SetMessage("Building block added.", MessageType.Info);
+                SetMessage(Tr("Building block added."), MessageType.Info);
             }
             catch (Exception exception)
             {
@@ -1120,17 +1378,148 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
         private static GUIContent Required(string label, string tooltip)
         {
-            return new GUIContent($"{label} * [Required]", tooltip);
+            return new GUIContent($"{Tr(label)} * [{Tr("Required")}]", tooltip);
         }
 
         private static GUIContent Conditional(string label, string tooltip)
         {
-            return new GUIContent($"{label} [Conditional]", tooltip);
+            return new GUIContent($"{Tr(label)} [{Tr("Conditional")}]", tooltip);
         }
 
         private static GUIContent Optional(string label, string tooltip)
         {
-            return new GUIContent($"{label} [Optional]", tooltip);
+            return new GUIContent($"{Tr(label)} [{Tr("Optional")}]", tooltip);
+        }
+
+        private static void ToggleLanguage()
+        {
+            _language = _language == Language.English
+                ? Language.Korean
+                : Language.English;
+            EditorPrefs.SetInt(LanguagePrefsKey, (int)_language);
+        }
+
+        private static string Tr(string text)
+        {
+            if (_language != Language.Korean)
+            {
+                return text;
+            }
+
+            switch (text)
+            {
+                case "New": return "신규";
+                case "Situation Authoring": return "상황 저작";
+                case "Edit Existing": return "기존 수정";
+                case "Building Blocks": return "빌딩 블록";
+                case "Validate": return "검증";
+                case "Switch Language": return "언어 전환";
+                case "Open Situation Authoring guide": return "Situation Authoring 사용 설명서 열기";
+                case "Resume": return "재개";
+                case "Cancel Pending Request": return "대기 요청 취소";
+                case "New Situation": return "신규 상황";
+                case "Creates the Controller script first, then resumes scene and Definition creation after Unity compiles.": return "Controller 스크립트를 먼저 생성한 뒤, Unity 컴파일 후 씬과 Definition 생성을 이어서 진행합니다.";
+                case "Display Name": return "표시 이름";
+                case "Situation ID": return "상황 ID";
+                case "Home Layout": return "홈 레이아웃";
+                case "Level": return "레벨";
+                case "Room Location": return "방 위치";
+                case "Scene Name": return "씬 이름";
+                case "Controller Class Name": return "Controller 클래스 이름";
+                case "Controller Namespace": return "Controller 네임스페이스";
+                case "Weight": return "가중치";
+                case "Minimum Day": return "최소 날짜";
+                case "Register as Candidate": return "후보로 등록";
+                case "Initial Prefabs": return "초기 프리팹";
+                case "Module Object IDs": return "모듈 오브젝트 ID";
+                case "Locked Door IDs": return "잠긴 문 ID";
+                case "Trap Door IDs": return "함정 문 ID";
+                case "View Door ID Layout": return "Door ID 배치도 보기";
+                case "Planned Assets": return "생성 예정 에셋";
+                case "Create Situation": return "상황 생성";
+                case "Controller script created. Unity will compile and resume the remaining work.": return "Controller 스크립트를 생성했습니다. Unity 컴파일 후 남은 작업을 이어서 진행합니다.";
+                case "Level 2 Rules": return "Level 2 규칙";
+                case "Uses Time Limit": return "제한시간 사용";
+                case "Time Limit Seconds": return "제한시간(초)";
+                case "Allowed Exits": return "허용 출구";
+                case "Emergency Stairs": return "비상계단";
+                case "Refuge Area": return "대피공간";
+                case "Lightweight Partition": return "경량칸막이";
+                case "Descender": return "완강기";
+                case "Location": return "위치";
+                case "Situation Location Catalog is missing or empty.": return "Situation Location Catalog가 없거나 비어 있습니다.";
+                case "Create or Reload Catalog": return "Catalog 생성/다시 불러오기";
+                case "Scene Folder": return "씬 폴더";
+                case "Controller Folder": return "Controller 폴더";
+                case "Add New Location": return "새 위치 추가";
+                case "Select Catalog Asset": return "Catalog 에셋 선택";
+                case "Location Name": return "위치 이름";
+                case "Location ID": return "위치 ID";
+                case "Save Location": return "위치 저장";
+                case "Location '{0}' was added.": return "위치 '{0}'을(를) 추가했습니다.";
+                case "Could Not Save Location": return "위치를 저장할 수 없음";
+                case "OK": return "확인";
+                case "Cancel": return "취소";
+                case "Definition": return "Definition";
+                case "Select a SituationDefinition.": return "SituationDefinition을 선택하세요.";
+                case "Apply Definition Changes": return "Definition 변경 적용";
+                case "Definition changes applied.": return "Definition 변경을 적용했습니다.";
+                case "Build Settings": return "Build Settings";
+                case "Registered": return "등록됨";
+                case "Missing or Disabled": return "없음 또는 비활성화";
+                case "Add to Build Settings": return "Build Settings에 추가";
+                case "Open Situation Scene": return "상황 씬 열기";
+                case "Open with Home Layout": return "Home Layout과 함께 열기";
+                case "Could not open the situation with its Home Layout.": return "상황을 Home Layout과 함께 열 수 없습니다.";
+                case "Validate This Situation": return "이 상황 검증";
+                case "Registered ({0} entry)": return "등록됨 ({0}개 항목)";
+                case "Not registered (valid for test-only use)": return "등록되지 않음 (테스트 전용으로 유효)";
+                case "Candidate": return "후보";
+                case "Register Candidate": return "후보 등록";
+                case "Unregister Candidate": return "후보 등록 해제";
+                case "Refresh Status": return "상태 새로고침";
+                case "Adds common components to the active situation scene. It does not create situation-specific success or failure logic.": return "현재 활성 상황 씬에 공통 컴포넌트를 추가합니다. 상황별 성공/실패 로직은 생성하지 않습니다.";
+                case "Situation Controller": return "상황 Controller";
+                case "Target Object": return "대상 오브젝트";
+                case "Refresh Scene Controller": return "씬 Controller 새로고침";
+                case "Refresh ID Assets": return "ID 에셋 새로고침";
+                case "Add Object Override": return "오브젝트 Override 추가";
+                case "Door IDs": return "Door ID";
+                case "Add Door Lock Override": return "문 잠금 Override 추가";
+                case "Add Trap Door Trigger": return "함정 문 Trigger 추가";
+                case "Prefab Palette": return "프리팹 팔레트";
+                case "Prefab": return "프리팹";
+                case "Add Selected Prefab": return "선택한 프리팹 추가";
+                case "Home Module Parents": return "Home 모듈 부모";
+                case "Creates empty root parent objects in selected Home Layout module scenes for situation-specific staging.": return "상황별 연출 정리를 위해 선택한 Home Layout 모듈 씬 루트에 빈 부모 오브젝트를 생성합니다.";
+                case "Situation Definition": return "상황 Definition";
+                case "Parent Object Name": return "부모 오브젝트 이름";
+                case "Suggest": return "추천";
+                case "Refresh Home Layout": return "Home Layout 새로고침";
+                case "Select All": return "전체 선택";
+                case "Clear Selection": return "선택 해제";
+                case "Home Layout is missing or has no module scenes.": return "Home Layout이 없거나 모듈 씬이 비어 있습니다.";
+                case "Create Parent In Selected Scenes": return "선택한 씬에 부모 생성";
+                case "Home Layout Module Scenes": return "Home Layout 모듈 씬";
+                case "Scene asset was not found.": return "씬 에셋을 찾을 수 없습니다.";
+                case "Created {0} parent object(s).": return "부모 오브젝트 {0}개를 생성했습니다.";
+                case "Skipped {0} scene(s) where the parent already exists.": return "이미 부모가 있는 씬 {0}개는 건너뛰었습니다.";
+                case "Missing scenes: {0}": return "찾을 수 없는 씬: {0}";
+                case "Parent object name is required.": return "부모 오브젝트 이름이 필요합니다.";
+                case "Select at least one Home Layout module scene.": return "Home Layout 모듈 씬을 하나 이상 선택하세요.";
+                case "Home module parent creation was cancelled.": return "Home 모듈 부모 생성이 취소되었습니다.";
+                case "Validate Current Situation": return "현재 상황 검증";
+                case "Required validation passed. Warnings: {0}.": return "필수 검증 통과. 경고: {0}개.";
+                case "Validation failed. Errors: {0}, Warnings: {1}.": return "검증 실패. 오류: {0}개, 경고: {1}개.";
+                case "Select": return "선택";
+                case "No ID assets were found.": return "ID 에셋을 찾을 수 없습니다.";
+                case "Add {0}": return "{0} 추가";
+                case "Building block added.": return "빌딩 블록을 추가했습니다.";
+                case "Required": return "필수";
+                case "Conditional": return "조건부";
+                case "Optional": return "선택";
+                default: return text;
+            }
         }
     }
 }
