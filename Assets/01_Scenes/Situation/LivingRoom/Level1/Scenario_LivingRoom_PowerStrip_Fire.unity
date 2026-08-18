@@ -221,6 +221,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1159630610}
     m_Modifications:
+    - target: {fileID: 1547152690847526177, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
+      propertyPath: m_Volume
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1547152690847526177, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 2802201682524127449, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
       propertyPath: m_Name
       value: PowerStripFireEffect
