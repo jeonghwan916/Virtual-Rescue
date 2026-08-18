@@ -117,14 +117,19 @@ namespace VirtualRescue.Situations.AnomalyObservation
         private void UpdateObservation()
         {
             Ray ray = new(_rayOrigin.position, _rayOrigin.forward);
-            bool hasHit = Physics.Raycast(
+            bool hasHit = _textureTarget.TryGetObservationHit(
                 ray,
-                out RaycastHit hit,
                 _maximumObservationDistance,
                 _raycastMask,
-                QueryTriggerInteraction.Ignore);
+                out RaycastHit hit);
 
-            if (!hasHit || !_textureTarget.IsTargetCollider(hit.collider))
+            if (!hasHit)
+            {
+                ResetObservationProgress();
+                return;
+            }
+
+            if (!_textureTarget.IsTargetCollider(hit.collider))
             {
                 ResetObservationProgress();
                 return;
