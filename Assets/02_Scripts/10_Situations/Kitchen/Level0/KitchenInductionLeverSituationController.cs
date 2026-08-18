@@ -21,8 +21,13 @@ namespace VirtualRescue.Situations
 
             if (isEmissionOff)
             {
-                ResolveSituation();
+                StageClear();
             }
+        }
+
+        private void StageClear()
+        {
+            ResolveSituation();
         }
     }
 }
