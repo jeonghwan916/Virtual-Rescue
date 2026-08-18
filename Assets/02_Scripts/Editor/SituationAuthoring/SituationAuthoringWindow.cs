@@ -47,6 +47,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         [SerializeField] private int _minimumDay = 1;
         [SerializeField] private string _resolvedDialogueId = string.Empty;
         [SerializeField] private string _failedDialogueId = string.Empty;
+        [SerializeField] private string _resolvedDialogueText = string.Empty;
+        [SerializeField] private string _failedDialogueText = string.Empty;
         [SerializeField] private bool _registerAsCandidate;
         [SerializeField] private bool _usesTimeLimit;
         [SerializeField] private float _timeLimitSeconds = 60f;
@@ -64,6 +66,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         [SerializeField] private SituationDefinition _validationDefinition;
         [SerializeField] private HomeLayoutDefinition _homeLayout;
         [SerializeField] private SituationLocationCatalog _locationCatalog;
+        [SerializeField] private string _editResolvedDialogueText = string.Empty;
+        [SerializeField] private string _editFailedDialogueText = string.Empty;
 
         [Header("New Location")]
         [SerializeField] private bool _showAddLocation;
@@ -334,10 +338,27 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 "Resolved Dialogue Id",
                 "상황 해결 시 재생할 Dialogue ID입니다. 비워두면 재생하지 않습니다."),
                 _resolvedDialogueId);
+            _resolvedDialogueText = EditorGUILayout.TextField(Optional(
+                "Resolved Dialogue Text",
+                "Resolved Dialogue ID로 Loop Text CSV에 추가할 대사 본문입니다."),
+                _resolvedDialogueText);
             _failedDialogueId = EditorGUILayout.TextField(Optional(
                 "Failed Dialogue Id",
                 "상황 실패 시 재생할 Dialogue ID입니다. 비워두면 재생하지 않습니다."),
                 _failedDialogueId);
+            _failedDialogueText = EditorGUILayout.TextField(Optional(
+                "Failed Dialogue Text",
+                "Failed Dialogue ID로 Loop Text CSV에 추가할 대사 본문입니다."),
+                _failedDialogueText);
+            if (GUILayout.Button(Tr("Append Missing Dialogue Rows")))
+            {
+                AppendMissingDialogueRows(
+                    _resolvedDialogueId,
+                    _resolvedDialogueText,
+                    _failedDialogueId,
+                    _failedDialogueText);
+            }
+
             _registerAsCandidate = EditorGUILayout.Toggle(Optional(
                 "Register as Candidate",
                 "활성화하면 생성한 Definition을 LoopBase Candidates에 추가합니다. " +
@@ -640,8 +661,26 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 serializedDefinition.FindProperty("_roomTrigger"));
             EditorGUILayout.PropertyField(
                 serializedDefinition.FindProperty("_resolvedDialogueId"));
+            _editResolvedDialogueText = EditorGUILayout.TextField(Optional(
+                "Resolved Dialogue Text",
+                "Resolved Dialogue ID로 Loop Text CSV에 추가할 대사 본문입니다."),
+                _editResolvedDialogueText);
             EditorGUILayout.PropertyField(
                 serializedDefinition.FindProperty("_failedDialogueId"));
+            _editFailedDialogueText = EditorGUILayout.TextField(Optional(
+                "Failed Dialogue Text",
+                "Failed Dialogue ID로 Loop Text CSV에 추가할 대사 본문입니다."),
+                _editFailedDialogueText);
+            if (GUILayout.Button(Tr("Append Missing Dialogue Rows")))
+            {
+                AppendMissingDialogueRows(
+                    serializedDefinition.FindProperty("_resolvedDialogueId")
+                        .stringValue,
+                    _editResolvedDialogueText,
+                    serializedDefinition.FindProperty("_failedDialogueId")
+                        .stringValue,
+                    _editFailedDialogueText);
+            }
 
             if ((SituationLevel)levelProperty.enumValueIndex ==
                 SituationLevel.Level2)
@@ -1302,6 +1341,30 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 SituationValidationService.Validate(_validationDefinition));
         }
 
+        private void AppendMissingDialogueRows(
+            string resolvedDialogueId,
+            string resolvedDialogueText,
+            string failedDialogueId,
+            string failedDialogueText)
+        {
+            SituationDialogueCsvEntry[] entries =
+            {
+                new(resolvedDialogueId, resolvedDialogueText),
+                new(failedDialogueId, failedDialogueText)
+            };
+
+            if (SituationDialogueCsvService.TryAppendMissingRows(
+                    entries,
+                    out string message))
+            {
+                SetMessage(Tr(message), MessageType.Info);
+            }
+            else
+            {
+                SetMessage(Tr(message), MessageType.Error);
+            }
+        }
+
         private void RefreshIdAssets()
         {
             LoadAssets(_availableModuleIds, "t:ModuleObjectId");
@@ -1668,7 +1731,10 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 case "Weight": return "가중치";
                 case "Minimum Day": return "최소 날짜";
                 case "Resolved Dialogue Id": return "해결 대사 ID";
+                case "Resolved Dialogue Text": return "해결 대사 본문";
                 case "Failed Dialogue Id": return "실패 대사 ID";
+                case "Failed Dialogue Text": return "실패 대사 본문";
+                case "Append Missing Dialogue Rows": return "누락 대사 행 추가";
                 case "Register as Candidate": return "후보로 등록";
                 case "Initial Prefabs": return "초기 프리팹";
                 case "Module Object IDs": return "모듈 오브젝트 ID";
