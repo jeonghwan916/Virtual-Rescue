@@ -81,5 +81,6 @@ namespace VirtualRescue.Situations.AnomalyObservation
                 rigidbodyComponent.useGravity = false;
             }
         }
+
     }
 }
