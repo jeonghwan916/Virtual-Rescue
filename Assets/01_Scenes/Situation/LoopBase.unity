@@ -336,7 +336,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 5c6ca98732cf18d4696f60ab153a0eef, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -427,7 +427,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: e7b48a76dbe611d469761e4db59e6a69, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -1526,7 +1526,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 07c63b3d5fdc0984f84b16ab168781f7, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -1832,7 +1832,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 78f82a6d1ad2c804ba634355d9068904, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -1934,7 +1934,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6af4d9d4ebb12174ca1e1606592e72aa, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -2025,7 +2025,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: c82290ab8fa2d7b45bfff9df5de3b565, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -2116,7 +2116,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: fe8ed6a31d3c38748a93829a95f060eb, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -2366,6 +2366,8 @@ MonoBehaviour:
   - _situationId: livingroom.power_strip_unplug
     _clip: {fileID: 8300000, guid: 88b7ec76808055846ab6bafce9536537, type: 3}
   _fallbackFailBroadcastClip: {fileID: 0}
+  _lightweightPartitionIncidentBroadcastClip: {fileID: 0}
+  _wrongCellPhoneCallBroadcastClip: {fileID: 0}
   _musicClip: {fileID: 0}
   _staticAudioSource: {fileID: 0}
   _staticNoiseClip: {fileID: 8300000, guid: 0695824886d55034d9b47140e137edab, type: 3}
@@ -2738,7 +2740,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 50f83a242339fac4f80207c945863df4, type: 2}
   - {fileID: 11400000, guid: 85cc01455cbf4f54190f49dcc4032cf6, type: 2}
   - {fileID: 11400000, guid: bc6a8032574785b4897ca99060bfff43, type: 2}
-  _noSituationChance: 0.2
+  _noSituationChance: 0.1
   _noSituationChanceReduction: 0.1
 --- !u!114 &2029193223
 MonoBehaviour:
