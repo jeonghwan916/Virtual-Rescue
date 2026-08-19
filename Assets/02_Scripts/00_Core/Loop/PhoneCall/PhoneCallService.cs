@@ -183,7 +183,7 @@ namespace VirtualRescue.GameFlow
                 return PlayThenExit(WrongCallGroupId);
             }
 
-            return ExitImmediately();
+            return PlayThenExit(definition.AfterResolveCallingDialogueGroupId);
         }
 
         private PhoneCallAction EvaluateLevel1(

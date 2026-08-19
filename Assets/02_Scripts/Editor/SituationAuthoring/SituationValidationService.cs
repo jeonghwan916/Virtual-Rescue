@@ -142,6 +142,16 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 }
             }
 
+            if (definition.Level == SituationLevel.Level0 &&
+                ContainsAllowedExit(definition, ExitType.CellPhone) &&
+                string.IsNullOrWhiteSpace(
+                    definition.AfterResolveCallingDialogueGroupId))
+            {
+                results.Add(Warning(
+                    "Level 0 CellPhone exit uses the after-resolve calling dialogue group, but it is empty.",
+                    definition));
+            }
+
             if (definition.Level == SituationLevel.Level2)
             {
                 if (definition.UsesTimeLimit && definition.TimeLimitSeconds <= 0f)

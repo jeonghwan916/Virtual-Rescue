@@ -55,12 +55,6 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             string.Empty;
         [SerializeField] private string _resolvedDialogueText = string.Empty;
         [SerializeField] private string _failedDialogueText = string.Empty;
-        [SerializeField] private string _beforeResolveCallingDialogueText =
-            string.Empty;
-        [SerializeField] private string _afterResolveCallingDialogueText =
-            string.Empty;
-        [SerializeField] private string _level2CallingDialogueText =
-            string.Empty;
         [SerializeField] private bool _registerAsCandidate;
         [SerializeField] private bool _usesTimeLimit;
         [SerializeField] private float _timeLimitSeconds = 60f;
@@ -82,12 +76,6 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         [SerializeField] private SituationLocationCatalog _locationCatalog;
         [SerializeField] private string _editResolvedDialogueText = string.Empty;
         [SerializeField] private string _editFailedDialogueText = string.Empty;
-        [SerializeField] private string _editBeforeResolveCallingDialogueText =
-            string.Empty;
-        [SerializeField] private string _editAfterResolveCallingDialogueText =
-            string.Empty;
-        [SerializeField] private string _editLevel2CallingDialogueText =
-            string.Empty;
 
         [Header("New Location")]
         [SerializeField] private bool _showAddLocation;
@@ -380,7 +368,11 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
 
             if (GUILayout.Button(Tr("Append Missing Dialogue Rows")))
             {
-                AppendMissingDialogueRows(BuildNewDialogueEntries());
+                AppendMissingDialogueRows(
+                    _resolvedDialogueId,
+                    _resolvedDialogueText,
+                    _failedDialogueId,
+                    _failedDialogueText);
             }
 
             _registerAsCandidate = EditorGUILayout.Toggle(Optional(
@@ -477,31 +469,17 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             _beforeResolveCallingDialogueGroupId =
                 EditorGUILayout.TextField(Optional(
                     "Before Resolve Calling Dialogue Group ID",
-                    "상황 발견 후 해결 전에 전화했을 때 재생할 Dialogue Group ID입니다."),
+                    "상황 발견 후 해결 전에 전화했을 때 재생할 Dialogue Group ID입니다. Group row는 Dialogue CSV에서 별도로 구성합니다."),
                     _beforeResolveCallingDialogueGroupId);
-            _beforeResolveCallingDialogueText =
-                EditorGUILayout.TextField(Optional(
-                    "Before Resolve Calling Dialogue Text",
-                    "Before Resolve Calling Dialogue Group ID로 Loop Text CSV에 추가할 대사 본문입니다."),
-                    _beforeResolveCallingDialogueText);
             _afterResolveCallingDialogueGroupId =
                 EditorGUILayout.TextField(Optional(
                     "After Resolve Calling Dialogue Group ID",
-                    "상황 해결 후 전화했을 때 재생할 Dialogue Group ID입니다."),
+                    "상황 해결 후 전화했을 때 재생할 Dialogue Group ID입니다. Group row는 Dialogue CSV에서 별도로 구성합니다."),
                     _afterResolveCallingDialogueGroupId);
-            _afterResolveCallingDialogueText =
-                EditorGUILayout.TextField(Optional(
-                    "After Resolve Calling Dialogue Text",
-                    "After Resolve Calling Dialogue Group ID로 Loop Text CSV에 추가할 대사 본문입니다."),
-                    _afterResolveCallingDialogueText);
             _level2CallingDialogueGroupId = EditorGUILayout.TextField(Optional(
                 "Level 2 Calling Dialogue Group ID",
-                "Level 2 상황 발견 후 전화했을 때 재생할 Dialogue Group ID입니다."),
+                "Level 2 상황 발견 후 전화했을 때 재생할 Dialogue Group ID입니다. Group row는 Dialogue CSV에서 별도로 구성합니다."),
                 _level2CallingDialogueGroupId);
-            _level2CallingDialogueText = EditorGUILayout.TextField(Optional(
-                "Level 2 Calling Dialogue Text",
-                "Level 2 Calling Dialogue Group ID로 Loop Text CSV에 추가할 대사 본문입니다."),
-                _level2CallingDialogueText);
         }
 
         private void DrawPhoneCallDialogueProperties(
@@ -515,7 +493,6 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             }
 
             DrawPhoneCallDialogueProperties(serializedDefinition);
-            DrawEditPhoneCallDialogueTexts();
         }
 
         private static void DrawPhoneCallDialogueProperties(
@@ -527,25 +504,6 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 "_afterResolveCallingDialogueGroupId"));
             EditorGUILayout.PropertyField(serializedDefinition.FindProperty(
                 "_level2CallingDialogueGroupId"));
-        }
-
-        private void DrawEditPhoneCallDialogueTexts()
-        {
-            _editBeforeResolveCallingDialogueText =
-                EditorGUILayout.TextField(Optional(
-                    "Before Resolve Calling Dialogue Text",
-                    "Before Resolve Calling Dialogue Group ID로 Loop Text CSV에 추가할 대사 본문입니다."),
-                    _editBeforeResolveCallingDialogueText);
-            _editAfterResolveCallingDialogueText =
-                EditorGUILayout.TextField(Optional(
-                    "After Resolve Calling Dialogue Text",
-                    "After Resolve Calling Dialogue Group ID로 Loop Text CSV에 추가할 대사 본문입니다."),
-                    _editAfterResolveCallingDialogueText);
-            _editLevel2CallingDialogueText =
-                EditorGUILayout.TextField(Optional(
-                    "Level 2 Calling Dialogue Text",
-                    "Level 2 Calling Dialogue Group ID로 Loop Text CSV에 추가할 대사 본문입니다."),
-                    _editLevel2CallingDialogueText);
         }
 
         private void DrawLevel2Rules()
@@ -789,10 +747,12 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             if (GUILayout.Button(Tr("Append Missing Dialogue Rows")))
             {
                 AppendMissingDialogueRows(
-                    BuildEditDialogueEntries(
-                        serializedDefinition,
-                        (SituationLevel)levelProperty.enumValueIndex,
-                        ContainsExit(allowedExitsProperty, ExitType.CellPhone)));
+                    serializedDefinition.FindProperty("_resolvedDialogueId")
+                        .stringValue,
+                    _editResolvedDialogueText,
+                    serializedDefinition.FindProperty("_failedDialogueId")
+                        .stringValue,
+                    _editFailedDialogueText);
             }
 
             EditorGUILayout.PropertyField(
@@ -1554,72 +1514,18 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             return false;
         }
 
-        private IReadOnlyList<SituationDialogueCsvEntry> BuildNewDialogueEntries()
-        {
-            List<SituationDialogueCsvEntry> entries = new()
-            {
-                new(_resolvedDialogueId, _resolvedDialogueText),
-                new(_failedDialogueId, _failedDialogueText)
-            };
-
-            if (ShouldShowPhoneCallFields(_level, _allowCellPhone))
-            {
-                entries.Add(new(
-                    _beforeResolveCallingDialogueGroupId,
-                    _beforeResolveCallingDialogueText));
-                entries.Add(new(
-                    _afterResolveCallingDialogueGroupId,
-                    _afterResolveCallingDialogueText));
-                entries.Add(new(
-                    _level2CallingDialogueGroupId,
-                    _level2CallingDialogueText));
-            }
-
-            return entries;
-        }
-
-        private IReadOnlyList<SituationDialogueCsvEntry> BuildEditDialogueEntries(
-            SerializedObject serializedDefinition,
-            SituationLevel level,
-            bool hasCellPhoneExit)
-        {
-            List<SituationDialogueCsvEntry> entries = new()
-            {
-                new(
-                    serializedDefinition.FindProperty("_resolvedDialogueId")
-                        .stringValue,
-                    _editResolvedDialogueText),
-                new(
-                    serializedDefinition.FindProperty("_failedDialogueId")
-                        .stringValue,
-                    _editFailedDialogueText)
-            };
-
-            if (ShouldShowPhoneCallFields(level, hasCellPhoneExit))
-            {
-                entries.Add(new(
-                    serializedDefinition
-                        .FindProperty("_beforeResolveCallingDialogueGroupId")
-                        .stringValue,
-                    _editBeforeResolveCallingDialogueText));
-                entries.Add(new(
-                    serializedDefinition
-                        .FindProperty("_afterResolveCallingDialogueGroupId")
-                        .stringValue,
-                    _editAfterResolveCallingDialogueText));
-                entries.Add(new(
-                    serializedDefinition
-                        .FindProperty("_level2CallingDialogueGroupId")
-                        .stringValue,
-                    _editLevel2CallingDialogueText));
-            }
-
-            return entries;
-        }
-
         private void AppendMissingDialogueRows(
-            IReadOnlyList<SituationDialogueCsvEntry> entries)
+            string resolvedDialogueId,
+            string resolvedDialogueText,
+            string failedDialogueId,
+            string failedDialogueText)
         {
+            SituationDialogueCsvEntry[] entries =
+            {
+                new(resolvedDialogueId, resolvedDialogueText),
+                new(failedDialogueId, failedDialogueText)
+            };
+
             if (SituationDialogueCsvService.TryAppendMissingRows(
                     entries,
                     out string message))
@@ -2002,11 +1908,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 case "Failed Dialogue Id": return "실패 대사 ID";
                 case "Failed Dialogue Text": return "실패 대사 본문";
                 case "Before Resolve Calling Dialogue Group ID": return "해결 전 통화 대사 그룹 ID";
-                case "Before Resolve Calling Dialogue Text": return "해결 전 통화 대사 본문";
                 case "After Resolve Calling Dialogue Group ID": return "해결 후 통화 대사 그룹 ID";
-                case "After Resolve Calling Dialogue Text": return "해결 후 통화 대사 본문";
                 case "Level 2 Calling Dialogue Group ID": return "Level 2 통화 대사 그룹 ID";
-                case "Level 2 Calling Dialogue Text": return "Level 2 통화 대사 본문";
                 case "Append Missing Dialogue Rows": return "누락 대사 행 추가";
                 case "Register as Candidate": return "후보로 등록";
                 case "Initial Prefabs": return "초기 프리팹";

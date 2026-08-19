@@ -2734,8 +2734,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c8c3ff1536f4a31b29b822291df07b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationSelector
-  _candidates: []
-  _noSituationChance: 0.2
+  _candidates:
+  - {fileID: 11400000, guid: 50f83a242339fac4f80207c945863df4, type: 2}
+  - {fileID: 11400000, guid: 85cc01455cbf4f54190f49dcc4032cf6, type: 2}
+  _noSituationChance: 0
   _noSituationChanceReduction: 0.1
 --- !u!114 &2029193223
 MonoBehaviour:
@@ -2777,6 +2779,8 @@ MonoBehaviour:
   _dayFlowController: {fileID: 2029193224}
   _situationSceneLoader: {fileID: 2029193223}
   _discoveryTracker: {fileID: 2029193230}
+  _dialogueManager: {fileID: 1979127967}
+  _blockedElevatorDialogueGroupId: Block_Eleavator
 --- !u!114 &2029193226
 MonoBehaviour:
   m_ObjectHideFlags: 0

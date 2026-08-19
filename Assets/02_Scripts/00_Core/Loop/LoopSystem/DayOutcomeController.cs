@@ -1,4 +1,5 @@
 using UnityEngine;
+using VirtualRescue.DialogueSystem;
 
 namespace VirtualRescue.GameFlow
 {
@@ -8,6 +9,9 @@ namespace VirtualRescue.GameFlow
         [SerializeField] private DayFlowController _dayFlowController = null;
         [SerializeField] private SituationSceneLoader _situationSceneLoader = null;
         [SerializeField] private SituationDiscoveryTracker _discoveryTracker = null;
+        [SerializeField] private DialogueManager _dialogueManager = null;
+        [SerializeField] private string _blockedElevatorDialogueGroupId =
+            "Block_Eleavator";
 
         private SituationController _boundSituationController;
 
@@ -103,7 +107,7 @@ namespace VirtualRescue.GameFlow
                 exitType == ExitType.Elevator)
             {
                 return HasDiscoveredCurrentSituation()
-                    ? BlockExit("The elevator is blocked after discovering a Level 1 situation.")
+                    ? BlockElevatorExit()
                     : FailDay(definition);
             }
 
@@ -245,6 +249,18 @@ namespace VirtualRescue.GameFlow
         {
             return _discoveryTracker != null &&
                    _discoveryTracker.HasDiscoveredCurrentSituation;
+        }
+
+        private bool BlockElevatorExit()
+        {
+            if (_dialogueManager != null &&
+                !string.IsNullOrWhiteSpace(_blockedElevatorDialogueGroupId))
+            {
+                _dialogueManager.TryPlayGroup(_blockedElevatorDialogueGroupId);
+            }
+
+            return BlockExit(
+                "The elevator is blocked after discovering a Level 1 situation.");
         }
 
         private bool Fail(string message)
