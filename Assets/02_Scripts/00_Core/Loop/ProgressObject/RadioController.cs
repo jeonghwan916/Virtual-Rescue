@@ -25,6 +25,7 @@ public class RadioController : MonoBehaviour
     [Header("Failed Broad Cast")]
     [SerializeField] private FailBroadcastEntry[] _failBroadcastEntries;
     [SerializeField] private AudioClip _fallbackFailBroadcastClip;
+    [SerializeField] private AudioClip _lightweightPartitionIncidentBroadcastClip;
 
     [Header("Music")]
     [SerializeField] private AudioClip _musicClip;
@@ -71,6 +72,7 @@ public class RadioController : MonoBehaviour
         Debug.Log(
             $"Result={resultContext.ResultType}, " +
             $"SituationId={resultContext.SituationId}, " +
+            $"FailureReason={resultContext.FailureReason}, " +
             $"Clip={clipName}",
             this);
         
@@ -336,6 +338,11 @@ public class RadioController : MonoBehaviour
     {
         if (resultContext.ResultType == DayResultType.Failed)
         {
+            if (IsLightweightPartitionIncident(resultContext))
+            {
+                return _lightweightPartitionIncidentBroadcastClip;
+            }
+
             AudioClip failClip = FindFailClip(resultContext.SituationId);
             return failClip != null
                 ? failClip
@@ -343,6 +350,15 @@ public class RadioController : MonoBehaviour
         }
 
         return SelectRandomCommonClip();
+    }
+
+    private static bool IsLightweightPartitionIncident(
+        DayResultContext resultContext)
+    {
+        return resultContext.FailureReason ==
+                   DayFailureReason.InvalidLightweightPartitionExit ||
+               resultContext.FailureReason ==
+                   DayFailureReason.NoDiscoveryLightweightPartitionExit;
     }
 
     private AudioClip FindFailClip(string situationId)

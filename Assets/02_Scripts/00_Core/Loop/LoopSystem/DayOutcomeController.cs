@@ -90,17 +90,35 @@ namespace VirtualRescue.GameFlow
             {
                 if (!definition.IsExitAllowed(exitType))
                 {
-                    return FailDay(definition);
+                    return FailDay(
+                        definition,
+                        GetInvalidExitFailureReason(exitType),
+                        exitType);
+                }
+
+                if (exitType == ExitType.LightweightPartition &&
+                    !HasDiscoveredCurrentSituation())
+                {
+                    return FailDay(
+                        definition,
+                        DayFailureReason.NoDiscoveryLightweightPartitionExit,
+                        exitType);
                 }
 
                 if (controller.IsActive && !controller.TryResolveByExit(exitType))
                 {
-                    return FailDay(definition);
+                    return FailDay(
+                        definition,
+                        DayFailureReason.InvalidExit,
+                        exitType);
                 }
 
                 return controller.IsResolved
                     ? CompleteDay(definition)
-                    : FailDay(definition);
+                    : FailDay(
+                        definition,
+                        DayFailureReason.InvalidExit,
+                        exitType);
             }
 
             if (definition.Level == SituationLevel.Level1 &&
@@ -230,6 +248,20 @@ namespace VirtualRescue.GameFlow
             return Fail("Day flow rejected a failed day result.");
         }
 
+        private bool FailDay(
+            SituationDefinition definition,
+            DayFailureReason failureReason,
+            ExitType exitType)
+        {
+            if (_dayFlowController.FailDay(
+                    DayResultContext.Failed(definition, failureReason, exitType)))
+            {
+                return true;
+            }
+
+            return Fail("Day flow rejected a failed day result.");
+        }
+
         private bool TryValidateReferences()
         {
             if (_dayFlowController == null)
@@ -249,6 +281,14 @@ namespace VirtualRescue.GameFlow
         {
             return _discoveryTracker != null &&
                    _discoveryTracker.HasDiscoveredCurrentSituation;
+        }
+
+        private static DayFailureReason GetInvalidExitFailureReason(
+            ExitType exitType)
+        {
+            return exitType == ExitType.LightweightPartition
+                ? DayFailureReason.InvalidLightweightPartitionExit
+                : DayFailureReason.InvalidExit;
         }
 
         private bool BlockElevatorExit()
