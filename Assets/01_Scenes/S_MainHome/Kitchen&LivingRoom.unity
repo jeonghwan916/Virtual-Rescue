@@ -5733,15 +5733,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8278972742441041082, guid: 97bb62be00dd36a46837eb6a7e0da673, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -15.91
+      value: -15.243
       objectReference: {fileID: 0}
     - target: {fileID: 8278972742441041082, guid: 97bb62be00dd36a46837eb6a7e0da673, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.05002791
+      value: 0.878
       objectReference: {fileID: 0}
     - target: {fileID: 8278972742441041082, guid: 97bb62be00dd36a46837eb6a7e0da673, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -6.548
+      value: -7.336
       objectReference: {fileID: 0}
     - target: {fileID: 8278972742441041082, guid: 97bb62be00dd36a46837eb6a7e0da673, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5790,13 +5790,42 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 704330283589150897, guid: 97bb62be00dd36a46837eb6a7e0da673, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1712984292}
   m_SourcePrefab: {fileID: 100100000, guid: 97bb62be00dd36a46837eb6a7e0da673, type: 3}
 --- !u!4 &1712984290 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8278972742441041082, guid: 97bb62be00dd36a46837eb6a7e0da673, type: 3}
   m_PrefabInstance: {fileID: 1712984289}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1712984291 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 704330283589150897, guid: 97bb62be00dd36a46837eb6a7e0da673, type: 3}
+  m_PrefabInstance: {fileID: 1712984289}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1712984292
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712984291}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.39189094, y: 0.03192853, z: 0.52017796}
+  m_Center: {x: 0, y: 0.015950684, z: 0}
 --- !u!1001 &1742303962
 PrefabInstance:
   m_ObjectHideFlags: 0

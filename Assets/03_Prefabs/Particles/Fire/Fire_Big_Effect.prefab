@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 714498182219613329}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: -2}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4863,7 +4863,7 @@ Transform:
   m_GameObject: {fileID: 1758928587194409716}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: -2}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9735,6 +9735,10 @@ MonoBehaviour:
   _extinguishDuration: 4
   _extinguishStageCount: 4
   _disableWhenExtinguished: 1
+  _temporaryOnlySuppressants: 
+  _maximumTemporarySuppression: 0.75
+  _temporaryRecoveryDelay: 0.15
+  _temporaryRecoveryDuration: 3
 --- !u!135 &6427645639204349642
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -9880,7 +9884,7 @@ Transform:
   m_GameObject: {fileID: 6485429145935122531}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: -2}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14734,7 +14738,7 @@ Transform:
   m_GameObject: {fileID: 6876109711325697770}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.64998627, z: -2}
+  m_LocalPosition: {x: 0, y: 0.64998627, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
