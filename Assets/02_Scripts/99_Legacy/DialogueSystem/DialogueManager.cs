@@ -131,20 +131,26 @@ namespace VirtualRescue.DialogueSystem
         // 그룹 ID에 속한 대사들을 order 순서대로 재생한다.
         public void PlayGroup(string groupId)
         {
+            TryPlayGroup(groupId);
+        }
+
+        public bool TryPlayGroup(string groupId)
+        {
             if (string.IsNullOrWhiteSpace(groupId))
             {
                 Debug.LogWarning("재생할 groupId가 비어 있습니다.");
-                return;
+                return false;
             }
 
             if (!_dialoguesByGroup.TryGetValue(groupId, out List<DialogueEntry> entries))
             {
                 Debug.LogWarning($"Dialogue Group을 찾을 수 없습니다: {groupId}");
-                return;
+                return false;
             }
 
             StopCurrentDialogue();
             _currentDialogueRoutine = StartCoroutine(PlayDialogueGroupRoutine(groupId, entries));
+            return true;
         }
 
         // 현재 재생 중인 대사와 음성을 중단하고 자막을 비활성화한다.

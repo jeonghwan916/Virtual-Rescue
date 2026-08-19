@@ -2657,7 +2657,9 @@ GameObject:
   - component: {fileID: 2029193226}
   - component: {fileID: 2029193227}
   - component: {fileID: 2029193228}
+  - component: {fileID: 2029193230}
   - component: {fileID: 2029193229}
+  - component: {fileID: 2029193231}
   m_Layer: 0
   m_Name: GameFlow
   m_TagString: Untagged
@@ -2732,8 +2734,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c8c3ff1536f4a31b29b822291df07b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationSelector
-  _candidates:
-  - {fileID: 11400000, guid: 13a56facdf06d0941af8614bc6cc35c1, type: 2}
+  _candidates: []
   _noSituationChance: 0.2
   _noSituationChanceReduction: 0.1
 --- !u!114 &2029193223
@@ -2775,6 +2776,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.DayOutcomeController
   _dayFlowController: {fileID: 2029193224}
   _situationSceneLoader: {fileID: 2029193223}
+  _discoveryTracker: {fileID: 2029193230}
 --- !u!114 &2029193226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2828,6 +2830,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationDialogueDirector
   _situationSceneLoader: {fileID: 2029193223}
   _dialogueManager: {fileID: 1979127967}
+--- !u!114 &2029193230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029193218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eab7ce45a9d84c0c95175b4ae7c1a8f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationDiscoveryTracker
+--- !u!114 &2029193231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029193218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e42ed4abb7eb4631b3c601aee8570ca9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.PhoneCallService
+  _dialogueManager: {fileID: 1979127967}
+  _situationSceneLoader: {fileID: 2029193223}
+  _discoveryTracker: {fileID: 2029193230}
 --- !u!1 &2032235526
 GameObject:
   m_ObjectHideFlags: 0
@@ -2884,6 +2913,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c84b9f50d27e4d45a6fd31b086df4712, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Locations.RoomSituationController
+  _discoveryTracker: {fileID: 2029193230}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

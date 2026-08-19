@@ -2,7 +2,6 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
-using VirtualRescue.GameFlow;
 
 public class NumPad : MonoBehaviour
 {
@@ -38,13 +37,12 @@ public class NumPad : MonoBehaviour
     [SerializeField] private float _hapticAmplitude = 0.3f;
     [SerializeField] private float _hapticDuration = 0.05f;
 
-    [Header("Exit Controller")]
-    [SerializeField] private ExitController _exitController;
-
     private readonly Collider[] _touchHits = new Collider[8];
     private bool _isInputLocked;
     private bool _isTouchActive;
     private float _nextTouchTime;
+    private Color _defaultTextColor;
+    private bool _hasDefaultTextColor;
 
     public event Action OnCorrectNumber;
     public event Action OnWrongNumber;
@@ -52,6 +50,7 @@ public class NumPad : MonoBehaviour
     private void Awake()
     {
         ConfigureInputField();
+        CacheDefaultTextColor();
     }
 
     private void Update()
@@ -288,17 +287,10 @@ public class NumPad : MonoBehaviour
     {
         if (flag)
         {
-            _isInputLocked = true;
             Debug.Log("OnCorrectNumber");
 
-            if (_inputField != null && _inputField.textComponent != null)
-            {
-                _inputField.textComponent.color = Color.green;
-            }
-
             OnCorrectNumber?.Invoke();
-            
-            _exitController.RequestExit(); // 고민중
+            ResetInput();
         }
         else
         {
@@ -306,5 +298,32 @@ public class NumPad : MonoBehaviour
             OnWrongNumber?.Invoke();
         }
     }
-    
+
+    public void ResetInput()
+    {
+        _isInputLocked = false;
+
+        if (_inputField == null)
+        {
+            return;
+        }
+
+        _inputField.text = string.Empty;
+
+        if (_hasDefaultTextColor && _inputField.textComponent != null)
+        {
+            _inputField.textComponent.color = _defaultTextColor;
+        }
+    }
+
+    private void CacheDefaultTextColor()
+    {
+        if (_inputField == null || _inputField.textComponent == null)
+        {
+            return;
+        }
+
+        _defaultTextColor = _inputField.textComponent.color;
+        _hasDefaultTextColor = true;
+    }
 }
