@@ -25,6 +25,10 @@ public class RadioController : MonoBehaviour
     [Header("Failed Broad Cast")]
     [SerializeField] private FailBroadcastEntry[] _failBroadcastEntries;
     [SerializeField] private AudioClip _fallbackFailBroadcastClip;
+    
+    [Header("Special Failed Broad Cast")]
+    [SerializeField] private AudioClip _lightweightPartitionIncidentBroadcastClip;
+    [SerializeField] private AudioClip _wrongCellPhoneCallBroadcastClip;
 
     [Header("Music")]
     [SerializeField] private AudioClip _musicClip;
@@ -71,6 +75,7 @@ public class RadioController : MonoBehaviour
         Debug.Log(
             $"Result={resultContext.ResultType}, " +
             $"SituationId={resultContext.SituationId}, " +
+            $"FailureReason={resultContext.FailureReason}, " +
             $"Clip={clipName}",
             this);
         
@@ -182,16 +187,40 @@ public class RadioController : MonoBehaviour
         _staticAudioSource = gameObject.AddComponent<AudioSource>();
         _staticAudioSource.playOnAwake = false;
         _staticAudioSource.loop = false;
+        _staticAudioSource.bypassEffects = _radioAudioSource.bypassEffects;
+        _staticAudioSource.bypassListenerEffects =
+            _radioAudioSource.bypassListenerEffects;
+        _staticAudioSource.bypassReverbZones =
+            _radioAudioSource.bypassReverbZones;
+        _staticAudioSource.dopplerLevel = _radioAudioSource.dopplerLevel;
+        _staticAudioSource.mute = _radioAudioSource.mute;
         _staticAudioSource.outputAudioMixerGroup =
             _radioAudioSource.outputAudioMixerGroup;
+        _staticAudioSource.panStereo = _radioAudioSource.panStereo;
+        _staticAudioSource.pitch = _radioAudioSource.pitch;
+        _staticAudioSource.priority = _radioAudioSource.priority;
+        _staticAudioSource.reverbZoneMix = _radioAudioSource.reverbZoneMix;
         _staticAudioSource.spatialBlend = _radioAudioSource.spatialBlend;
         _staticAudioSource.spatialize = _radioAudioSource.spatialize;
         _staticAudioSource.spatializePostEffects =
             _radioAudioSource.spatializePostEffects;
+        _staticAudioSource.spread = _radioAudioSource.spread;
+        _staticAudioSource.volume = _radioAudioSource.volume;
         _staticAudioSource.rolloffMode = _radioAudioSource.rolloffMode;
         _staticAudioSource.minDistance = _radioAudioSource.minDistance;
         _staticAudioSource.maxDistance = _radioAudioSource.maxDistance;
-        _staticAudioSource.dopplerLevel = _radioAudioSource.dopplerLevel;
+        _staticAudioSource.SetCustomCurve(
+            AudioSourceCurveType.CustomRolloff,
+            _radioAudioSource.GetCustomCurve(AudioSourceCurveType.CustomRolloff));
+        _staticAudioSource.SetCustomCurve(
+            AudioSourceCurveType.SpatialBlend,
+            _radioAudioSource.GetCustomCurve(AudioSourceCurveType.SpatialBlend));
+        _staticAudioSource.SetCustomCurve(
+            AudioSourceCurveType.Spread,
+            _radioAudioSource.GetCustomCurve(AudioSourceCurveType.Spread));
+        _staticAudioSource.SetCustomCurve(
+            AudioSourceCurveType.ReverbZoneMix,
+            _radioAudioSource.GetCustomCurve(AudioSourceCurveType.ReverbZoneMix));
     }
 
     private void EnsureStaticNoiseLoaded()
@@ -312,6 +341,18 @@ public class RadioController : MonoBehaviour
     {
         if (resultContext.ResultType == DayResultType.Failed)
         {
+            if (IsLightweightPartitionIncident(resultContext))
+            {
+                Debug.Log("Light weight partition failed");
+                return _lightweightPartitionIncidentBroadcastClip;
+            }
+
+            if (resultContext.FailureReason == DayFailureReason.WrongCellPhoneCall)
+            {
+                Debug.Log("Wrong Cell Phone Call failed");
+                return _wrongCellPhoneCallBroadcastClip;
+            }
+
             AudioClip failClip = FindFailClip(resultContext.SituationId);
             return failClip != null
                 ? failClip
@@ -319,6 +360,15 @@ public class RadioController : MonoBehaviour
         }
 
         return SelectRandomCommonClip();
+    }
+
+    private static bool IsLightweightPartitionIncident(
+        DayResultContext resultContext)
+    {
+        return resultContext.FailureReason ==
+                   DayFailureReason.InvalidLightweightPartitionExit ||
+               resultContext.FailureReason ==
+                   DayFailureReason.NoDiscoveryLightweightPartitionExit;
     }
 
     private AudioClip FindFailClip(string situationId)

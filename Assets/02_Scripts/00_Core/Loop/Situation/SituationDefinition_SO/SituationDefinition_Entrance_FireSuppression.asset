@@ -20,6 +20,9 @@ MonoBehaviour:
   _roomTrigger: 14
   _resolvedDialogueId: 
   _failedDialogueId: 
+  _beforeResolveCallingDialogueGroupId: Entrance_FireSuppression_BeforeResolve
+  _afterResolveCallingDialogueGroupId: Entrance_FireSuppression_AfterResolve
+  _level2CallingDialogueGroupId: ""
   _usesTimeLimit: 0
   _timeLimitSeconds: 0
-  _level2AllowedExits: 
+  _allowedExits: 05000000

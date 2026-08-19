@@ -127,16 +127,28 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 request.resolvedDialogueId?.Trim() ?? string.Empty;
             serializedDefinition.FindProperty("_failedDialogueId").stringValue =
                 request.failedDialogueId?.Trim() ?? string.Empty;
+            serializedDefinition
+                .FindProperty("_beforeResolveCallingDialogueGroupId")
+                .stringValue =
+                request.beforeResolveCallingDialogueGroupId?.Trim() ??
+                string.Empty;
+            serializedDefinition
+                .FindProperty("_afterResolveCallingDialogueGroupId")
+                .stringValue =
+                request.afterResolveCallingDialogueGroupId?.Trim() ??
+                string.Empty;
+            serializedDefinition
+                .FindProperty("_level2CallingDialogueGroupId")
+                .stringValue =
+                request.level2CallingDialogueGroupId?.Trim() ?? string.Empty;
             serializedDefinition.FindProperty("_usesTimeLimit").boolValue =
                 request.Level == SituationLevel.Level2 && request.usesTimeLimit;
             serializedDefinition.FindProperty("_timeLimitSeconds").floatValue =
                 request.timeLimitSeconds;
 
             SerializedProperty exits = serializedDefinition.FindProperty(
-                "_level2AllowedExits");
-            int[] allowedExits = request.Level == SituationLevel.Level2
-                ? request.allowedExits ?? Array.Empty<int>()
-                : Array.Empty<int>();
+                "_allowedExits");
+            int[] allowedExits = request.allowedExits ?? Array.Empty<int>();
             exits.arraySize = allowedExits.Length;
             for (int index = 0; index < allowedExits.Length; index++)
             {

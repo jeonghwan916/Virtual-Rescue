@@ -6,6 +6,7 @@ namespace VirtualRescue.GameFlow
         EmergencyStairs = 1,
         LightweightPartition = 2,
         Descender = 3,
-        RefugeArea = 4
+        RefugeArea = 4,
+        CellPhone = 5
     }
 }

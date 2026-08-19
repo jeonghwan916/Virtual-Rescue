@@ -101,6 +101,57 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 results.Add(Error("Scene Name is required.", definition));
             }
 
+            if (definition.AllowedExits == null ||
+                definition.AllowedExits.Count == 0)
+            {
+                results.Add(Error(
+                    "A situation requires at least one allowed exit.",
+                    definition));
+            }
+
+            if (definition.Level == SituationLevel.Level1)
+            {
+                if (!ContainsAllowedExit(definition, ExitType.CellPhone))
+                {
+                    results.Add(Error(
+                        "A Level 1 situation requires CellPhone as an allowed exit.",
+                        definition));
+                }
+
+                if (ContainsAllowedExit(definition, ExitType.Elevator))
+                {
+                    results.Add(Error(
+                        "Elevator cannot be an allowed Level 1 exit.",
+                        definition));
+                }
+
+                if (string.IsNullOrWhiteSpace(
+                        definition.BeforeResolveCallingDialogueGroupId))
+                {
+                    results.Add(Warning(
+                        "Level 1 before-resolve calling dialogue group is empty.",
+                        definition));
+                }
+
+                if (string.IsNullOrWhiteSpace(
+                        definition.AfterResolveCallingDialogueGroupId))
+                {
+                    results.Add(Warning(
+                        "Level 1 after-resolve calling dialogue group is empty.",
+                        definition));
+                }
+            }
+
+            if (definition.Level == SituationLevel.Level0 &&
+                ContainsAllowedExit(definition, ExitType.CellPhone) &&
+                string.IsNullOrWhiteSpace(
+                    definition.AfterResolveCallingDialogueGroupId))
+            {
+                results.Add(Warning(
+                    "Level 0 CellPhone exit uses the after-resolve calling dialogue group, but it is empty.",
+                    definition));
+            }
+
             if (definition.Level == SituationLevel.Level2)
             {
                 if (definition.UsesTimeLimit && definition.TimeLimitSeconds <= 0f)
@@ -110,28 +161,41 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                         definition));
                 }
 
-                if (definition.Level2AllowedExits == null ||
-                    definition.Level2AllowedExits.Count == 0)
+                if (ContainsAllowedExit(definition, ExitType.Elevator))
                 {
                     results.Add(Error(
-                        "A Level 2 situation requires at least one allowed exit.",
+                        "Elevator cannot be an allowed Level 2 exit.",
                         definition));
                 }
 
-                if (definition.Level2AllowedExits != null)
+                if (string.IsNullOrWhiteSpace(
+                        definition.Level2CallingDialogueGroupId))
                 {
-                    foreach (ExitType exitType in definition.Level2AllowedExits)
-                    {
-                        if (exitType == ExitType.Elevator)
-                        {
-                            results.Add(Error(
-                                "Elevator cannot be an allowed Level 2 exit.",
-                                definition));
-                            break;
-                        }
-                    }
+                    results.Add(Warning(
+                        "Level 2 calling dialogue group is empty.",
+                        definition));
                 }
             }
+        }
+
+        private static bool ContainsAllowedExit(
+            SituationDefinition definition,
+            ExitType exitType)
+        {
+            if (definition?.AllowedExits == null)
+            {
+                return false;
+            }
+
+            foreach (ExitType allowedExit in definition.AllowedExits)
+            {
+                if (allowedExit == exitType)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static void ValidateRegistration(
@@ -441,6 +505,16 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         {
             return new SituationValidationResult(
                 SituationValidationSeverity.Error,
+                message,
+                context);
+        }
+
+        private static SituationValidationResult Warning(
+            string message,
+            UnityEngine.Object context)
+        {
+            return new SituationValidationResult(
+                SituationValidationSeverity.Warning,
                 message,
                 context);
         }

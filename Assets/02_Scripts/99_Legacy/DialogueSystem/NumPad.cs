@@ -41,6 +41,8 @@ public class NumPad : MonoBehaviour
     private bool _isInputLocked;
     private bool _isTouchActive;
     private float _nextTouchTime;
+    private Color _defaultTextColor;
+    private bool _hasDefaultTextColor;
 
     public event Action OnCorrectNumber;
     public event Action OnWrongNumber;
@@ -48,6 +50,7 @@ public class NumPad : MonoBehaviour
     private void Awake()
     {
         ConfigureInputField();
+        CacheDefaultTextColor();
     }
 
     private void Update()
@@ -137,17 +140,17 @@ public class NumPad : MonoBehaviour
         if (_inputField == null)
         {
             Debug.LogWarning($"{nameof(NumPad)} needs an input field before calling.", this);
-            IsNumberIsCorrect(true);
+            IsNumberCorrect(false);
             return;
         }
 
         if (_inputField.text == _correctNumber)
         {
-            IsNumberIsCorrect(true);
+            IsNumberCorrect(true);
             return;
         }
 
-        IsNumberIsCorrect(false);
+        IsNumberCorrect(false);
     }
 
     private void ConfigureInputField()
@@ -280,19 +283,14 @@ public class NumPad : MonoBehaviour
         _hapticPlayer.SendHapticImpulse(_hapticAmplitude, _hapticDuration);
     }
 
-    public void IsNumberIsCorrect(bool flag)
+    public void IsNumberCorrect(bool flag)
     {
         if (flag)
         {
-            _isInputLocked = true;
             Debug.Log("OnCorrectNumber");
 
-            if (_inputField != null && _inputField.textComponent != null)
-            {
-                _inputField.textComponent.color = Color.green;
-            }
-
             OnCorrectNumber?.Invoke();
+            ResetInput();
         }
         else
         {
@@ -300,5 +298,32 @@ public class NumPad : MonoBehaviour
             OnWrongNumber?.Invoke();
         }
     }
-    
+
+    public void ResetInput()
+    {
+        _isInputLocked = false;
+
+        if (_inputField == null)
+        {
+            return;
+        }
+
+        _inputField.text = string.Empty;
+
+        if (_hasDefaultTextColor && _inputField.textComponent != null)
+        {
+            _inputField.textComponent.color = _defaultTextColor;
+        }
+    }
+
+    private void CacheDefaultTextColor()
+    {
+        if (_inputField == null || _inputField.textComponent == null)
+        {
+            return;
+        }
+
+        _defaultTextColor = _inputField.textComponent.color;
+        _hasDefaultTextColor = true;
+    }
 }

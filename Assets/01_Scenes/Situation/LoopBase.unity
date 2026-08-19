@@ -2241,7 +2241,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.9
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -2249,10 +2249,10 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 2.5727463
-  MaxDistance: 50
+  MinDistance: 1
+  MaxDistance: 9
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 2
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -2260,23 +2260,23 @@ AudioSource:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
+      time: 0.14285715
       value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0
+      outWeight: 0
     - serializedVersion: 3
       time: 1
       value: 0
-      inSlope: 0
-      outSlope: 0
+      inSlope: -2.887747
+      outSlope: -2.887747
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0.11290326
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -2285,7 +2285,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -2366,6 +2366,8 @@ MonoBehaviour:
   - _situationId: livingroom.power_strip_unplug
     _clip: {fileID: 8300000, guid: 88b7ec76808055846ab6bafce9536537, type: 3}
   _fallbackFailBroadcastClip: {fileID: 0}
+  _lightweightPartitionIncidentBroadcastClip: {fileID: 0}
+  _wrongCellPhoneCallBroadcastClip: {fileID: 0}
   _musicClip: {fileID: 0}
   _staticAudioSource: {fileID: 0}
   _staticNoiseClip: {fileID: 8300000, guid: 0695824886d55034d9b47140e137edab, type: 3}
@@ -2657,7 +2659,9 @@ GameObject:
   - component: {fileID: 2029193226}
   - component: {fileID: 2029193227}
   - component: {fileID: 2029193228}
+  - component: {fileID: 2029193230}
   - component: {fileID: 2029193229}
+  - component: {fileID: 2029193231}
   m_Layer: 0
   m_Name: GameFlow
   m_TagString: Untagged
@@ -2733,8 +2737,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationSelector
   _candidates:
-  - {fileID: 11400000, guid: 13a56facdf06d0941af8614bc6cc35c1, type: 2}
-  _noSituationChance: 0.2
+  - {fileID: 11400000, guid: 50f83a242339fac4f80207c945863df4, type: 2}
+  - {fileID: 11400000, guid: 85cc01455cbf4f54190f49dcc4032cf6, type: 2}
+  - {fileID: 11400000, guid: bc6a8032574785b4897ca99060bfff43, type: 2}
+  _noSituationChance: 0.1
   _noSituationChanceReduction: 0.1
 --- !u!114 &2029193223
 MonoBehaviour:
@@ -2775,6 +2781,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.DayOutcomeController
   _dayFlowController: {fileID: 2029193224}
   _situationSceneLoader: {fileID: 2029193223}
+  _discoveryTracker: {fileID: 2029193230}
+  _dialogueManager: {fileID: 1979127967}
+  _blockedElevatorDialogueGroupId: Block_Eleavator
 --- !u!114 &2029193226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2828,6 +2837,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationDialogueDirector
   _situationSceneLoader: {fileID: 2029193223}
   _dialogueManager: {fileID: 1979127967}
+--- !u!114 &2029193230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029193218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eab7ce45a9d84c0c95175b4ae7c1a8f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationDiscoveryTracker
+--- !u!114 &2029193231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029193218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e42ed4abb7eb4631b3c601aee8570ca9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.PhoneCallService
+  _dialogueManager: {fileID: 1979127967}
+  _situationSceneLoader: {fileID: 2029193223}
+  _discoveryTracker: {fileID: 2029193230}
 --- !u!1 &2032235526
 GameObject:
   m_ObjectHideFlags: 0
@@ -2884,6 +2920,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c84b9f50d27e4d45a6fd31b086df4712, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Locations.RoomSituationController
+  _discoveryTracker: {fileID: 2029193230}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

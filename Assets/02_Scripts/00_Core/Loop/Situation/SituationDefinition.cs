@@ -32,12 +32,15 @@ namespace VirtualRescue.GameFlow
         [Header("Dialogue")]
         [SerializeField] private string _resolvedDialogueId = string.Empty;
         [SerializeField] private string _failedDialogueId = string.Empty;
+        [SerializeField] private string _beforeResolveCallingDialogueGroupId = string.Empty;
+        [SerializeField] private string _afterResolveCallingDialogueGroupId = string.Empty;
+        [SerializeField] private string _level2CallingDialogueGroupId = string.Empty;
 
         [Header("Level 2 Rules")]
         [SerializeField] private bool _usesTimeLimit;
         [Min(0f)]
         [SerializeField] private float _timeLimitSeconds = 60f;
-        [SerializeField] private List<ExitType> _level2AllowedExits = new();
+        [SerializeField] private List<ExitType> _allowedExits = new();
 
         public string Id => _id;
         public SituationLevel Level => _level;
@@ -47,21 +50,21 @@ namespace VirtualRescue.GameFlow
         public RoomLocation RoomLocation => _roomTrigger;
         public string ResolvedDialogueId => _resolvedDialogueId;
         public string FailedDialogueId => _failedDialogueId;
+        public string BeforeResolveCallingDialogueGroupId =>
+            _beforeResolveCallingDialogueGroupId;
+        public string AfterResolveCallingDialogueGroupId =>
+            _afterResolveCallingDialogueGroupId;
+        public string Level2CallingDialogueGroupId =>
+            _level2CallingDialogueGroupId;
         public bool UsesTimeLimit =>
             _level == SituationLevel.Level2 && _usesTimeLimit;
         public float TimeLimitSeconds => UsesTimeLimit ? _timeLimitSeconds : 0f;
-        public IReadOnlyList<ExitType> Level2AllowedExits => _level2AllowedExits;
+        public IReadOnlyList<ExitType> AllowedExits => _allowedExits;
 
         public bool IsExitAllowed(ExitType exitType)
         {
-            if (_level != SituationLevel.Level2)
-            {
-                return exitType == ExitType.Elevator;
-            }
-
-            return _level2AllowedExits != null &&
-                   exitType != ExitType.Elevator &&
-                   _level2AllowedExits.Contains(exitType);
+            return _allowedExits != null &&
+                   _allowedExits.Contains(exitType);
         }
 
         private void OnValidate()
@@ -70,6 +73,12 @@ namespace VirtualRescue.GameFlow
             _weight = Mathf.Max(1, _weight);
             _resolvedDialogueId = _resolvedDialogueId?.Trim() ?? string.Empty;
             _failedDialogueId = _failedDialogueId?.Trim() ?? string.Empty;
+            _beforeResolveCallingDialogueGroupId =
+                _beforeResolveCallingDialogueGroupId?.Trim() ?? string.Empty;
+            _afterResolveCallingDialogueGroupId =
+                _afterResolveCallingDialogueGroupId?.Trim() ?? string.Empty;
+            _level2CallingDialogueGroupId =
+                _level2CallingDialogueGroupId?.Trim() ?? string.Empty;
             _minimumDay = Mathf.Clamp(
                 _minimumDay,
                 DayRunState.FirstDay,
@@ -94,15 +103,15 @@ namespace VirtualRescue.GameFlow
                     this);
             }
 
-            if (_level2AllowedExits == null || _level2AllowedExits.Count == 0)
+            if (_allowedExits == null || _allowedExits.Count == 0)
             {
                 Debug.LogWarning(
                     $"{name}: Level 2 situation requires at least one allowed exit.",
                     this);
             }
 
-            if (_level2AllowedExits != null &&
-                _level2AllowedExits.Contains(ExitType.Elevator))
+            if (_allowedExits != null &&
+                _allowedExits.Contains(ExitType.Elevator))
             {
                 Debug.LogWarning(
                     $"{name}: Elevator cannot be an allowed exit for a Level 2 situation.",

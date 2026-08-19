@@ -9,6 +9,8 @@ namespace VirtualRescue.Locations
         private RoomTrigger[] _roomTriggers;
         private bool _roomDialoguesSuppressed;
 
+        [SerializeField] private SituationDiscoveryTracker _discoveryTracker;
+
         private void Awake()
         {
             _roomTriggers = GetComponentsInChildren<RoomTrigger>(true);
@@ -95,6 +97,7 @@ namespace VirtualRescue.Locations
                 return;
             }
 
+            _discoveryTracker?.MarkDiscovered(situationLevel);
             _roomDialoguesSuppressed = true;
 
             foreach (RoomTrigger roomTrigger in _roomTriggers)
