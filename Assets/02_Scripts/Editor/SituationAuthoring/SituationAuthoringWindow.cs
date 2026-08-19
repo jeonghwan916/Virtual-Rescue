@@ -47,11 +47,19 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         [SerializeField] private int _minimumDay = 1;
         [SerializeField] private string _resolvedDialogueId = string.Empty;
         [SerializeField] private string _failedDialogueId = string.Empty;
+        [SerializeField] private string _beforeResolveCallingDialogueGroupId =
+            string.Empty;
+        [SerializeField] private string _afterResolveCallingDialogueGroupId =
+            string.Empty;
+        [SerializeField] private string _level2CallingDialogueGroupId =
+            string.Empty;
         [SerializeField] private string _resolvedDialogueText = string.Empty;
         [SerializeField] private string _failedDialogueText = string.Empty;
         [SerializeField] private bool _registerAsCandidate;
         [SerializeField] private bool _usesTimeLimit;
         [SerializeField] private float _timeLimitSeconds = 60f;
+        [SerializeField] private bool _allowElevator;
+        [SerializeField] private bool _allowCellPhone;
         [SerializeField] private bool _allowEmergencyStairs;
         [SerializeField] private bool _allowRefugeArea;
         [SerializeField] private bool _allowLightweightPartition;
@@ -75,6 +83,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         [SerializeField] private string _newLocationName = string.Empty;
 
         [Header("Building Blocks")]
+        [SerializeField] private SituationDefinition _buildingDefinition;
         [SerializeField] private SituationController _buildingController;
         [SerializeField] private GameObject _buildingTarget;
         [SerializeField] private GameObject _buildingPrefab;
@@ -332,6 +341,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 1,
                 7);
 
+            DrawAllowedExits();
+
             EditorGUILayout.Space(8f);
             EditorGUILayout.LabelField(Tr("Optional"), EditorStyles.boldLabel);
             _resolvedDialogueId = EditorGUILayout.TextField(Optional(
@@ -350,6 +361,11 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 "Failed Dialogue Text",
                 "Failed Dialogue ID로 Loop Text CSV에 추가할 대사 본문입니다."),
                 _failedDialogueText);
+            if (ShouldShowPhoneCallFields(_level, _allowCellPhone))
+            {
+                DrawPhoneCallDialogueIds();
+            }
+
             if (GUILayout.Button(Tr("Append Missing Dialogue Rows")))
             {
                 AppendMissingDialogueRows(
@@ -424,6 +440,72 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             }
         }
 
+        private void DrawAllowedExits()
+        {
+            EditorGUILayout.Space(4f);
+            EditorGUILayout.LabelField(Tr("Allowed Exits"), EditorStyles.boldLabel);
+            _allowElevator = EditorGUILayout.ToggleLeft(
+                Tr("Elevator"),
+                _allowElevator);
+            _allowCellPhone = EditorGUILayout.ToggleLeft(
+                Tr("CellPhone"),
+                _allowCellPhone);
+            _allowEmergencyStairs = EditorGUILayout.ToggleLeft(
+                Tr("Emergency Stairs"),
+                _allowEmergencyStairs);
+            _allowRefugeArea = EditorGUILayout.ToggleLeft(
+                Tr("Refuge Area"),
+                _allowRefugeArea);
+            _allowLightweightPartition = EditorGUILayout.ToggleLeft(
+                Tr("Lightweight Partition"),
+                _allowLightweightPartition);
+            _allowDescender = EditorGUILayout.ToggleLeft(
+                Tr("Descender"),
+                _allowDescender);
+        }
+
+        private void DrawPhoneCallDialogueIds()
+        {
+            _beforeResolveCallingDialogueGroupId =
+                EditorGUILayout.TextField(Optional(
+                    "Before Resolve Calling Dialogue Group ID",
+                    "상황 발견 후 해결 전에 전화했을 때 재생할 Dialogue Group ID입니다. Group row는 Dialogue CSV에서 별도로 구성합니다."),
+                    _beforeResolveCallingDialogueGroupId);
+            _afterResolveCallingDialogueGroupId =
+                EditorGUILayout.TextField(Optional(
+                    "After Resolve Calling Dialogue Group ID",
+                    "상황 해결 후 전화했을 때 재생할 Dialogue Group ID입니다. Group row는 Dialogue CSV에서 별도로 구성합니다."),
+                    _afterResolveCallingDialogueGroupId);
+            _level2CallingDialogueGroupId = EditorGUILayout.TextField(Optional(
+                "Level 2 Calling Dialogue Group ID",
+                "Level 2 상황 발견 후 전화했을 때 재생할 Dialogue Group ID입니다. Group row는 Dialogue CSV에서 별도로 구성합니다."),
+                _level2CallingDialogueGroupId);
+        }
+
+        private void DrawPhoneCallDialogueProperties(
+            SerializedObject serializedDefinition,
+            SituationLevel level,
+            bool hasCellPhoneExit)
+        {
+            if (!ShouldShowPhoneCallFields(level, hasCellPhoneExit))
+            {
+                return;
+            }
+
+            DrawPhoneCallDialogueProperties(serializedDefinition);
+        }
+
+        private static void DrawPhoneCallDialogueProperties(
+            SerializedObject serializedDefinition)
+        {
+            EditorGUILayout.PropertyField(serializedDefinition.FindProperty(
+                "_beforeResolveCallingDialogueGroupId"));
+            EditorGUILayout.PropertyField(serializedDefinition.FindProperty(
+                "_afterResolveCallingDialogueGroupId"));
+            EditorGUILayout.PropertyField(serializedDefinition.FindProperty(
+                "_level2CallingDialogueGroupId"));
+        }
+
         private void DrawLevel2Rules()
         {
             if (_level != SituationLevel.Level2)
@@ -444,22 +526,6 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                     "제한시간을 사용할 때는 0보다 큰 값을 입력해야 합니다."),
                     _timeLimitSeconds);
             }
-
-            EditorGUILayout.LabelField(Conditional(
-                "Allowed Exits",
-                "엘리베이터가 아닌 출구를 하나 이상 선택해야 합니다."));
-            _allowEmergencyStairs = EditorGUILayout.ToggleLeft(
-                Tr("Emergency Stairs"),
-                _allowEmergencyStairs);
-            _allowRefugeArea = EditorGUILayout.ToggleLeft(
-                Tr("Refuge Area"),
-                _allowRefugeArea);
-            _allowLightweightPartition = EditorGUILayout.ToggleLeft(
-                Tr("Lightweight Partition"),
-                _allowLightweightPartition);
-            _allowDescender = EditorGUILayout.ToggleLeft(
-                Tr("Descender"),
-                _allowDescender);
         }
 
         private void DrawLocationSelector()
@@ -671,6 +737,13 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 "Failed Dialogue Text",
                 "Failed Dialogue ID로 Loop Text CSV에 추가할 대사 본문입니다."),
                 _editFailedDialogueText);
+
+            SerializedProperty allowedExitsProperty =
+                serializedDefinition.FindProperty("_allowedExits");
+            DrawPhoneCallDialogueProperties(
+                serializedDefinition,
+                (SituationLevel)levelProperty.enumValueIndex,
+                ContainsExit(allowedExitsProperty, ExitType.CellPhone));
             if (GUILayout.Button(Tr("Append Missing Dialogue Rows")))
             {
                 AppendMissingDialogueRows(
@@ -682,6 +755,10 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                     _editFailedDialogueText);
             }
 
+            EditorGUILayout.PropertyField(
+                allowedExitsProperty,
+                true);
+
             if ((SituationLevel)levelProperty.enumValueIndex ==
                 SituationLevel.Level2)
             {
@@ -692,10 +769,6 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                     EditorGUILayout.PropertyField(
                         serializedDefinition.FindProperty("_timeLimitSeconds"));
                 }
-
-                EditorGUILayout.PropertyField(
-                    serializedDefinition.FindProperty("_level2AllowedExits"),
-                    true);
             }
 
             if (GUILayout.Button(Tr("Apply Definition Changes")))
@@ -791,6 +864,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             EditorGUILayout.HelpBox(
                 Tr("Adds common components to the active situation scene. It does not create situation-specific success or failure logic."),
                 MessageType.Info);
+
+            DrawBuildingBlockPhoneCallDialogue();
 
             if (_buildingController == null ||
                 _buildingController.gameObject.scene !=
@@ -913,6 +988,59 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             }
 
             DrawHomeModuleParents();
+        }
+
+        private void DrawBuildingBlockPhoneCallDialogue()
+        {
+            EditorGUILayout.Space(8f);
+            EditorGUILayout.LabelField(
+                Tr("Phone Call Dialogue"),
+                EditorStyles.boldLabel);
+            _buildingDefinition =
+                (SituationDefinition)EditorGUILayout.ObjectField(
+                    Optional(
+                        "Situation Definition",
+                        "통화 Dialogue Group ID를 편집할 Situation Definition입니다."),
+                    _buildingDefinition,
+                    typeof(SituationDefinition),
+                    false);
+
+            if (_buildingDefinition == null)
+            {
+                return;
+            }
+
+            SerializedObject serializedDefinition =
+                new(_buildingDefinition);
+            SerializedProperty levelProperty =
+                serializedDefinition.FindProperty("_level");
+            SerializedProperty allowedExitsProperty =
+                serializedDefinition.FindProperty("_allowedExits");
+            SituationLevel level =
+                (SituationLevel)levelProperty.enumValueIndex;
+
+            if (!ShouldShowPhoneCallFields(
+                    level,
+                    ContainsExit(allowedExitsProperty, ExitType.CellPhone)))
+            {
+                EditorGUILayout.HelpBox(
+                    Tr("CellPhone is not an allowed exit for this definition."),
+                    MessageType.Info);
+                return;
+            }
+
+            DrawPhoneCallDialogueProperties(serializedDefinition);
+
+            if (GUILayout.Button(Tr("Apply Definition Changes")))
+            {
+                Undo.RecordObject(
+                    _buildingDefinition,
+                    "Edit Situation Phone Call Dialogue");
+                serializedDefinition.ApplyModifiedProperties();
+                EditorUtility.SetDirty(_buildingDefinition);
+                AssetDatabase.SaveAssets();
+                SetMessage(Tr("Definition changes applied."), MessageType.Info);
+            }
         }
 
         private void DrawHomeModuleParents()
@@ -1277,6 +1405,16 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         private SituationCreationRequest BuildRequest()
         {
             List<int> exits = new();
+            if (_allowElevator)
+            {
+                exits.Add((int)ExitType.Elevator);
+            }
+
+            if (_allowCellPhone)
+            {
+                exits.Add((int)ExitType.CellPhone);
+            }
+
             if (_allowEmergencyStairs)
             {
                 exits.Add((int)ExitType.EmergencyStairs);
@@ -1315,6 +1453,11 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 minimumDay = _minimumDay,
                 resolvedDialogueId = _resolvedDialogueId,
                 failedDialogueId = _failedDialogueId,
+                beforeResolveCallingDialogueGroupId =
+                    _beforeResolveCallingDialogueGroupId,
+                afterResolveCallingDialogueGroupId =
+                    _afterResolveCallingDialogueGroupId,
+                level2CallingDialogueGroupId = _level2CallingDialogueGroupId,
                 registerAsCandidate = _registerAsCandidate,
                 usesTimeLimit = _usesTimeLimit,
                 timeLimitSeconds = _timeLimitSeconds,
@@ -1339,6 +1482,36 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
             _validationResults.Clear();
             _validationResults.AddRange(
                 SituationValidationService.Validate(_validationDefinition));
+        }
+
+        private static bool ShouldShowPhoneCallFields(
+            SituationLevel level,
+            bool hasCellPhoneExit)
+        {
+            return hasCellPhoneExit ||
+                   level == SituationLevel.Level1 ||
+                   level == SituationLevel.Level2;
+        }
+
+        private static bool ContainsExit(
+            SerializedProperty exitsProperty,
+            ExitType exitType)
+        {
+            if (exitsProperty == null || !exitsProperty.isArray)
+            {
+                return false;
+            }
+
+            for (int index = 0; index < exitsProperty.arraySize; index++)
+            {
+                if (exitsProperty.GetArrayElementAtIndex(index).enumValueIndex ==
+                    (int)exitType)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void AppendMissingDialogueRows(
@@ -1734,6 +1907,9 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 case "Resolved Dialogue Text": return "해결 대사 본문";
                 case "Failed Dialogue Id": return "실패 대사 ID";
                 case "Failed Dialogue Text": return "실패 대사 본문";
+                case "Before Resolve Calling Dialogue Group ID": return "해결 전 통화 대사 그룹 ID";
+                case "After Resolve Calling Dialogue Group ID": return "해결 후 통화 대사 그룹 ID";
+                case "Level 2 Calling Dialogue Group ID": return "Level 2 통화 대사 그룹 ID";
                 case "Append Missing Dialogue Rows": return "누락 대사 행 추가";
                 case "Register as Candidate": return "후보로 등록";
                 case "Initial Prefabs": return "초기 프리팹";
@@ -1748,6 +1924,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 case "Uses Time Limit": return "제한시간 사용";
                 case "Time Limit Seconds": return "제한시간(초)";
                 case "Allowed Exits": return "허용 출구";
+                case "Elevator": return "엘리베이터";
+                case "CellPhone": return "휴대전화";
                 case "Emergency Stairs": return "비상계단";
                 case "Refuge Area": return "대피공간";
                 case "Lightweight Partition": return "경량칸막이";
@@ -1796,6 +1974,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 case "Prefab Palette": return "프리팹 팔레트";
                 case "Prefab": return "프리팹";
                 case "Add Selected Prefab": return "선택한 프리팹 추가";
+                case "Phone Call Dialogue": return "통화 대사";
+                case "CellPhone is not an allowed exit for this definition.": return "이 Definition은 CellPhone이 허용 출구가 아닙니다.";
                 case "Home Module Parents": return "Home 모듈 부모";
                 case "Creates empty root parent objects in selected Home Layout module scenes for situation-specific staging.": return "상황별 연출 정리를 위해 선택한 Home Layout 모듈 씬 루트에 빈 부모 오브젝트를 생성합니다.";
                 case "Situation Definition": return "상황 Definition";

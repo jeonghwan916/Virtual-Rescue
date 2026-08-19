@@ -20,6 +20,9 @@ MonoBehaviour:
   _roomTrigger: 8
   _resolvedDialogueId: 
   _failedDialogueId: 
+  _beforeResolveCallingDialogueGroupId: LivingRoom_PowerStrip_Fire_BeforeResolve
+  _afterResolveCallingDialogueGroupId: LivingRoom_PowerStrip_Fire_AfterResolve
+  _level2CallingDialogueGroupId: 
   _usesTimeLimit: 0
   _timeLimitSeconds: 60
-  _level2AllowedExits: 
+  _allowedExits: 05000000

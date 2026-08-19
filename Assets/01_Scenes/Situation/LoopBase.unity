@@ -336,7 +336,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
+      propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 5c6ca98732cf18d4696f60ab153a0eef, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -427,7 +427,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
+      propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: e7b48a76dbe611d469761e4db59e6a69, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -1526,7 +1526,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
+      propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 07c63b3d5fdc0984f84b16ab168781f7, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -1832,7 +1832,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
+      propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 78f82a6d1ad2c804ba634355d9068904, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -1934,7 +1934,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
+      propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 6af4d9d4ebb12174ca1e1606592e72aa, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -2025,7 +2025,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
+      propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: c82290ab8fa2d7b45bfff9df5de3b565, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -2116,7 +2116,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
+      propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: fe8ed6a31d3c38748a93829a95f060eb, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -2657,7 +2657,9 @@ GameObject:
   - component: {fileID: 2029193226}
   - component: {fileID: 2029193227}
   - component: {fileID: 2029193228}
+  - component: {fileID: 2029193230}
   - component: {fileID: 2029193229}
+  - component: {fileID: 2029193231}
   m_Layer: 0
   m_Name: GameFlow
   m_TagString: Untagged
@@ -2733,8 +2735,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationSelector
   _candidates:
+  - {fileID: 11400000, guid: 50f83a242339fac4f80207c945863df4, type: 2}
+  - {fileID: 11400000, guid: 85cc01455cbf4f54190f49dcc4032cf6, type: 2}
   - {fileID: 11400000, guid: bc6a8032574785b4897ca99060bfff43, type: 2}
-  _noSituationChance: 0.1
+  _noSituationChance: 0.2
   _noSituationChanceReduction: 0.1
 --- !u!114 &2029193223
 MonoBehaviour:
@@ -2775,6 +2779,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.DayOutcomeController
   _dayFlowController: {fileID: 2029193224}
   _situationSceneLoader: {fileID: 2029193223}
+  _discoveryTracker: {fileID: 2029193230}
+  _dialogueManager: {fileID: 1979127967}
+  _blockedElevatorDialogueGroupId: Block_Eleavator
 --- !u!114 &2029193226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2828,6 +2835,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationDialogueDirector
   _situationSceneLoader: {fileID: 2029193223}
   _dialogueManager: {fileID: 1979127967}
+--- !u!114 &2029193230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029193218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eab7ce45a9d84c0c95175b4ae7c1a8f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationDiscoveryTracker
+--- !u!114 &2029193231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029193218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e42ed4abb7eb4631b3c601aee8570ca9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.PhoneCallService
+  _dialogueManager: {fileID: 1979127967}
+  _situationSceneLoader: {fileID: 2029193223}
+  _discoveryTracker: {fileID: 2029193230}
 --- !u!1 &2032235526
 GameObject:
   m_ObjectHideFlags: 0
@@ -2884,6 +2918,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c84b9f50d27e4d45a6fd31b086df4712, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Locations.RoomSituationController
+  _discoveryTracker: {fileID: 2029193230}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

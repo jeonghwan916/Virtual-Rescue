@@ -20,6 +20,9 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         public int minimumDay = 1;
         public string resolvedDialogueId;
         public string failedDialogueId;
+        public string beforeResolveCallingDialogueGroupId;
+        public string afterResolveCallingDialogueGroupId;
+        public string level2CallingDialogueGroupId;
         public bool registerAsCandidate;
         public bool usesTimeLimit;
         public float timeLimitSeconds = 60f;

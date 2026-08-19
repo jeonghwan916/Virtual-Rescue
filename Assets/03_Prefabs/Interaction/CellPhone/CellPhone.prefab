@@ -2150,6 +2150,7 @@ GameObject:
   - component: {fileID: 6323193975697250312}
   - component: {fileID: 6358006599515696000}
   - component: {fileID: 4610116415439733876}
+  - component: {fileID: 7328260251317138141}
   m_Layer: 0
   m_Name: CellPhone
   m_TagString: Untagged
@@ -2188,6 +2189,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.ExitController
   _exitType: 5
+--- !u!114 &7328260251317138141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3569751344202023613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e6fb27a69824246bb3767d575c84571, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.CellPhoneEndpoint
+  _numPad: {fileID: 4214951256103944001}
+  _exitController: {fileID: 6323193975697250312}
 --- !u!114 &6358006599515696000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6348,7 +6363,6 @@ MonoBehaviour:
   _hapticPlayer: {fileID: 0}
   _hapticAmplitude: 0.3
   _hapticDuration: 0.05
-  _exitController: {fileID: 0}
 --- !u!114 &8081949368880489731
 MonoBehaviour:
   m_ObjectHideFlags: 0

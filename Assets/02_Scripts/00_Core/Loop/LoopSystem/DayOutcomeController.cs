@@ -1,4 +1,5 @@
 using UnityEngine;
+using VirtualRescue.DialogueSystem;
 
 namespace VirtualRescue.GameFlow
 {
@@ -7,6 +8,10 @@ namespace VirtualRescue.GameFlow
     {
         [SerializeField] private DayFlowController _dayFlowController = null;
         [SerializeField] private SituationSceneLoader _situationSceneLoader = null;
+        [SerializeField] private SituationDiscoveryTracker _discoveryTracker = null;
+        [SerializeField] private DialogueManager _dialogueManager = null;
+        [SerializeField] private string _blockedElevatorDialogueGroupId =
+            "Block_Eleavator";
 
         private SituationController _boundSituationController;
 
@@ -98,6 +103,14 @@ namespace VirtualRescue.GameFlow
                     : FailDay(definition);
             }
 
+            if (definition.Level == SituationLevel.Level1 &&
+                exitType == ExitType.Elevator)
+            {
+                return HasDiscoveredCurrentSituation()
+                    ? BlockElevatorExit()
+                    : FailDay(definition);
+            }
+
             if (!controller.IsResolved)
             {
                 return FailDay(definition);
@@ -121,6 +134,7 @@ namespace VirtualRescue.GameFlow
                 return;
             }
 
+            _discoveryTracker?.ResetCurrentSituation();
             UnbindCurrentSituation();
         }
 
@@ -231,10 +245,35 @@ namespace VirtualRescue.GameFlow
             return true;
         }
 
+        private bool HasDiscoveredCurrentSituation()
+        {
+            return _discoveryTracker != null &&
+                   _discoveryTracker.HasDiscoveredCurrentSituation;
+        }
+
+        private bool BlockElevatorExit()
+        {
+            if (_dialogueManager != null &&
+                !string.IsNullOrWhiteSpace(_blockedElevatorDialogueGroupId))
+            {
+                _dialogueManager.TryPlayGroup(_blockedElevatorDialogueGroupId);
+            }
+
+            return BlockExit(
+                "The elevator is blocked after discovering a Level 1 situation.");
+        }
+
         private bool Fail(string message)
         {
             LastError = message;
             Debug.LogError($"DayOutcomeController: {message}", this);
+            return false;
+        }
+
+        private bool BlockExit(string message)
+        {
+            LastError = message;
+            Debug.Log($"DayOutcomeController: {message}", this);
             return false;
         }
     }
