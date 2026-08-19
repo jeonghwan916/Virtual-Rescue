@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Inputs.Haptics;
+using VirtualRescue.GameFlow;
 
 public class NumPad : MonoBehaviour
 {
@@ -36,6 +37,9 @@ public class NumPad : MonoBehaviour
     [SerializeField] private HapticImpulsePlayer _hapticPlayer;
     [SerializeField] private float _hapticAmplitude = 0.3f;
     [SerializeField] private float _hapticDuration = 0.05f;
+
+    [Header("Exit Controller")]
+    [SerializeField] private ExitController _exitController;
 
     private readonly Collider[] _touchHits = new Collider[8];
     private bool _isInputLocked;
@@ -137,17 +141,17 @@ public class NumPad : MonoBehaviour
         if (_inputField == null)
         {
             Debug.LogWarning($"{nameof(NumPad)} needs an input field before calling.", this);
-            IsNumberIsCorrect(true);
+            IsNumberCorrect(false);
             return;
         }
 
         if (_inputField.text == _correctNumber)
         {
-            IsNumberIsCorrect(true);
+            IsNumberCorrect(true);
             return;
         }
 
-        IsNumberIsCorrect(false);
+        IsNumberCorrect(false);
     }
 
     private void ConfigureInputField()
@@ -280,7 +284,7 @@ public class NumPad : MonoBehaviour
         _hapticPlayer.SendHapticImpulse(_hapticAmplitude, _hapticDuration);
     }
 
-    public void IsNumberIsCorrect(bool flag)
+    public void IsNumberCorrect(bool flag)
     {
         if (flag)
         {
@@ -293,6 +297,8 @@ public class NumPad : MonoBehaviour
             }
 
             OnCorrectNumber?.Invoke();
+            
+            _exitController.RequestExit(); // 고민중
         }
         else
         {

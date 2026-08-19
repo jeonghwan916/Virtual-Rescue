@@ -2147,6 +2147,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5130291086207150845}
+  - component: {fileID: 6323193975697250312}
   - component: {fileID: 6358006599515696000}
   - component: {fileID: 4610116415439733876}
   m_Layer: 0
@@ -2174,6 +2175,19 @@ Transform:
   - {fileID: 3086221642534226883}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6323193975697250312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3569751344202023613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27848dd114834794a4ac04a227e3935a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.ExitController
+  _exitType: 5
 --- !u!114 &6358006599515696000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6334,6 +6348,7 @@ MonoBehaviour:
   _hapticPlayer: {fileID: 0}
   _hapticAmplitude: 0.3
   _hapticDuration: 0.05
+  _exitController: {fileID: 0}
 --- !u!114 &8081949368880489731
 MonoBehaviour:
   m_ObjectHideFlags: 0
