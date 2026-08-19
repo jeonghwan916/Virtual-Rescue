@@ -6,6 +6,7 @@ namespace VirtualRescue.GameFlow
         SituationFailed = 1,
         InvalidExit = 2,
         InvalidLightweightPartitionExit = 3,
-        NoDiscoveryLightweightPartitionExit = 4
+        NoDiscoveryLightweightPartitionExit = 4,
+        WrongCellPhoneCall = 5
     }
 }

@@ -72,7 +72,10 @@ namespace VirtualRescue.GameFlow
             {
                 return exitType == ExitType.Elevator
                     ? CompleteDay(definition)
-                    : FailDay(definition);
+                    : FailDay(
+                        definition,
+                        GetInvalidExitFailureReason(exitType),
+                        exitType);
             }
 
             if (definition == null || controller == null)
@@ -109,7 +112,7 @@ namespace VirtualRescue.GameFlow
                 {
                     return FailDay(
                         definition,
-                        DayFailureReason.InvalidExit,
+                        GetInvalidExitFailureReason(exitType),
                         exitType);
                 }
 
@@ -117,7 +120,7 @@ namespace VirtualRescue.GameFlow
                     ? CompleteDay(definition)
                     : FailDay(
                         definition,
-                        DayFailureReason.InvalidExit,
+                        GetInvalidExitFailureReason(exitType),
                         exitType);
             }
 
@@ -126,17 +129,26 @@ namespace VirtualRescue.GameFlow
             {
                 return HasDiscoveredCurrentSituation()
                     ? BlockElevatorExit()
-                    : FailDay(definition);
+                    : FailDay(
+                        definition,
+                        GetInvalidExitFailureReason(exitType),
+                        exitType);
             }
 
             if (!controller.IsResolved)
             {
-                return FailDay(definition);
+                return FailDay(
+                    definition,
+                    GetInvalidExitFailureReason(exitType),
+                    exitType);
             }
 
             return definition.IsExitAllowed(exitType)
                 ? CompleteDay(definition)
-                : FailDay(definition);
+                : FailDay(
+                    definition,
+                    GetInvalidExitFailureReason(exitType),
+                    exitType);
         }
 
         private void HandleExitRequested(ExitType exitType)
@@ -286,9 +298,14 @@ namespace VirtualRescue.GameFlow
         private static DayFailureReason GetInvalidExitFailureReason(
             ExitType exitType)
         {
-            return exitType == ExitType.LightweightPartition
-                ? DayFailureReason.InvalidLightweightPartitionExit
-                : DayFailureReason.InvalidExit;
+            return exitType switch
+            {
+                ExitType.LightweightPartition =>
+                    DayFailureReason.InvalidLightweightPartitionExit,
+                ExitType.CellPhone =>
+                    DayFailureReason.WrongCellPhoneCall,
+                _ => DayFailureReason.InvalidExit
+            };
         }
 
         private bool BlockElevatorExit()

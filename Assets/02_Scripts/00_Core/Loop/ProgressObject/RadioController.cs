@@ -25,7 +25,10 @@ public class RadioController : MonoBehaviour
     [Header("Failed Broad Cast")]
     [SerializeField] private FailBroadcastEntry[] _failBroadcastEntries;
     [SerializeField] private AudioClip _fallbackFailBroadcastClip;
+    
+    [Header("Special Failed Broad Cast")]
     [SerializeField] private AudioClip _lightweightPartitionIncidentBroadcastClip;
+    [SerializeField] private AudioClip _wrongCellPhoneCallBroadcastClip;
 
     [Header("Music")]
     [SerializeField] private AudioClip _musicClip;
@@ -340,7 +343,14 @@ public class RadioController : MonoBehaviour
         {
             if (IsLightweightPartitionIncident(resultContext))
             {
+                Debug.Log("Light weight partition failed");
                 return _lightweightPartitionIncidentBroadcastClip;
+            }
+
+            if (resultContext.FailureReason == DayFailureReason.WrongCellPhoneCall)
+            {
+                Debug.Log("Wrong Cell Phone Call failed");
+                return _wrongCellPhoneCallBroadcastClip;
             }
 
             AudioClip failClip = FindFailClip(resultContext.SituationId);
