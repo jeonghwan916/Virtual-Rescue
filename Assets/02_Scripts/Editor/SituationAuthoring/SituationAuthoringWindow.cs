@@ -46,6 +46,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         [SerializeField] private int _weight = 1;
         [SerializeField] private int _minimumDay = 1;
         [SerializeField] private string _resolvedDialogueId = string.Empty;
+        [SerializeField] private string _warningDialogueId = string.Empty;
         [SerializeField] private string _failedDialogueId = string.Empty;
         [SerializeField] private string _beforeResolveCallingDialogueGroupId =
             string.Empty;
@@ -54,6 +55,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         [SerializeField] private string _level2CallingDialogueGroupId =
             string.Empty;
         [SerializeField] private string _resolvedDialogueText = string.Empty;
+        [SerializeField] private string _warningDialogueText = string.Empty;
         [SerializeField] private string _failedDialogueText = string.Empty;
         [SerializeField] private bool _registerAsCandidate;
         [SerializeField] private bool _usesTimeLimit;
@@ -75,6 +77,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         [SerializeField] private HomeLayoutDefinition _homeLayout;
         [SerializeField] private SituationLocationCatalog _locationCatalog;
         [SerializeField] private string _editResolvedDialogueText = string.Empty;
+        [SerializeField] private string _editWarningDialogueText = string.Empty;
         [SerializeField] private string _editFailedDialogueText = string.Empty;
 
         [Header("New Location")]
@@ -353,6 +356,14 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 "Resolved Dialogue Text",
                 "Resolved Dialogue ID로 Loop Text CSV에 추가할 대사 본문입니다."),
                 _resolvedDialogueText);
+            _warningDialogueId = EditorGUILayout.TextField(Optional(
+                "Warning Dialogue Id",
+                "복구 가능한 경고 발생 시 재생할 Dialogue ID입니다. 비워두면 재생하지 않습니다."),
+                _warningDialogueId);
+            _warningDialogueText = EditorGUILayout.TextField(Optional(
+                "Warning Dialogue Text",
+                "Warning Dialogue ID로 Loop Text CSV에 추가할 대사 본문입니다."),
+                _warningDialogueText);
             _failedDialogueId = EditorGUILayout.TextField(Optional(
                 "Failed Dialogue Id",
                 "상황 실패 시 재생할 Dialogue ID입니다. 비워두면 재생하지 않습니다."),
@@ -371,6 +382,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 AppendMissingDialogueRows(
                     _resolvedDialogueId,
                     _resolvedDialogueText,
+                    _warningDialogueId,
+                    _warningDialogueText,
                     _failedDialogueId,
                     _failedDialogueText);
             }
@@ -732,6 +745,12 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 "Resolved Dialogue ID로 Loop Text CSV에 추가할 대사 본문입니다."),
                 _editResolvedDialogueText);
             EditorGUILayout.PropertyField(
+                serializedDefinition.FindProperty("_warningDialogueId"));
+            _editWarningDialogueText = EditorGUILayout.TextField(Optional(
+                "Warning Dialogue Text",
+                "Warning Dialogue ID로 Loop Text CSV에 추가할 대사 본문입니다."),
+                _editWarningDialogueText);
+            EditorGUILayout.PropertyField(
                 serializedDefinition.FindProperty("_failedDialogueId"));
             _editFailedDialogueText = EditorGUILayout.TextField(Optional(
                 "Failed Dialogue Text",
@@ -750,6 +769,9 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                     serializedDefinition.FindProperty("_resolvedDialogueId")
                         .stringValue,
                     _editResolvedDialogueText,
+                    serializedDefinition.FindProperty("_warningDialogueId")
+                        .stringValue,
+                    _editWarningDialogueText,
                     serializedDefinition.FindProperty("_failedDialogueId")
                         .stringValue,
                     _editFailedDialogueText);
@@ -1452,6 +1474,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 weight = _weight,
                 minimumDay = _minimumDay,
                 resolvedDialogueId = _resolvedDialogueId,
+                warningDialogueId = _warningDialogueId,
                 failedDialogueId = _failedDialogueId,
                 beforeResolveCallingDialogueGroupId =
                     _beforeResolveCallingDialogueGroupId,
@@ -1517,12 +1540,15 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         private void AppendMissingDialogueRows(
             string resolvedDialogueId,
             string resolvedDialogueText,
+            string warningDialogueId,
+            string warningDialogueText,
             string failedDialogueId,
             string failedDialogueText)
         {
             SituationDialogueCsvEntry[] entries =
             {
                 new(resolvedDialogueId, resolvedDialogueText),
+                new(warningDialogueId, warningDialogueText),
                 new(failedDialogueId, failedDialogueText)
             };
 
@@ -1905,6 +1931,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 case "Minimum Day": return "최소 날짜";
                 case "Resolved Dialogue Id": return "해결 대사 ID";
                 case "Resolved Dialogue Text": return "해결 대사 본문";
+                case "Warning Dialogue Id": return "경고 대사 ID";
+                case "Warning Dialogue Text": return "경고 대사 본문";
                 case "Failed Dialogue Id": return "실패 대사 ID";
                 case "Failed Dialogue Text": return "실패 대사 본문";
                 case "Before Resolve Calling Dialogue Group ID": return "해결 전 통화 대사 그룹 ID";

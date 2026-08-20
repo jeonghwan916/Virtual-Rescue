@@ -125,6 +125,8 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
                 request.roomLocation;
             serializedDefinition.FindProperty("_resolvedDialogueId").stringValue =
                 request.resolvedDialogueId?.Trim() ?? string.Empty;
+            serializedDefinition.FindProperty("_warningDialogueId").stringValue =
+                request.warningDialogueId?.Trim() ?? string.Empty;
             serializedDefinition.FindProperty("_failedDialogueId").stringValue =
                 request.failedDialogueId?.Trim() ?? string.Empty;
             serializedDefinition

@@ -19,6 +19,7 @@ namespace VirtualRescue.EditorTools.SituationAuthoring
         public int weight = 1;
         public int minimumDay = 1;
         public string resolvedDialogueId;
+        public string warningDialogueId;
         public string failedDialogueId;
         public string beforeResolveCallingDialogueGroupId;
         public string afterResolveCallingDialogueGroupId;
