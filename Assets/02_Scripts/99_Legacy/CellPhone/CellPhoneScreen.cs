@@ -23,6 +23,8 @@ namespace VirtualRescue.GameFlow
         [Header("Panels")]
         [SerializeField] private GameObject _panel119;
         [SerializeField] private GameObject _panelManagement;
+        [SerializeField] private GameObject _panel119Calling;
+        [SerializeField] private GameObject _panelManagementCalling;
 
         [Header("Call Touch Areas")]
         [SerializeField] private BoxCollider _call119TouchArea;
@@ -35,6 +37,7 @@ namespace VirtualRescue.GameFlow
 
         private readonly Collider[] _touchHits = new Collider[8];
         private bool _isTouchActive;
+        private bool _keepCallingVisible;
         private float _nextTouchTime;
 
         public event Action ScreenOpened;
@@ -119,6 +122,7 @@ namespace VirtualRescue.GameFlow
                 return;
             }
 
+            _keepCallingVisible = false;
             bool showManagement = contact == CellPhoneContact.Management;
 
             if (_panel119 != null)
@@ -131,11 +135,24 @@ namespace VirtualRescue.GameFlow
                 _panelManagement.SetActive(showManagement);
             }
 
+            if (_panel119Calling != null)
+            {
+                _panel119Calling.SetActive(false);
+            }
+
+            if (_panelManagementCalling != null)
+            {
+                _panelManagementCalling.SetActive(false);
+            }
+
             ResetTouchState();
         }
 
-        public void HideAll()
+        public void ShowCalling(CellPhoneContact contact)
         {
+            _keepCallingVisible = true;
+            bool showManagement = contact == CellPhoneContact.Management;
+
             if (_panel119 != null)
             {
                 _panel119.SetActive(false);
@@ -144,6 +161,43 @@ namespace VirtualRescue.GameFlow
             if (_panelManagement != null)
             {
                 _panelManagement.SetActive(false);
+            }
+
+            if (_panel119Calling != null)
+            {
+                _panel119Calling.SetActive(!showManagement);
+            }
+
+            if (_panelManagementCalling != null)
+            {
+                _panelManagementCalling.SetActive(showManagement);
+            }
+
+            ResetTouchState();
+        }
+
+        public void HideAll()
+        {
+            _keepCallingVisible = false;
+
+            if (_panel119 != null)
+            {
+                _panel119.SetActive(false);
+            }
+
+            if (_panelManagement != null)
+            {
+                _panelManagement.SetActive(false);
+            }
+
+            if (_panel119Calling != null)
+            {
+                _panel119Calling.SetActive(false);
+            }
+
+            if (_panelManagementCalling != null)
+            {
+                _panelManagementCalling.SetActive(false);
             }
         }
 
@@ -156,7 +210,12 @@ namespace VirtualRescue.GameFlow
 
             IsHeld = true;
             ResetTouchState();
-            HideAll();
+
+            if (!_keepCallingVisible)
+            {
+                HideAll();
+            }
+
             ScreenOpened?.Invoke();
         }
 
@@ -170,7 +229,12 @@ namespace VirtualRescue.GameFlow
 
             IsHeld = false;
             ResetTouchState();
-            HideAll();
+
+            if (!_keepCallingVisible)
+            {
+                HideAll();
+            }
+
             ScreenClosed?.Invoke();
         }
 
