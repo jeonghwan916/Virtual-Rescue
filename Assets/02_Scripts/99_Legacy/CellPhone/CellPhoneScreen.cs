@@ -12,6 +12,15 @@ namespace VirtualRescue.GameFlow
         Management
     }
 
+    public enum CellPhoneDisplayState
+    {
+        Hidden,
+        Emergency119,
+        Management,
+        Emergency119Calling,
+        ManagementCalling
+    }
+
     [DisallowMultipleComponent]
     public sealed class CellPhoneScreen : MonoBehaviour
     {
@@ -37,7 +46,6 @@ namespace VirtualRescue.GameFlow
 
         private readonly Collider[] _touchHits = new Collider[8];
         private bool _isTouchActive;
-        private bool _keepCallingVisible;
         private float _nextTouchTime;
 
         public event Action ScreenOpened;
@@ -45,6 +53,7 @@ namespace VirtualRescue.GameFlow
         public event Action CallRequested;
 
         public bool IsHeld { get; private set; }
+        public CellPhoneDisplayState DisplayState { get; private set; }
 
         private void OnEnable()
         {
@@ -55,8 +64,7 @@ namespace VirtualRescue.GameFlow
             }
 
             IsHeld = false;
-            ResetTouchState();
-            HideAll();
+            SetDisplay(CellPhoneDisplayState.Hidden);
         }
 
         private void OnDisable()
@@ -69,8 +77,7 @@ namespace VirtualRescue.GameFlow
 
             bool wasHeld = IsHeld;
             IsHeld = false;
-            ResetTouchState();
-            HideAll();
+            SetDisplay(CellPhoneDisplayState.Hidden);
 
             if (wasHeld)
             {
@@ -114,91 +121,33 @@ namespace VirtualRescue.GameFlow
             }
         }
 
-        public void ShowContact(CellPhoneContact contact)
+        public void SetDisplay(CellPhoneDisplayState state)
         {
-            if (!IsHeld)
-            {
-                HideAll();
-                return;
-            }
-
-            _keepCallingVisible = false;
-            bool showManagement = contact == CellPhoneContact.Management;
+            DisplayState = state;
 
             if (_panel119 != null)
             {
-                _panel119.SetActive(!showManagement);
+                _panel119.SetActive(state == CellPhoneDisplayState.Emergency119);
             }
 
             if (_panelManagement != null)
             {
-                _panelManagement.SetActive(showManagement);
+                _panelManagement.SetActive(state == CellPhoneDisplayState.Management);
             }
 
             if (_panel119Calling != null)
             {
-                _panel119Calling.SetActive(false);
+                _panel119Calling.SetActive(
+                    state == CellPhoneDisplayState.Emergency119Calling);
             }
 
             if (_panelManagementCalling != null)
             {
-                _panelManagementCalling.SetActive(false);
+                _panelManagementCalling.SetActive(
+                    state == CellPhoneDisplayState.ManagementCalling);
             }
 
             ResetTouchState();
-        }
-
-        public void ShowCalling(CellPhoneContact contact)
-        {
-            _keepCallingVisible = true;
-            bool showManagement = contact == CellPhoneContact.Management;
-
-            if (_panel119 != null)
-            {
-                _panel119.SetActive(false);
-            }
-
-            if (_panelManagement != null)
-            {
-                _panelManagement.SetActive(false);
-            }
-
-            if (_panel119Calling != null)
-            {
-                _panel119Calling.SetActive(!showManagement);
-            }
-
-            if (_panelManagementCalling != null)
-            {
-                _panelManagementCalling.SetActive(showManagement);
-            }
-
-            ResetTouchState();
-        }
-
-        public void HideAll()
-        {
-            _keepCallingVisible = false;
-
-            if (_panel119 != null)
-            {
-                _panel119.SetActive(false);
-            }
-
-            if (_panelManagement != null)
-            {
-                _panelManagement.SetActive(false);
-            }
-
-            if (_panel119Calling != null)
-            {
-                _panel119Calling.SetActive(false);
-            }
-
-            if (_panelManagementCalling != null)
-            {
-                _panelManagementCalling.SetActive(false);
-            }
         }
 
         private void HandleSelectEntered(SelectEnterEventArgs args)
@@ -210,12 +159,6 @@ namespace VirtualRescue.GameFlow
 
             IsHeld = true;
             ResetTouchState();
-
-            if (!_keepCallingVisible)
-            {
-                HideAll();
-            }
-
             ScreenOpened?.Invoke();
         }
 
@@ -223,38 +166,24 @@ namespace VirtualRescue.GameFlow
         {
             if (!IsHeld)
             {
-                HideAll();
                 return;
             }
 
             IsHeld = false;
             ResetTouchState();
-
-            if (!_keepCallingVisible)
-            {
-                HideAll();
-            }
-
             ScreenClosed?.Invoke();
         }
 
         private BoxCollider GetActiveTouchArea()
         {
-            if (_panelManagement != null &&
-                _panelManagement.activeInHierarchy &&
-                IsAvailable(_callManagementTouchArea))
+            BoxCollider touchArea = DisplayState switch
             {
-                return _callManagementTouchArea;
-            }
+                CellPhoneDisplayState.Emergency119 => _call119TouchArea,
+                CellPhoneDisplayState.Management => _callManagementTouchArea,
+                _ => null
+            };
 
-            if (_panel119 != null &&
-                _panel119.activeInHierarchy &&
-                IsAvailable(_call119TouchArea))
-            {
-                return _call119TouchArea;
-            }
-
-            return null;
+            return IsAvailable(touchArea) ? touchArea : null;
         }
 
         private bool IsTouching(BoxCollider touchArea)

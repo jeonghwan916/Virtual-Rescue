@@ -183,6 +183,18 @@ namespace VirtualRescue.GameFlow
 
         private void HandleSituationResolved()
         {
+            if (ShouldAutoExitAfterResolvedLevel1Call())
+            {
+                if (_isCallInProgress)
+                {
+                    _shouldRequestExitAfterDialogue = true;
+                    return;
+                }
+
+                RequestExit();
+                return;
+            }
+
             RefreshScreenDisplay();
         }
 
@@ -221,29 +233,44 @@ namespace VirtualRescue.GameFlow
                 return;
             }
 
-            if (_isCallDisplayLocked &&
-                !_isCallInProgress &&
-                CanRetryResolvedLevel1Call())
+            if (!screen.isActiveAndEnabled)
             {
-                _isCallDisplayLocked = false;
+                screen.SetDisplay(CellPhoneDisplayState.Hidden);
+                return;
             }
 
             if (_isCallDisplayLocked)
             {
-                screen.ShowCalling(_callingContact);
+                screen.SetDisplay(GetDisplayState(_callingContact, true));
                 return;
             }
 
             if (!screen.IsHeld)
             {
-                screen.HideAll();
+                screen.SetDisplay(CellPhoneDisplayState.Hidden);
                 return;
             }
 
-            screen.ShowContact(EvaluateScreenContact());
+            screen.SetDisplay(GetDisplayState(EvaluateScreenContact(), false));
         }
 
-        private bool CanRetryResolvedLevel1Call()
+        private static CellPhoneDisplayState GetDisplayState(
+            CellPhoneContact contact,
+            bool isCalling)
+        {
+            if (contact == CellPhoneContact.Management)
+            {
+                return isCalling
+                    ? CellPhoneDisplayState.ManagementCalling
+                    : CellPhoneDisplayState.Management;
+            }
+
+            return isCalling
+                ? CellPhoneDisplayState.Emergency119Calling
+                : CellPhoneDisplayState.Emergency119;
+        }
+
+        private bool ShouldAutoExitAfterResolvedLevel1Call()
         {
             SituationDefinition definition = _situationSceneLoader?.CurrentDefinition;
             SituationController controller = _situationSceneLoader?.CurrentController;
