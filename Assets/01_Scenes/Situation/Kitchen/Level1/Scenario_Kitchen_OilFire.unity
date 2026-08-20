@@ -179,6 +179,18 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 1547152690847526177, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
+      propertyPath: m_Volume
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1547152690847526177, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
+      propertyPath: MaxDistance
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1547152690847526177, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
+      propertyPath: MinDistance
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1758928587194409716, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
       propertyPath: m_Layer
       value: 13
@@ -198,6 +210,10 @@ PrefabInstance:
     - target: {fileID: 2802201682524127449, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
       propertyPath: m_Layer
       value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 6427645639204349642, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
+      propertyPath: m_Radius
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 6485429145935122531, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
       propertyPath: m_Layer

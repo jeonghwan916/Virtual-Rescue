@@ -20,6 +20,9 @@ MonoBehaviour:
   _roomTrigger: 12
   _resolvedDialogueId: 
   _failedDialogueId: 
+  _beforeResolveCallingDialogueGroupId: ""
+  _afterResolveCallingDialogueGroupId: ""
+  _level2CallingDialogueGroupId: Entrance_LightweightPartition_Escape_Calling
   _usesTimeLimit: 1
   _timeLimitSeconds: 90
-  _level2AllowedExits: 01000000
+  _allowedExits: 0200000005000000

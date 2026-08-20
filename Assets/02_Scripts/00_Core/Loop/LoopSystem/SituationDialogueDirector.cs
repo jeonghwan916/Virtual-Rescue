@@ -69,6 +69,7 @@ namespace VirtualRescue.GameFlow
             }
 
             _boundController.Resolved += HandleSituationResolved;
+            _boundController.WarningRaised += HandleSituationWarningRaised;
             _boundController.Failed += HandleSituationFailed;
         }
 
@@ -80,6 +81,7 @@ namespace VirtualRescue.GameFlow
             }
 
             _boundController.Resolved -= HandleSituationResolved;
+            _boundController.WarningRaised -= HandleSituationWarningRaised;
             _boundController.Failed -= HandleSituationFailed;
             _boundController = null;
         }
@@ -87,6 +89,11 @@ namespace VirtualRescue.GameFlow
         private void HandleSituationResolved()
         {
             PlayDialogue(_situationSceneLoader.CurrentDefinition?.ResolvedDialogueId);
+        }
+
+        private void HandleSituationWarningRaised()
+        {
+            PlayDialogue(_situationSceneLoader.CurrentDefinition?.WarningDialogueId);
         }
 
         private void HandleSituationFailed()

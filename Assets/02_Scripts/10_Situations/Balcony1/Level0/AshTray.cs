@@ -1,29 +1,25 @@
 using System;
 using UnityEngine;
+using UnityEngine.VFX;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class AshTray : MonoBehaviour
 {
     [SerializeField] private BalconyCigaretteSituationController _situationController;
     [SerializeField] private GameObject _cigarette;
-    [SerializeField] private bool _entered = false;
+    [SerializeField] private VisualEffect _cigaretteEmber;
+    [SerializeField] private bool _isFirstEnteredAshtray;
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip _emberDiableClip;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == _cigarette)
+        if (other.gameObject == _cigarette && !_isFirstEnteredAshtray)
         {
-            _entered = true;
+            _isFirstEnteredAshtray = true;
             _situationController.OnCigaretteEnteredAshtray();
-            other.GetComponent<XRGrabInteractable>().enabled = false;
-        }
-    }
-    
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject == _cigarette)
-        {
-            _entered = false;
-            _situationController.OnCigaretteExitedAshtray();
+            _cigaretteEmber.Stop();
+            _audioSource.PlayOneShot(_emberDiableClip);
         }
     }
 }

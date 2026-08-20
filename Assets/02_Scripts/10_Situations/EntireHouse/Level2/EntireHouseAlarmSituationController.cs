@@ -8,6 +8,9 @@ public class EntireHouseAlarmSituationController : SituationController
     [SerializeField] private AudioSource _broadCastAudioSource;
     [SerializeField] private bool _isAlarmStarted = false;
     [SerializeField] private SituationTrapDoorTrigger _trapDoorTrigger;
+    [SerializeField] private AudioClip _deathAudioClip;
+
+    private bool _hasPlayedDeathAudio;
 
     private void OnEnable()
     {
@@ -54,6 +57,43 @@ public class EntireHouseAlarmSituationController : SituationController
             return;
         }
 
-        FailSituation();
+        if (FailSituation())
+        {
+            PlayDeathAudio();
+        }
+    }
+
+    protected override void OnActivated()
+    {
+        _hasPlayedDeathAudio = false;
+    }
+
+    private void PlayDeathAudio()
+    {
+        if (_hasPlayedDeathAudio)
+        {
+            return;
+        }
+
+        _hasPlayedDeathAudio = true;
+
+        if (_deathAudioClip == null)
+        {
+            Debug.LogWarning("Death audio clip is not assigned.", this);
+            return;
+        }
+
+        PlayerReferenceHub playerReferenceHub = PlayerReferenceHub.Instance;
+        AudioSource xrAudioSource = playerReferenceHub?.XrAudioSource;
+
+        if (xrAudioSource == null)
+        {
+            Debug.LogWarning(
+                "HMD AudioSource was not found on PlayerReferenceHub.",
+                this);
+            return;
+        }
+
+        xrAudioSource.PlayOneShot(_deathAudioClip);
     }
 }

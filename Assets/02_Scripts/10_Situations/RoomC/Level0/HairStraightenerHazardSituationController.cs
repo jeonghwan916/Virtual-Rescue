@@ -13,8 +13,34 @@ namespace VirtualRescue.Situations.HairStraightenerHazard
         [SerializeField] private XRSocketInteractor _powerSocket;
         [SerializeField] private AudioSource _operatingAudioSource;
 
+        [Header("Power Warning Visual")]
+        [SerializeField] private Renderer _bodyRenderer;
+        [SerializeField] private Renderer _topRenderer;
+        [SerializeField] private Color _poweredBaseColor =
+            new Color(1f, 0.05f, 0.02f, 1f);
+        [SerializeField, ColorUsage(true, true)]
+        private Color _poweredEmissionColor =
+            new Color(4f, 0.1f, 0f, 1f);
+
         private Coroutine _evaluationRoutine;
         private bool _hasObservedConnection;
+        private MaterialPropertyBlock _propertyBlock;
+        private Color _normalBodyColor;
+        private Color _normalTopColor;
+
+        private static readonly int BaseColorId =
+            Shader.PropertyToID("_BaseColor");
+
+        private static readonly int EmissionColorId =
+            Shader.PropertyToID("_EmissionColor");
+
+        private void Awake()
+        {
+            _propertyBlock = new MaterialPropertyBlock();
+            _normalBodyColor = GetBaseColor(_bodyRenderer);
+            _normalTopColor = GetBaseColor(_topRenderer);
+            ApplyPowerWarningVisual(false);
+        }
 
         protected override void OnActivated()
         {
@@ -36,8 +62,8 @@ namespace VirtualRescue.Situations.HairStraightenerHazard
         protected override void OnResolved()
         {
             StopEvaluation();
-            UnsubscribeSocketEvents();
             StopOperatingAudio();
+            ApplyPowerWarningVisual(false);
         }
 
         protected override void OnFailed()
@@ -45,6 +71,7 @@ namespace VirtualRescue.Situations.HairStraightenerHazard
             StopEvaluation();
             UnsubscribeSocketEvents();
             StopOperatingAudio();
+            ApplyPowerWarningVisual(_powerSocket != null && _powerSocket.hasSelection);
         }
 
         protected override void OnReset()
@@ -52,6 +79,7 @@ namespace VirtualRescue.Situations.HairStraightenerHazard
             StopEvaluation();
             UnsubscribeSocketEvents();
             StopOperatingAudio();
+            ApplyPowerWarningVisual(false);
             _hasObservedConnection = false;
         }
 
@@ -74,7 +102,7 @@ namespace VirtualRescue.Situations.HairStraightenerHazard
 
         private void ScheduleEvaluation()
         {
-            if (!IsActive)
+            if (!IsActive && !IsResolved)
             {
                 return;
             }
@@ -93,19 +121,32 @@ namespace VirtualRescue.Situations.HairStraightenerHazard
 
         private void EvaluatePowerState()
         {
-            if (!IsActive || _powerSocket == null)
+            if ((!IsActive && !IsResolved) || _powerSocket == null)
             {
                 return;
             }
 
             if (_powerSocket.hasSelection)
             {
+                ApplyPowerWarningVisual(true);
+
+                if (IsResolved)
+                {
+                    if (!ReopenResolvedSituation())
+                    {
+                        Debug.LogError(
+                            "The resolved hair straightener hazard situation could not be reopened.",
+                            this);
+                    }
+                }
+
                 _hasObservedConnection = true;
                 PlayOperatingAudio();
                 return;
             }
 
             StopOperatingAudio();
+            ApplyPowerWarningVisual(false);
 
             // 시작 플러그 연결이 누락된 설정 오류를 성공으로 처리하지 않는다.
             if (!_hasObservedConnection)
@@ -153,6 +194,50 @@ namespace VirtualRescue.Situations.HairStraightenerHazard
             }
 
             _operatingAudioSource.Stop();
+        }
+
+        private static Color GetBaseColor(Renderer renderer)
+        {
+            if (renderer == null ||
+                renderer.sharedMaterial == null ||
+                !renderer.sharedMaterial.HasProperty(BaseColorId))
+            {
+                return Color.white;
+            }
+
+            return renderer.sharedMaterial.GetColor(BaseColorId);
+        }
+
+        private void ApplyPowerWarningVisual(bool isPowered)
+        {
+            ApplyRendererColor(
+                _bodyRenderer,
+                _normalBodyColor,
+                isPowered);
+            ApplyRendererColor(
+                _topRenderer,
+                _normalTopColor,
+                isPowered);
+        }
+
+        private void ApplyRendererColor(
+            Renderer renderer,
+            Color normalColor,
+            bool isPowered)
+        {
+            if (renderer == null || _propertyBlock == null)
+            {
+                return;
+            }
+
+            renderer.GetPropertyBlock(_propertyBlock);
+            _propertyBlock.SetColor(
+                BaseColorId,
+                isPowered ? _poweredBaseColor : normalColor);
+            _propertyBlock.SetColor(
+                EmissionColorId,
+                isPowered ? _poweredEmissionColor : Color.black);
+            renderer.SetPropertyBlock(_propertyBlock);
         }
 
         private void SubscribeSocketEvents()

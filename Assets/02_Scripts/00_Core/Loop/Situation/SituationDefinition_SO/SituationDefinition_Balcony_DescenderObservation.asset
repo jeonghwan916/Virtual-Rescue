@@ -18,8 +18,11 @@ MonoBehaviour:
   _minimumDay: 1
   _sceneName: Scenario_Balcony_DescenderObservation
   _roomTrigger: 5
-  _resolvedDialogueId: 
+  _resolvedDialogueId: Balcony_DescenderObservation_Resolve
   _failedDialogueId: 
+  _beforeResolveCallingDialogueGroupId: ""
+  _afterResolveCallingDialogueGroupId: Balcony_DescenderObservation_AfterResolve
+  _level2CallingDialogueGroupId: ""
   _usesTimeLimit: 0
   _timeLimitSeconds: 60
-  _level2AllowedExits: 
+  _allowedExits: 05000000

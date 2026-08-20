@@ -5,13 +5,13 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/01_Scenes/LobbyScene.unity
     guid: 162625e7173cedc4cad92eef26a58108
-  - enabled: 1
+  - enabled: 0
     path: Assets/01_Scenes/LoadingScene.unity
     guid: 7ef09305f134b174b819f0ffa640bf44
-  - enabled: 1
+  - enabled: 0
     path: Assets/01_Scenes/Missions/01_CallRefuge.unity
     guid: 65ecd612b98f5d7458eb2181d838e560
   - enabled: 0
@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/01_Scenes/Missions/05_PartitionEscape.unity
     guid: 9df53db2613ac8a46a151ce06633b43f
+  - enabled: 1
+    path: Assets/01_Scenes/Situation/LoopBase.unity
+    guid: 9a586b261bdedf04c922f061a1e1c175
   - enabled: 1
     path: Assets/01_Scenes/S_Env/S_Env.unity
     guid: c0184ccde82e5574d96adb8cb562dd00
@@ -57,21 +60,18 @@ EditorBuildSettings:
     path: Assets/01_Scenes/S_SubHome/VestibuleRoom_Sub.unity
     guid: e0bba783cc2d7ed42a91e9664f3c33c1
   - enabled: 1
-    path: Assets/01_Scenes/Situation/LoopBase.unity
-    guid: 9a586b261bdedf04c922f061a1e1c175
-  - enabled: 1
     path: Assets/01_Scenes/Situation/EndingScene.unity
     guid: 839d6d8f43ce7b24d9919613580189e6
-  - enabled: 1
+  - enabled: 0
     path: Assets/01_Scenes/Situation/Test/ExitScene.unity
     guid: 063cc8b82dd774d45bb6a5b832aa8efd
-  - enabled: 1
+  - enabled: 0
     path: Assets/01_Scenes/Situation/Test/Scenario_TestCube.unity
     guid: a74cabb30c336a04ba923722196c651a
-  - enabled: 1
+  - enabled: 0
     path: Assets/01_Scenes/Situation/Test/Scenario_TestSphere.unity
     guid: 14662d186caed2c4cbc1f48660fd379d
-  - enabled: 1
+  - enabled: 0
     path: Assets/01_Scenes/Situation/Test/Scenario_TestCapsule.unity
     guid: 0d82a0ecf5ac1844fbb66632e36c8a98
   - enabled: 1
@@ -81,35 +81,35 @@ EditorBuildSettings:
     path: Assets/01_Scenes/Situation/Balcony1/Level0/Scenario_Balcony_DescenderObservation.unity
     guid: 5f286e7843dcbb44a976ab3a253261f6
   - enabled: 1
-    path: Assets/01_Scenes/Situation/Kitchen/Level0/Scenario_Kitchen_FireExtinguisherObservation.unity
-    guid: 831c539617fdc5b4d889e786362da25e
-  - enabled: 1
-    path: Assets/01_Scenes/Situation/LivingRoom/Level0/Scenario_LivingRoom_PowerStrip_Unplug.unity
-    guid: 96e05db59f06ebf46acf65b68d409a05
-  - enabled: 1
-    path: Assets/01_Scenes/Situation/LivingRoom/Level1/Scenario_LivingRoom_PowerStrip_Fire.unity
-    guid: e8d226645d2b28c4a89ca3ccb41d5719
-  - enabled: 1
-    path: Assets/01_Scenes/Situation/Entrance/Level2/Scenario_Entrance_LightweightPartition_Escape.unity
-    guid: aa88ba28e8526564eb1ce304255206d3
-  - enabled: 1
-    path: Assets/01_Scenes/Situation/Kitchen/Level0/Scenario_Kitchen_Induction.unity
-    guid: 3629fabe39f67d141abaaef42b951cc0
+    path: Assets/01_Scenes/Situation/EntireHouse/Level2/Scenario_EntireHouse_Alarm.unity
+    guid: d31daf1ab57bab44e8d2aab790b2c093
   - enabled: 1
     path: Assets/01_Scenes/Situation/Entrance/Level1/Scenario_Entrance_FireSuppression.unity
     guid: 0da9e385f9e292c41ac7bf438855fbfe
   - enabled: 1
-    path: Assets/01_Scenes/Situation/Kitchen/Level1/Scenario_Kitchen_OilFire.unity
-    guid: ff5ce9d089a9260409173d61f913b006
+    path: Assets/01_Scenes/Situation/Entrance/Level2/Scenario_Entrance_LightweightPartition_Escape.unity
+    guid: aa88ba28e8526564eb1ce304255206d3
   - enabled: 1
-    path: Assets/01_Scenes/Situation/RoomC/Level0/Scenario_RoomC_HairStraightener_Hazard.unity
-    guid: feb0941505232f14b91b2c57500c6f87
+    path: Assets/01_Scenes/Situation/Kitchen/Level0/Scenario_Kitchen_FireExtinguisherObservation.unity
+    guid: 831c539617fdc5b4d889e786362da25e
   - enabled: 1
     path: Assets/01_Scenes/Situation/Kitchen/Level0/Scenario_Kitchen_InductionLever.unity
     guid: bf07cb31994e7f740be25b3b01190a89
   - enabled: 1
-    path: Assets/01_Scenes/Situation/EntireHouse/Level2/Scenario_EntireHouse_Alarm.unity
-    guid: d31daf1ab57bab44e8d2aab790b2c093
+    path: Assets/01_Scenes/Situation/Kitchen/Level1/Scenario_Kitchen_OilFire.unity
+    guid: ff5ce9d089a9260409173d61f913b006
+  - enabled: 1
+    path: Assets/01_Scenes/Situation/LivingRoom/Level1/Scenario_LivingRoom_PowerStrip_Fire.unity
+    guid: e8d226645d2b28c4a89ca3ccb41d5719
+  - enabled: 1
+    path: Assets/01_Scenes/Situation/LivingRoom/Level0/Scenario_LivingRoom_PowerStrip_Unplug.unity
+    guid: 96e05db59f06ebf46acf65b68d409a05
+  - enabled: 1
+    path: Assets/01_Scenes/Situation/RoomC/Level0/Scenario_RoomC_HairStraightener_Hazard.unity
+    guid: feb0941505232f14b91b2c57500c6f87
+  - enabled: 1
+    path: Assets/01_Scenes/Situation/Balcony1/Level0/Scenario_Balcony_FishBowl.unity
+    guid: f7d62d07e9fe4034f82ae134d56f057a
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 2f5d93eb51c05214f92f23235f0eceb9, type: 2}

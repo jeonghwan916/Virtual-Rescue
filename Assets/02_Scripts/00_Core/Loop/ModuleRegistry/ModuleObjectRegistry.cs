@@ -65,6 +65,51 @@ namespace VirtualRescue.GameFlow
             return handled;
         }
 
+        public bool TryGetTargets(
+            ModuleObjectId objectId,
+            List<GameObject> results)
+        {
+            if (results == null)
+            {
+                return false;
+            }
+
+            string normalizedId = GetIdValue(objectId);
+            if (string.IsNullOrEmpty(normalizedId) ||
+                !_items.TryGetValue(normalizedId, out List<ModuleObjectRegistryItem> items))
+            {
+                return false;
+            }
+
+            bool handled = false;
+
+            for (int i = items.Count - 1; i >= 0; i--)
+            {
+                ModuleObjectRegistryItem item = items[i];
+                if (item == null)
+                {
+                    items.RemoveAt(i);
+                    continue;
+                }
+
+                GameObject target = item.Target;
+                if (target == null)
+                {
+                    continue;
+                }
+
+                results.Add(target);
+                handled = true;
+            }
+
+            if (items.Count == 0)
+            {
+                _items.Remove(normalizedId);
+            }
+
+            return handled;
+        }
+
         internal bool Register(ModuleObjectRegistryItem item)
         {
             if (item == null || item.ObjectId == null || string.IsNullOrEmpty(item.ObjectIdValue))

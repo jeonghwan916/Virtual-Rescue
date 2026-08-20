@@ -1,4 +1,5 @@
 using UnityEngine;
+using VirtualRescue.DialogueSystem;
 
 namespace VirtualRescue.GameFlow
 {
@@ -7,6 +8,10 @@ namespace VirtualRescue.GameFlow
     {
         [SerializeField] private DayFlowController _dayFlowController = null;
         [SerializeField] private SituationSceneLoader _situationSceneLoader = null;
+        [SerializeField] private SituationDiscoveryTracker _discoveryTracker = null;
+        [SerializeField] private DialogueManager _dialogueManager = null;
+        [SerializeField] private string _blockedElevatorDialogueGroupId =
+            "Block_Eleavator";
 
         private SituationController _boundSituationController;
 
@@ -15,6 +20,7 @@ namespace VirtualRescue.GameFlow
         private void OnEnable()
         {
             ExitController.ExitRequested += HandleExitRequested;
+            ExitController.ExitAnimationBlocked += ShouldBlockExitAnimation;
 
             if (_dayFlowController != null)
             {
@@ -30,6 +36,7 @@ namespace VirtualRescue.GameFlow
         private void OnDisable()
         {
             ExitController.ExitRequested -= HandleExitRequested;
+            ExitController.ExitAnimationBlocked -= ShouldBlockExitAnimation;
 
             if (_dayFlowController != null)
             {
@@ -67,7 +74,10 @@ namespace VirtualRescue.GameFlow
             {
                 return exitType == ExitType.Elevator
                     ? CompleteDay(definition)
-                    : FailDay(definition);
+                    : FailDay(
+                        definition,
+                        GetInvalidExitFailureReason(exitType),
+                        exitType);
             }
 
             if (definition == null || controller == null)
@@ -85,27 +95,62 @@ namespace VirtualRescue.GameFlow
             {
                 if (!definition.IsExitAllowed(exitType))
                 {
-                    return FailDay(definition);
+                    return FailDay(
+                        definition,
+                        GetInvalidExitFailureReason(exitType),
+                        exitType);
+                }
+
+                if (exitType == ExitType.LightweightPartition &&
+                    !HasDiscoveredCurrentSituation())
+                {
+                    return FailDay(
+                        definition,
+                        DayFailureReason.NoDiscoveryLightweightPartitionExit,
+                        exitType);
                 }
 
                 if (controller.IsActive && !controller.TryResolveByExit(exitType))
                 {
-                    return FailDay(definition);
+                    return FailDay(
+                        definition,
+                        GetInvalidExitFailureReason(exitType),
+                        exitType);
                 }
 
                 return controller.IsResolved
                     ? CompleteDay(definition)
-                    : FailDay(definition);
+                    : FailDay(
+                        definition,
+                        GetInvalidExitFailureReason(exitType),
+                        exitType);
+            }
+
+            if (definition.Level == SituationLevel.Level1 &&
+                exitType == ExitType.Elevator)
+            {
+                return HasDiscoveredCurrentSituation()
+                    ? BlockElevatorExit()
+                    : FailDay(
+                        definition,
+                        GetInvalidExitFailureReason(exitType),
+                        exitType);
             }
 
             if (!controller.IsResolved)
             {
-                return FailDay(definition);
+                return FailDay(
+                    definition,
+                    GetInvalidExitFailureReason(exitType),
+                    exitType);
             }
 
             return definition.IsExitAllowed(exitType)
                 ? CompleteDay(definition)
-                : FailDay(definition);
+                : FailDay(
+                    definition,
+                    GetInvalidExitFailureReason(exitType),
+                    exitType);
         }
 
         private void HandleExitRequested(ExitType exitType)
@@ -121,6 +166,7 @@ namespace VirtualRescue.GameFlow
                 return;
             }
 
+            _discoveryTracker?.ResetCurrentSituation();
             UnbindCurrentSituation();
         }
 
@@ -216,6 +262,20 @@ namespace VirtualRescue.GameFlow
             return Fail("Day flow rejected a failed day result.");
         }
 
+        private bool FailDay(
+            SituationDefinition definition,
+            DayFailureReason failureReason,
+            ExitType exitType)
+        {
+            if (_dayFlowController.FailDay(
+                    DayResultContext.Failed(definition, failureReason, exitType)))
+            {
+                return true;
+            }
+
+            return Fail("Day flow rejected a failed day result.");
+        }
+
         private bool TryValidateReferences()
         {
             if (_dayFlowController == null)
@@ -231,10 +291,93 @@ namespace VirtualRescue.GameFlow
             return true;
         }
 
+        private bool HasDiscoveredCurrentSituation()
+        {
+            return _discoveryTracker != null &&
+                   _discoveryTracker.HasDiscoveredCurrentSituation;
+        }
+
+        private bool ShouldBlockExitAnimation(ExitType exitType)
+        {
+            if (exitType != ExitType.Elevator ||
+                _situationSceneLoader == null)
+            {
+                return false;
+            }
+
+            SituationDefinition definition =
+                _situationSceneLoader.CurrentDefinition;
+            SituationController controller =
+                _situationSceneLoader.CurrentController;
+
+            if (definition == null || controller == null)
+            {
+                return false;
+            }
+
+            if (definition.Level == SituationLevel.Level1 &&
+                (HasDiscoveredCurrentSituation() || controller.IsResolved))
+            {
+                PlayBlockedElevatorDialogue();
+                BlockExit(
+                    "The elevator animation is blocked after discovering a Level 1 situation.");
+                return true;
+            }
+
+            if (definition.Level == SituationLevel.Level0 &&
+                controller.IsResolved &&
+                !definition.IsExitAllowed(ExitType.Elevator))
+            {
+                PlayBlockedElevatorDialogue();
+                BlockExit(
+                    "The elevator animation is blocked because this Level 0 situation does not allow elevator exit.");
+                return true;
+            }
+
+            return false;
+        }
+
+        private static DayFailureReason GetInvalidExitFailureReason(
+            ExitType exitType)
+        {
+            return exitType switch
+            {
+                ExitType.LightweightPartition =>
+                    DayFailureReason.InvalidLightweightPartitionExit,
+                ExitType.CellPhone =>
+                    DayFailureReason.WrongCellPhoneCall,
+                _ => DayFailureReason.InvalidExit
+            };
+        }
+
+        private bool BlockElevatorExit()
+        {
+            PlayBlockedElevatorDialogue();
+
+            return BlockExit(
+                "The elevator is blocked after discovering a Level 1 situation.");
+        }
+
+        private void PlayBlockedElevatorDialogue()
+        {
+            if (_dialogueManager != null &&
+                !string.IsNullOrWhiteSpace(_blockedElevatorDialogueGroupId))
+            {
+                _dialogueManager.TryPlayGroup(_blockedElevatorDialogueGroupId);
+            }
+        }
+
         private bool Fail(string message)
         {
             LastError = message;
             Debug.LogError($"DayOutcomeController: {message}", this);
+            return false;
+        }
+
+        private bool BlockExit(string message)
+        {
+            LastError = message;
+            Debug.Log($"DayOutcomeController: {message}", this);
             return false;
         }
     }

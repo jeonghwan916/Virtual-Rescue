@@ -178,8 +178,9 @@ GameObject:
   - component: {fileID: 1508490786}
   - component: {fileID: 1508490785}
   - component: {fileID: 1508490789}
+  - component: {fileID: 1508490790}
   m_Layer: 0
-  m_Name: GoalZone
+  m_Name: AshTray
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -292,7 +293,107 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AshTray
   _situationController: {fileID: 346131512}
   _cigarette: {fileID: 1712984290}
-  _entered: 0
+  _cigaretteEmber: {fileID: 1712984294}
+  _isFirstEnteredAshtray: 0
+  _audioSource: {fileID: 1508490790}
+  _emberDiableClip: {fileID: 8300000, guid: 2678524957ab4a646aed8d71050087d6, type: 3}
+--- !u!82 &1508490790
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1508490784}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1535285841
 GameObject:
   m_ObjectHideFlags: 0
@@ -361,15 +462,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 102475126210697447, guid: 62c6b71ddca7a5a4790aa48a8eac6c83, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -15.812
+      value: -15.22
       objectReference: {fileID: 0}
     - target: {fileID: 102475126210697447, guid: 62c6b71ddca7a5a4790aa48a8eac6c83, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.694
+      value: 0.975
       objectReference: {fileID: 0}
     - target: {fileID: 102475126210697447, guid: 62c6b71ddca7a5a4790aa48a8eac6c83, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -6.411
+      value: -7.249
       objectReference: {fileID: 0}
     - target: {fileID: 102475126210697447, guid: 62c6b71ddca7a5a4790aa48a8eac6c83, type: 3}
       propertyPath: m_LocalRotation.w
@@ -402,6 +503,14 @@ PrefabInstance:
     - target: {fileID: 731764815561376349, guid: 62c6b71ddca7a5a4790aa48a8eac6c83, type: 3}
       propertyPath: m_Name
       value: Cigarette
+      objectReference: {fileID: 0}
+    - target: {fileID: 2508464028412835377, guid: 62c6b71ddca7a5a4790aa48a8eac6c83, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8811145856705280846, guid: 62c6b71ddca7a5a4790aa48a8eac6c83, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -599,6 +708,11 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!2083052967 &1712984294 stripped
+VisualEffect:
+  m_CorrespondingSourceObject: {fileID: 6605984893237861624, guid: 62c6b71ddca7a5a4790aa48a8eac6c83, type: 3}
+  m_PrefabInstance: {fileID: 1712984289}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
