@@ -46,6 +46,21 @@ namespace VirtualRescue.Locations
             }
         }
 
+        public void SuppressEntryDialogues()
+        {
+            if (_roomDialoguesSuppressed)
+            {
+                return;
+            }
+
+            _roomDialoguesSuppressed = true;
+
+            foreach (RoomTrigger roomTrigger in _roomTriggers)
+            {
+                roomTrigger.SuppressEntryDialogue();
+            }
+        }
+
         public void Configure(SituationDefinition definition)
         {
             if (definition == null ||
@@ -98,12 +113,7 @@ namespace VirtualRescue.Locations
             }
 
             _discoveryTracker?.MarkDiscovered(situationLevel);
-            _roomDialoguesSuppressed = true;
-
-            foreach (RoomTrigger roomTrigger in _roomTriggers)
-            {
-                roomTrigger.SuppressEntryDialogue();
-            }
+            SuppressEntryDialogues();
         }
 
         private static bool ShouldSuppressAfterSituationEntry(

@@ -1,5 +1,6 @@
 using UnityEngine;
 using VirtualRescue.DialogueSystem;
+using VirtualRescue.Locations;
 
 namespace VirtualRescue.GameFlow
 {
@@ -11,13 +12,16 @@ namespace VirtualRescue.GameFlow
         [SerializeField] private DialogueManager _dialogueManager;
         [SerializeField] private SituationSceneLoader _situationSceneLoader;
         [SerializeField] private SituationDiscoveryTracker _discoveryTracker;
+        [SerializeField] private RoomSituationController _roomSituationController;
 
         private CellPhoneEndpoint _endpoint;
         private bool _isCallInProgress;
         private bool _shouldRequestExitAfterDialogue;
+        private bool _isCallDisplayLocked;
+        private bool _hasCalledBeforeResolve;
         private string _pendingGroupId = string.Empty;
-        private string _beforeResolveCalledSituationId = string.Empty;
-        private SituationController _heldSituationController;
+        private CellPhoneContact _callingContact = CellPhoneContact.Emergency119;
+        private SituationController _boundSituationController;
 
         private void OnEnable()
         {
@@ -52,7 +56,7 @@ namespace VirtualRescue.GameFlow
                 _situationSceneLoader.SituationUnloaded -= HandleSituationUnloaded;
             }
 
-            UnbindHeldSituation();
+            UnbindSituation();
             UnbindEndpoint(_endpoint);
             ResetCallState();
         }
@@ -71,34 +75,23 @@ namespace VirtualRescue.GameFlow
 
             if (_endpoint != null && _endpoint != endpoint)
             {
-                UnbindHeldSituation();
                 UnbindEndpoint(_endpoint);
             }
 
             _endpoint = endpoint;
-            if (_endpoint.Screen != null)
-            {
-                _endpoint.Screen.ScreenOpened += HandleScreenOpened;
-                _endpoint.Screen.ScreenClosed += HandleScreenClosed;
-                _endpoint.Screen.CallRequested += HandleCallRequested;
-
-                if (_endpoint.Screen.IsHeld)
-                {
-                    HandleScreenOpened();
-                }
-
-                return;
-            }
-
-            if (_endpoint.NumPad == null)
+            if (_endpoint.Screen == null)
             {
                 Debug.LogWarning(
-                    $"{endpoint.name}: CellPhoneScreen and NumPad are not assigned.",
+                    $"{endpoint.name}: CellPhoneScreen is not assigned.",
                     endpoint);
                 return;
             }
 
-            _endpoint.NumPad.OnCorrectNumber += HandleCallRequested;
+            _endpoint.Screen.ScreenOpened += HandleScreenOpened;
+            _endpoint.Screen.ScreenClosed += HandleScreenClosed;
+            _endpoint.Screen.CallRequested += HandleCallRequested;
+            BindSituation(_situationSceneLoader?.CurrentController);
+            RefreshScreenDisplay();
         }
 
         private void HandleEndpointUnregistered(CellPhoneEndpoint endpoint)
@@ -108,10 +101,8 @@ namespace VirtualRescue.GameFlow
                 return;
             }
 
-            UnbindHeldSituation();
             UnbindEndpoint(endpoint);
             _endpoint = null;
-            ResetCallState();
         }
 
         private void UnbindEndpoint(CellPhoneEndpoint endpoint)
@@ -128,10 +119,6 @@ namespace VirtualRescue.GameFlow
                 endpoint.Screen.CallRequested -= HandleCallRequested;
             }
 
-            if (endpoint.NumPad != null)
-            {
-                endpoint.NumPad.OnCorrectNumber -= HandleCallRequested;
-            }
         }
 
         private void HandleCallRequested()
@@ -146,9 +133,12 @@ namespace VirtualRescue.GameFlow
                 return;
             }
 
+            _roomSituationController?.SuppressEntryDialogues();
+
             PhoneCallAction action = EvaluatePhoneCallAction();
             if (action.RequestExitImmediately)
             {
+                LockCallDisplay();
                 RequestExit();
                 return;
             }
@@ -159,84 +149,137 @@ namespace VirtualRescue.GameFlow
                 return;
             }
 
-            PlayDialogueThenComplete(action.DialogueGroupId, action.RequestExitAfterDialogue);
+            PlayDialogueThenComplete(
+                action.DialogueGroupId,
+                action.RequestExitAfterDialogue,
+                action.MarkBeforeResolveCall);
         }
 
         private void HandleScreenOpened()
         {
-            BindHeldSituation(
-                _situationSceneLoader != null
-                    ? _situationSceneLoader.CurrentController
-                    : null);
-            RefreshScreenContact();
+            BindSituation(_situationSceneLoader?.CurrentController);
+            RefreshScreenDisplay();
         }
 
         private void HandleScreenClosed()
         {
-            UnbindHeldSituation();
+            RefreshScreenDisplay();
         }
 
         private void HandleSituationLoaded(
             SituationController controller,
             SituationDefinition _)
         {
-            if (_endpoint?.Screen == null || !_endpoint.Screen.IsHeld)
-            {
-                return;
-            }
-
-            BindHeldSituation(controller);
-            RefreshScreenContact();
+            BindSituation(controller);
+            RefreshScreenDisplay();
         }
 
         private void HandleSituationUnloaded()
         {
-            UnbindHeldSituation();
+            UnbindSituation();
             ResetCallState();
-            RefreshScreenContact();
+            RefreshScreenDisplay();
         }
 
-        private void HandleHeldSituationResolved()
+        private void HandleSituationResolved()
         {
-            RefreshScreenContact();
+            if (ShouldAutoExitAfterResolvedLevel1Call())
+            {
+                if (_isCallInProgress)
+                {
+                    _shouldRequestExitAfterDialogue = true;
+                    return;
+                }
+
+                RequestExit();
+                return;
+            }
+
+            RefreshScreenDisplay();
         }
 
-        private void BindHeldSituation(SituationController controller)
+        private void BindSituation(SituationController controller)
         {
-            if (_heldSituationController == controller)
+            if (_boundSituationController == controller)
             {
                 return;
             }
 
-            UnbindHeldSituation();
-            _heldSituationController = controller;
+            UnbindSituation();
+            _boundSituationController = controller;
 
-            if (_heldSituationController != null)
+            if (_boundSituationController != null)
             {
-                _heldSituationController.Resolved += HandleHeldSituationResolved;
+                _boundSituationController.Resolved += HandleSituationResolved;
             }
         }
 
-        private void UnbindHeldSituation()
+        private void UnbindSituation()
         {
-            if (_heldSituationController == null)
+            if (_boundSituationController == null)
             {
                 return;
             }
 
-            _heldSituationController.Resolved -= HandleHeldSituationResolved;
-            _heldSituationController = null;
+            _boundSituationController.Resolved -= HandleSituationResolved;
+            _boundSituationController = null;
         }
 
-        private void RefreshScreenContact()
+        private void RefreshScreenDisplay()
         {
             CellPhoneScreen screen = _endpoint?.Screen;
-            if (screen == null || !screen.IsHeld)
+            if (screen == null)
             {
                 return;
             }
 
-            screen.ShowContact(EvaluateScreenContact());
+            if (!screen.isActiveAndEnabled)
+            {
+                screen.SetDisplay(CellPhoneDisplayState.Hidden);
+                return;
+            }
+
+            if (_isCallDisplayLocked)
+            {
+                screen.SetDisplay(GetDisplayState(_callingContact, true));
+                return;
+            }
+
+            if (!screen.IsHeld)
+            {
+                screen.SetDisplay(CellPhoneDisplayState.Hidden);
+                return;
+            }
+
+            screen.SetDisplay(GetDisplayState(EvaluateScreenContact(), false));
+        }
+
+        private static CellPhoneDisplayState GetDisplayState(
+            CellPhoneContact contact,
+            bool isCalling)
+        {
+            if (contact == CellPhoneContact.Management)
+            {
+                return isCalling
+                    ? CellPhoneDisplayState.ManagementCalling
+                    : CellPhoneDisplayState.Management;
+            }
+
+            return isCalling
+                ? CellPhoneDisplayState.Emergency119Calling
+                : CellPhoneDisplayState.Emergency119;
+        }
+
+        private bool ShouldAutoExitAfterResolvedLevel1Call()
+        {
+            SituationDefinition definition = _situationSceneLoader?.CurrentDefinition;
+            SituationController controller = _situationSceneLoader?.CurrentController;
+
+            return definition != null &&
+                   controller != null &&
+                   definition.Level == SituationLevel.Level1 &&
+                   controller.IsResolved &&
+                   _hasCalledBeforeResolve;
         }
 
         private CellPhoneContact EvaluateScreenContact()
@@ -320,6 +363,11 @@ namespace VirtualRescue.GameFlow
             SituationDefinition definition,
             SituationController controller)
         {
+            if (controller.IsResolved && _hasCalledBeforeResolve)
+            {
+                return ExitImmediately();
+            }
+
             if (!HasDiscoveredCurrentSituation())
             {
                 return PlayThenExit(WrongCallGroupId);
@@ -327,16 +375,10 @@ namespace VirtualRescue.GameFlow
 
             if (controller.IsResolved)
             {
-                if (WasBeforeResolveCallPlayed(definition))
-                {
-                    return ExitImmediately();
-                }
-
                 return PlayThenExit(definition.AfterResolveCallingDialogueGroupId);
             }
 
-            _beforeResolveCalledSituationId = definition.Id;
-            return PlayOnly(definition.BeforeResolveCallingDialogueGroupId);
+            return PlayOnly(definition.BeforeResolveCallingDialogueGroupId, true);
         }
 
         private PhoneCallAction EvaluateLevel2(SituationDefinition definition)
@@ -355,19 +397,10 @@ namespace VirtualRescue.GameFlow
                    _discoveryTracker.HasDiscoveredCurrentSituation;
         }
 
-        private bool WasBeforeResolveCallPlayed(SituationDefinition definition)
-        {
-            return definition != null &&
-                   !string.IsNullOrWhiteSpace(definition.Id) &&
-                   string.Equals(
-                       _beforeResolveCalledSituationId,
-                       definition.Id,
-                       System.StringComparison.Ordinal);
-        }
-
         private void PlayDialogueThenComplete(
             string dialogueGroupId,
-            bool requestExitAfterDialogue)
+            bool requestExitAfterDialogue,
+            bool markBeforeResolveCall)
         {
             if (_dialogueManager == null)
             {
@@ -385,6 +418,13 @@ namespace VirtualRescue.GameFlow
             _isCallInProgress = true;
             _pendingGroupId = dialogueGroupId;
             _shouldRequestExitAfterDialogue = requestExitAfterDialogue;
+
+            if (markBeforeResolveCall)
+            {
+                _hasCalledBeforeResolve = true;
+            }
+
+            LockCallDisplay();
         }
 
         private void HandleDialogueGroupCompleted(string groupId)
@@ -407,7 +447,17 @@ namespace VirtualRescue.GameFlow
             if (requestExit)
             {
                 RequestExit();
+                return;
             }
+
+            RefreshScreenDisplay();
+        }
+
+        private void LockCallDisplay()
+        {
+            _callingContact = EvaluateScreenContact();
+            _isCallDisplayLocked = true;
+            RefreshScreenDisplay();
         }
 
         private void RequestExit()
@@ -424,7 +474,9 @@ namespace VirtualRescue.GameFlow
         private void ResetCallState()
         {
             ResetDialogueState();
-            _beforeResolveCalledSituationId = string.Empty;
+            _hasCalledBeforeResolve = false;
+            _isCallDisplayLocked = false;
+            _callingContact = CellPhoneContact.Emergency119;
         }
 
         private void ResetDialogueState()
@@ -435,29 +487,34 @@ namespace VirtualRescue.GameFlow
         }
 
         private static PhoneCallAction PlayThenExit(string dialogueGroupId) =>
-            new(dialogueGroupId, false, true);
+            new(dialogueGroupId, false, true, false);
 
-        private static PhoneCallAction PlayOnly(string dialogueGroupId) =>
-            new(dialogueGroupId, false, false);
+        private static PhoneCallAction PlayOnly(
+            string dialogueGroupId,
+            bool markBeforeResolveCall) =>
+            new(dialogueGroupId, false, false, markBeforeResolveCall);
 
         private static PhoneCallAction ExitImmediately() =>
-            new(string.Empty, true, false);
+            new(string.Empty, true, false, false);
 
         private readonly struct PhoneCallAction
         {
             public PhoneCallAction(
                 string dialogueGroupId,
                 bool requestExitImmediately,
-                bool requestExitAfterDialogue)
+                bool requestExitAfterDialogue,
+                bool markBeforeResolveCall)
             {
                 DialogueGroupId = dialogueGroupId;
                 RequestExitImmediately = requestExitImmediately;
                 RequestExitAfterDialogue = requestExitAfterDialogue;
+                MarkBeforeResolveCall = markBeforeResolveCall;
             }
 
             public string DialogueGroupId { get; }
             public bool RequestExitImmediately { get; }
             public bool RequestExitAfterDialogue { get; }
+            public bool MarkBeforeResolveCall { get; }
         }
     }
 }

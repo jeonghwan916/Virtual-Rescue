@@ -6,11 +6,9 @@ namespace VirtualRescue.GameFlow
     public sealed class CellPhoneEndpoint : MonoBehaviour
     {
         [SerializeField] private CellPhoneScreen _screen;
-        [SerializeField] private NumPad _numPad;
         [SerializeField] private ExitController _exitController;
 
         public CellPhoneScreen Screen => _screen;
-        public NumPad NumPad => _numPad;
 
         private void OnEnable()
         {
@@ -38,7 +36,6 @@ namespace VirtualRescue.GameFlow
         private void Reset()
         {
             _screen = GetComponentInChildren<CellPhoneScreen>(true);
-            _numPad = GetComponentInChildren<NumPad>(true);
             _exitController = GetComponent<ExitController>();
         }
 
@@ -47,11 +44,6 @@ namespace VirtualRescue.GameFlow
             if (_screen == null)
             {
                 _screen = GetComponentInChildren<CellPhoneScreen>(true);
-            }
-
-            if (_numPad == null)
-            {
-                _numPad = GetComponentInChildren<NumPad>(true);
             }
 
             if (_exitController == null)
