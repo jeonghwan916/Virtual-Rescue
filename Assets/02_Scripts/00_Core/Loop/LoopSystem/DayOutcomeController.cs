@@ -20,6 +20,7 @@ namespace VirtualRescue.GameFlow
         private void OnEnable()
         {
             ExitController.ExitRequested += HandleExitRequested;
+            ExitController.ExitAnimationBlocked += ShouldBlockExitAnimation;
 
             if (_dayFlowController != null)
             {
@@ -35,6 +36,7 @@ namespace VirtualRescue.GameFlow
         private void OnDisable()
         {
             ExitController.ExitRequested -= HandleExitRequested;
+            ExitController.ExitAnimationBlocked -= ShouldBlockExitAnimation;
 
             if (_dayFlowController != null)
             {
@@ -295,6 +297,46 @@ namespace VirtualRescue.GameFlow
                    _discoveryTracker.HasDiscoveredCurrentSituation;
         }
 
+        private bool ShouldBlockExitAnimation(ExitType exitType)
+        {
+            if (exitType != ExitType.Elevator ||
+                _situationSceneLoader == null)
+            {
+                return false;
+            }
+
+            SituationDefinition definition =
+                _situationSceneLoader.CurrentDefinition;
+            SituationController controller =
+                _situationSceneLoader.CurrentController;
+
+            if (definition == null || controller == null)
+            {
+                return false;
+            }
+
+            if (definition.Level == SituationLevel.Level1 &&
+                (HasDiscoveredCurrentSituation() || controller.IsResolved))
+            {
+                PlayBlockedElevatorDialogue();
+                BlockExit(
+                    "The elevator animation is blocked after discovering a Level 1 situation.");
+                return true;
+            }
+
+            if (definition.Level == SituationLevel.Level0 &&
+                controller.IsResolved &&
+                !definition.IsExitAllowed(ExitType.Elevator))
+            {
+                PlayBlockedElevatorDialogue();
+                BlockExit(
+                    "The elevator animation is blocked because this Level 0 situation does not allow elevator exit.");
+                return true;
+            }
+
+            return false;
+        }
+
         private static DayFailureReason GetInvalidExitFailureReason(
             ExitType exitType)
         {
@@ -310,14 +352,19 @@ namespace VirtualRescue.GameFlow
 
         private bool BlockElevatorExit()
         {
+            PlayBlockedElevatorDialogue();
+
+            return BlockExit(
+                "The elevator is blocked after discovering a Level 1 situation.");
+        }
+
+        private void PlayBlockedElevatorDialogue()
+        {
             if (_dialogueManager != null &&
                 !string.IsNullOrWhiteSpace(_blockedElevatorDialogueGroupId))
             {
                 _dialogueManager.TryPlayGroup(_blockedElevatorDialogueGroupId);
             }
-
-            return BlockExit(
-                "The elevator is blocked after discovering a Level 1 situation.");
         }
 
         private bool Fail(string message)
