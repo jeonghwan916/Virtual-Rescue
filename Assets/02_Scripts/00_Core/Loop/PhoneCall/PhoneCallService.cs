@@ -17,6 +17,7 @@ namespace VirtualRescue.GameFlow
         private bool _shouldRequestExitAfterDialogue;
         private string _pendingGroupId = string.Empty;
         private string _beforeResolveCalledSituationId = string.Empty;
+        private SituationController _heldSituationController;
 
         private void OnEnable()
         {
@@ -30,7 +31,8 @@ namespace VirtualRescue.GameFlow
 
             if (_situationSceneLoader != null)
             {
-                _situationSceneLoader.SituationUnloaded += ResetCallState;
+                _situationSceneLoader.SituationLoaded += HandleSituationLoaded;
+                _situationSceneLoader.SituationUnloaded += HandleSituationUnloaded;
             }
         }
 
@@ -46,9 +48,11 @@ namespace VirtualRescue.GameFlow
 
             if (_situationSceneLoader != null)
             {
-                _situationSceneLoader.SituationUnloaded -= ResetCallState;
+                _situationSceneLoader.SituationLoaded -= HandleSituationLoaded;
+                _situationSceneLoader.SituationUnloaded -= HandleSituationUnloaded;
             }
 
+            UnbindHeldSituation();
             UnbindEndpoint(_endpoint);
             ResetCallState();
         }
@@ -67,19 +71,34 @@ namespace VirtualRescue.GameFlow
 
             if (_endpoint != null && _endpoint != endpoint)
             {
+                UnbindHeldSituation();
                 UnbindEndpoint(_endpoint);
             }
 
             _endpoint = endpoint;
+            if (_endpoint.Screen != null)
+            {
+                _endpoint.Screen.ScreenOpened += HandleScreenOpened;
+                _endpoint.Screen.ScreenClosed += HandleScreenClosed;
+                _endpoint.Screen.CallRequested += HandleCallRequested;
+
+                if (_endpoint.Screen.IsHeld)
+                {
+                    HandleScreenOpened();
+                }
+
+                return;
+            }
+
             if (_endpoint.NumPad == null)
             {
                 Debug.LogWarning(
-                    $"{endpoint.name}: NumPad is not assigned.",
+                    $"{endpoint.name}: CellPhoneScreen and NumPad are not assigned.",
                     endpoint);
                 return;
             }
 
-            _endpoint.NumPad.OnCorrectNumber += HandleCorrectNumber;
+            _endpoint.NumPad.OnCorrectNumber += HandleCallRequested;
         }
 
         private void HandleEndpointUnregistered(CellPhoneEndpoint endpoint)
@@ -89,6 +108,7 @@ namespace VirtualRescue.GameFlow
                 return;
             }
 
+            UnbindHeldSituation();
             UnbindEndpoint(endpoint);
             _endpoint = null;
             ResetCallState();
@@ -96,15 +116,25 @@ namespace VirtualRescue.GameFlow
 
         private void UnbindEndpoint(CellPhoneEndpoint endpoint)
         {
-            if (endpoint == null || endpoint.NumPad == null)
+            if (endpoint == null)
             {
                 return;
             }
 
-            endpoint.NumPad.OnCorrectNumber -= HandleCorrectNumber;
+            if (endpoint.Screen != null)
+            {
+                endpoint.Screen.ScreenOpened -= HandleScreenOpened;
+                endpoint.Screen.ScreenClosed -= HandleScreenClosed;
+                endpoint.Screen.CallRequested -= HandleCallRequested;
+            }
+
+            if (endpoint.NumPad != null)
+            {
+                endpoint.NumPad.OnCorrectNumber -= HandleCallRequested;
+            }
         }
 
-        private void HandleCorrectNumber()
+        private void HandleCallRequested()
         {
             if (_isCallInProgress)
             {
@@ -130,6 +160,106 @@ namespace VirtualRescue.GameFlow
             }
 
             PlayDialogueThenComplete(action.DialogueGroupId, action.RequestExitAfterDialogue);
+        }
+
+        private void HandleScreenOpened()
+        {
+            BindHeldSituation(
+                _situationSceneLoader != null
+                    ? _situationSceneLoader.CurrentController
+                    : null);
+            RefreshScreenContact();
+        }
+
+        private void HandleScreenClosed()
+        {
+            UnbindHeldSituation();
+        }
+
+        private void HandleSituationLoaded(
+            SituationController controller,
+            SituationDefinition _)
+        {
+            if (_endpoint?.Screen == null || !_endpoint.Screen.IsHeld)
+            {
+                return;
+            }
+
+            BindHeldSituation(controller);
+            RefreshScreenContact();
+        }
+
+        private void HandleSituationUnloaded()
+        {
+            UnbindHeldSituation();
+            ResetCallState();
+            RefreshScreenContact();
+        }
+
+        private void HandleHeldSituationResolved()
+        {
+            RefreshScreenContact();
+        }
+
+        private void BindHeldSituation(SituationController controller)
+        {
+            if (_heldSituationController == controller)
+            {
+                return;
+            }
+
+            UnbindHeldSituation();
+            _heldSituationController = controller;
+
+            if (_heldSituationController != null)
+            {
+                _heldSituationController.Resolved += HandleHeldSituationResolved;
+            }
+        }
+
+        private void UnbindHeldSituation()
+        {
+            if (_heldSituationController == null)
+            {
+                return;
+            }
+
+            _heldSituationController.Resolved -= HandleHeldSituationResolved;
+            _heldSituationController = null;
+        }
+
+        private void RefreshScreenContact()
+        {
+            CellPhoneScreen screen = _endpoint?.Screen;
+            if (screen == null || !screen.IsHeld)
+            {
+                return;
+            }
+
+            screen.ShowContact(EvaluateScreenContact());
+        }
+
+        private CellPhoneContact EvaluateScreenContact()
+        {
+            SituationDefinition definition =
+                _situationSceneLoader != null
+                    ? _situationSceneLoader.CurrentDefinition
+                    : null;
+            SituationController controller =
+                _situationSceneLoader != null
+                    ? _situationSceneLoader.CurrentController
+                    : null;
+
+            bool shouldCallManagement =
+                definition != null &&
+                controller != null &&
+                definition.Level == SituationLevel.Level0 &&
+                controller.IsResolved &&
+                definition.IsExitAllowed(ExitType.CellPhone);
+
+            return shouldCallManagement
+                ? CellPhoneContact.Management
+                : CellPhoneContact.Emergency119;
         }
 
         private bool CanHandlePhoneCall()
