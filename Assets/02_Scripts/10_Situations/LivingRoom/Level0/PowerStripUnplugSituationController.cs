@@ -22,14 +22,24 @@ namespace VirtualRescue.Situations.PowerStripUnplug
         [SerializeField] private List<XRSocketInteractor> _adapterBApplianceSockets = new();
         [SerializeField] private List<XRSocketInteractor> _adapterCApplianceSockets = new();
 
+        [Header("Hazard Effects")]
+        [SerializeField] private GameObject _electricShockEffect;
+        [SerializeField] private AudioSource _electricShockAudioSource;
+
         private Coroutine _evaluationRoutine;
         private bool _hasObservedPoweredAppliance;
 
         public int PoweredAppliancePathCount => CountPoweredAppliancePaths();
 
+        private void Awake()
+        {
+            SetHazardEffectsActive(false);
+        }
+
         protected override void OnActivated()
         {
             _hasObservedPoweredAppliance = false;
+            SetHazardEffectsActive(false);
 
             if (!TryValidateSockets())
             {
@@ -43,18 +53,21 @@ namespace VirtualRescue.Situations.PowerStripUnplug
         protected override void OnResolved()
         {
             StopEvaluation();
+            SetHazardEffectsActive(false);
         }
 
         protected override void OnFailed()
         {
             StopEvaluation();
             UnsubscribeSocketEvents();
+            SetHazardEffectsActive(false);
         }
 
         protected override void OnReset()
         {
             StopEvaluation();
             UnsubscribeSocketEvents();
+            SetHazardEffectsActive(false);
             _hasObservedPoweredAppliance = false;
         }
 
@@ -62,6 +75,7 @@ namespace VirtualRescue.Situations.PowerStripUnplug
         {
             StopEvaluation();
             UnsubscribeSocketEvents();
+            SetHazardEffectsActive(false);
         }
 
         private void HandleSocketSelectionChanged(SelectEnterEventArgs args)
@@ -115,8 +129,11 @@ namespace VirtualRescue.Situations.PowerStripUnplug
             if (poweredAppliancePathCount > 0)
             {
                 _hasObservedPoweredAppliance = true;
+                SetHazardEffectsActive(true);
                 return;
             }
+
+            SetHazardEffectsActive(false);
 
             if (!_hasObservedPoweredAppliance)
             {
@@ -129,6 +146,36 @@ namespace VirtualRescue.Situations.PowerStripUnplug
                     "The power strip unplug situation could not be resolved.",
                     this);
             }
+        }
+
+        private void SetHazardEffectsActive(bool isActive)
+        {
+            if (_electricShockEffect == null)
+            {
+                return;
+            }
+
+            if (!isActive)
+            {
+                if (_electricShockAudioSource != null)
+                {
+                    _electricShockAudioSource.Stop();
+                }
+
+                _electricShockEffect.SetActive(false);
+                return;
+            }
+
+            _electricShockEffect.SetActive(true);
+
+            if (_electricShockAudioSource == null ||
+                _electricShockAudioSource.clip == null ||
+                _electricShockAudioSource.isPlaying)
+            {
+                return;
+            }
+
+            _electricShockAudioSource.Play();
         }
 
         private int CountPoweredAppliancePaths()
