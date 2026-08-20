@@ -19,7 +19,8 @@ namespace VirtualRescue.Situations.AnomalyObservation
 
         public override bool TryApplyNormalTexture()
         {
-            return TryApplyLengthText(_normalLengthText, "normal");
+            // 관측은 이상을 확인하는 행위이므로, 로프 길이를 정상 상태로 바꾸지 않는다.
+            return true;
         }
 
         private void OnValidate()

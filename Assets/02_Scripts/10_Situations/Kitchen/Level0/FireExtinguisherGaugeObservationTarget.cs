@@ -29,7 +29,8 @@ namespace VirtualRescue.Situations.AnomalyObservation
 
         public override bool TryApplyNormalTexture()
         {
-            return TryApplyState(true, 0f);
+            // 관측은 이상을 확인하는 행위이므로, 부족한 압력 상태를 바꾸지 않는다.
+            return true;
         }
 
         public override bool TryGetObservationHit(
