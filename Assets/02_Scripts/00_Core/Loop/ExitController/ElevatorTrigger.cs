@@ -1,17 +1,22 @@
+using System.Collections;
 using UnityEngine;
 using VirtualRescue.GameFlow;
 
 public class ElevatorTrigger : MonoBehaviour
 { 
+    private static readonly int ButtonPressedHash = Animator.StringToHash("ButtonPressed");
+    private static readonly int EleavatorAnimHash = Animator.StringToHash("EleavatorAnim");
+    
     [SerializeField] private ExitController _exitController;
     [SerializeField] private LayerMask handLayerMask;
     private bool _hasTriggered;
-    //[SerializeField] private Animator _animator;
+    [SerializeField] private Animator _animator;
     [SerializeField] private AudioSource _elevatorAudioSource;
     [SerializeField] private AudioClip _elevatorButtonClickAudioClip;
     [SerializeField] private AudioClip _elevatorDingDongAudioClip;
-    //[SerializeField] private bool _isTrap;
-    //[SerializeField] private ParticleSystem _fireParticle;
+    [SerializeField] private AudioClip _elevatorOpenAudioClip;
+    [SerializeField] private bool _isTrap;
+    [SerializeField] private ParticleSystem _fireParticle;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -40,10 +45,44 @@ public class ElevatorTrigger : MonoBehaviour
 
     private void OnElevatorButtonPressed()
     {
+        if (_animator == null)
+        {
+            Debug.LogError("ElevatorTrigger requires an Animator.", this);
+            _hasTriggered = false;
+            return;
+        }
 
-        // 여기서 원하는 동작 실행
-        _elevatorAudioSource.PlayOneShot(_elevatorButtonClickAudioClip);
-        _elevatorAudioSource.PlayOneShot(_elevatorDingDongAudioClip);
+        if (_elevatorAudioSource != null && _elevatorButtonClickAudioClip != null)
+        {
+            _elevatorAudioSource.PlayOneShot(_elevatorButtonClickAudioClip);
+        }
+
+        if (ExitController.ShouldBlockExitAnimation(_exitController.Type))
+        {
+            _hasTriggered = false;
+            return;
+        }
+        
+        StartCoroutine(RequestExitAfterElevatorAnimation());
+    }
+
+    private IEnumerator RequestExitAfterElevatorAnimation()
+    {
+        _animator.SetTrigger(ButtonPressedHash);
+
+        yield return null;
+
+        while (_animator.IsInTransition(0) ||
+               _animator.GetCurrentAnimatorStateInfo(0).shortNameHash != EleavatorAnimHash)
+        {
+            yield return null;
+        }
+
+        while (_animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
+        {
+            yield return null;
+        }
+
         _exitController.RequestExit();
     }
 
