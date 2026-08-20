@@ -148,7 +148,9 @@ public class DaySceneCoordinator : MonoBehaviour
                 Debug.Log($"{currentDay}일차는 무상황입니다.", this);
             }
 
-            _roomSituationController?.Configure(selectedSituation);
+            _roomSituationController?.Configure(
+                selectedSituation,
+                _situationSceneLoader.CurrentController);
 
             await RunFadeAsync(_screenFader?.FadeIn(_fadeInDuration));
 
