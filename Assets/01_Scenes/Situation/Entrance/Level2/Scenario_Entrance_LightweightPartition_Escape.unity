@@ -772,6 +772,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Situations.PartitionEscape.LightweightPartitionEscapeSituationController
   _state: 0
   _remainingTime: 0
+  _trapDoorTrigger: {fileID: 1040009930}
+  _deathAudioClip: {fileID: 8300000, guid: 1f7b75d95ee677c4788127c94a4c6092, type: 3}
 --- !u!4 &1040009928
 Transform:
   m_ObjectHideFlags: 0
