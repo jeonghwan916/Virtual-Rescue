@@ -82,6 +82,23 @@ namespace VirtualRescue.EditorTools.DialogueCsvAuthoring.Tests
             Assert.That(error, Does.Contain("Existing"));
         }
 
+        [Test]
+        public void ParserCanRoundTripUpdatedRowShape()
+        {
+            List<string[]> rows = DialogueCsvParser.Parse(
+                "id,language,text,,,,comment\n1,kr,old,,,,memo");
+            rows[1][2] = "new, text";
+
+            string csv = string.Join(
+                "\n",
+                DialogueCsvParser.CreateRow(rows[0]),
+                DialogueCsvParser.CreateRow(rows[1]));
+
+            Assert.That(
+                csv,
+                Is.EqualTo("id,language,text,,,,comment\n1,kr,\"new, text\",,,,memo"));
+        }
+
         private static Dictionary<string, int> HeaderMap(params string[] headers)
         {
             Dictionary<string, int> map = new();

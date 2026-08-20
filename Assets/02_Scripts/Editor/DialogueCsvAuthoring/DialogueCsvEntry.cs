@@ -83,4 +83,17 @@ namespace VirtualRescue.EditorTools.DialogueCsvAuthoring
         public bool CanSave { get; }
         public IReadOnlyList<string> Warnings { get; }
     }
+
+    internal sealed class DialogueCsvEditEntry
+    {
+        public string Id { get; set; }
+        public string Group { get; set; }
+        public string Order { get; set; }
+        public string Language { get; set; }
+        public string Text { get; set; }
+        public string Speaker { get; set; }
+        public string AudioPath { get; set; }
+        public string CallbackKey { get; set; }
+        public string DelayAfterAudio { get; set; }
+    }
 }

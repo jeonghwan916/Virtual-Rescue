@@ -158,6 +158,293 @@ namespace VirtualRescue.EditorTools.DialogueCsvAuthoring
             return true;
         }
 
+        public static bool TryFindEntries(
+            string dialogueAssetPath,
+            string textAssetPath,
+            string id,
+            string group,
+            string language,
+            out List<DialogueCsvEditEntry> entries,
+            out string message)
+        {
+            entries = new List<DialogueCsvEditEntry>();
+            message = string.Empty;
+            DialogueCsvValidationResult validation = ValidateFiles(
+                dialogueAssetPath,
+                textAssetPath,
+                false);
+            if (!validation.CanSave)
+            {
+                message = "CSV headers are invalid.";
+                return false;
+            }
+
+            if (!TryReadRows(dialogueAssetPath, out List<string[]> dialogueRows, out string error))
+            {
+                message = error;
+                return false;
+            }
+
+            if (!TryReadRows(textAssetPath, out List<string[]> textRows, out error))
+            {
+                message = error;
+                return false;
+            }
+
+            Dictionary<string, int> dialogueHeaderMap = BuildHeaderMap(dialogueRows[0]);
+            Dictionary<string, int> textHeaderMap = BuildHeaderMap(textRows[0]);
+            string normalizedId = id?.Trim() ?? string.Empty;
+            string normalizedGroup = group?.Trim() ?? string.Empty;
+            string normalizedLanguage = string.IsNullOrWhiteSpace(language)
+                ? DefaultLanguage
+                : language.Trim();
+            if (string.IsNullOrEmpty(normalizedId) &&
+                string.IsNullOrEmpty(normalizedGroup))
+            {
+                message = "Enter an ID or Group to search.";
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(normalizedGroup) &&
+                !dialogueHeaderMap.ContainsKey("group"))
+            {
+                message = "Dialogue CSV does not have a group field.";
+                return false;
+            }
+
+            Dictionary<string, string> textById = ReadTextById(
+                textRows,
+                textHeaderMap,
+                normalizedLanguage);
+
+            for (int rowIndex = 1; rowIndex < dialogueRows.Count; rowIndex++)
+            {
+                string[] row = dialogueRows[rowIndex];
+                string rowId = GetCell(row, dialogueHeaderMap, "id");
+                if (string.IsNullOrWhiteSpace(rowId))
+                {
+                    continue;
+                }
+
+                string rowGroup = GetCell(row, dialogueHeaderMap, "group");
+                bool idMatches =
+                    !string.IsNullOrEmpty(normalizedId) &&
+                    string.Equals(rowId, normalizedId, StringComparison.Ordinal);
+                bool groupMatches =
+                    !string.IsNullOrEmpty(normalizedGroup) &&
+                    string.Equals(rowGroup, normalizedGroup, StringComparison.Ordinal);
+                if (!idMatches && !groupMatches)
+                {
+                    continue;
+                }
+
+                entries.Add(new DialogueCsvEditEntry
+                {
+                    Id = rowId,
+                    Group = rowGroup,
+                    Order = GetCell(row, dialogueHeaderMap, "order"),
+                    Language = normalizedLanguage,
+                    Text = textById.TryGetValue(rowId, out string text)
+                        ? text
+                        : string.Empty,
+                    Speaker = GetCell(row, dialogueHeaderMap, "speaker"),
+                    AudioPath = GetCell(row, dialogueHeaderMap, "audioPath"),
+                    CallbackKey = GetCell(row, dialogueHeaderMap, "callbackKey"),
+                    DelayAfterAudio = GetCell(row, dialogueHeaderMap, "delayAfterAudio")
+                });
+            }
+
+            entries.Sort((left, right) =>
+                CompareOrderThenId(left.Order, left.Id, right.Order, right.Id));
+            message = entries.Count == 0
+                ? "No matching dialogue rows were found."
+                : $"Found {entries.Count} dialogue row(s).";
+            return entries.Count > 0;
+        }
+
+        public static bool TryUpdateEntries(
+            string dialogueAssetPath,
+            string textAssetPath,
+            IReadOnlyList<DialogueCsvEditEntry> entries,
+            out string message)
+        {
+            message = string.Empty;
+            if (entries == null || entries.Count == 0)
+            {
+                message = "No edit entries were provided.";
+                return false;
+            }
+
+            DialogueCsvValidationResult validation = ValidateFiles(
+                dialogueAssetPath,
+                textAssetPath,
+                false);
+            if (!validation.CanSave)
+            {
+                message = "CSV headers are invalid.";
+                return false;
+            }
+
+            if (!TryReadRows(dialogueAssetPath, out List<string[]> dialogueRows, out string error))
+            {
+                message = error;
+                return false;
+            }
+
+            if (!TryReadRows(textAssetPath, out List<string[]> textRows, out error))
+            {
+                message = error;
+                return false;
+            }
+
+            Dictionary<string, int> dialogueHeaderMap = BuildHeaderMap(dialogueRows[0]);
+            Dictionary<string, int> textHeaderMap = BuildHeaderMap(textRows[0]);
+            Dictionary<string, DialogueCsvEditEntry> entryById =
+                entries.ToDictionary(entry => entry.Id, StringComparer.Ordinal);
+            int dialogueUpdated = 0;
+            int textUpdated = 0;
+
+            for (int rowIndex = 1; rowIndex < dialogueRows.Count; rowIndex++)
+            {
+                string[] row = EnsureColumnCount(
+                    dialogueRows[rowIndex],
+                    dialogueRows[0].Length);
+                string id = GetCell(row, dialogueHeaderMap, "id");
+                if (!entryById.TryGetValue(id, out DialogueCsvEditEntry entry))
+                {
+                    dialogueRows[rowIndex] = row;
+                    continue;
+                }
+
+                SetCell(row, dialogueHeaderMap, "group", entry.Group);
+                SetCell(row, dialogueHeaderMap, "order", entry.Order);
+                SetCell(row, dialogueHeaderMap, "speaker", entry.Speaker);
+                SetCell(row, dialogueHeaderMap, "audioPath", entry.AudioPath);
+                SetCell(row, dialogueHeaderMap, "callbackKey", entry.CallbackKey);
+                SetCell(row, dialogueHeaderMap, "delayAfterAudio", entry.DelayAfterAudio);
+                dialogueRows[rowIndex] = row;
+                dialogueUpdated++;
+            }
+
+            for (int rowIndex = 1; rowIndex < textRows.Count; rowIndex++)
+            {
+                string[] row = EnsureColumnCount(textRows[rowIndex], textRows[0].Length);
+                string id = GetCell(row, textHeaderMap, "id");
+                string language = GetCell(row, textHeaderMap, "language");
+                if (!entryById.TryGetValue(id, out DialogueCsvEditEntry entry) ||
+                    !string.Equals(language, entry.Language, StringComparison.Ordinal))
+                {
+                    textRows[rowIndex] = row;
+                    continue;
+                }
+
+                SetCell(row, textHeaderMap, "text", entry.Text);
+                textRows[rowIndex] = row;
+                textUpdated++;
+            }
+
+            if (dialogueUpdated == 0 && textUpdated == 0)
+            {
+                message = "No matching rows were updated.";
+                return false;
+            }
+
+            File.WriteAllText(
+                ToAbsolutePath(dialogueAssetPath),
+                CreateCsvText(dialogueRows),
+                Encoding.UTF8);
+            File.WriteAllText(
+                ToAbsolutePath(textAssetPath),
+                CreateCsvText(textRows),
+                Encoding.UTF8);
+            AssetDatabase.ImportAsset(dialogueAssetPath);
+            AssetDatabase.ImportAsset(textAssetPath);
+            AssetDatabase.Refresh();
+
+            message =
+                $"Rows updated. Dialogue: {dialogueUpdated}, Text: {textUpdated}.";
+            return true;
+        }
+
+        public static bool TryDeleteEntries(
+            string dialogueAssetPath,
+            string textAssetPath,
+            IReadOnlyList<string> ids,
+            out string message)
+        {
+            message = string.Empty;
+            if (ids == null || ids.Count == 0)
+            {
+                message = "No IDs were selected for deletion.";
+                return false;
+            }
+
+            HashSet<string> idSet = new(
+                ids.Where(id => !string.IsNullOrWhiteSpace(id))
+                    .Select(id => id.Trim()),
+                StringComparer.Ordinal);
+            if (idSet.Count == 0)
+            {
+                message = "No valid IDs were selected for deletion.";
+                return false;
+            }
+
+            DialogueCsvValidationResult validation = ValidateFiles(
+                dialogueAssetPath,
+                textAssetPath,
+                false);
+            if (!validation.CanSave)
+            {
+                message = "CSV headers are invalid.";
+                return false;
+            }
+
+            if (!TryReadRows(dialogueAssetPath, out List<string[]> dialogueRows, out string error))
+            {
+                message = error;
+                return false;
+            }
+
+            if (!TryReadRows(textAssetPath, out List<string[]> textRows, out error))
+            {
+                message = error;
+                return false;
+            }
+
+            Dictionary<string, int> dialogueHeaderMap = BuildHeaderMap(dialogueRows[0]);
+            Dictionary<string, int> textHeaderMap = BuildHeaderMap(textRows[0]);
+            int dialogueDeleted = RemoveRowsById(
+                dialogueRows,
+                dialogueHeaderMap["id"],
+                idSet);
+            int textDeleted = RemoveRowsById(
+                textRows,
+                textHeaderMap["id"],
+                idSet);
+
+            if (dialogueDeleted == 0 && textDeleted == 0)
+            {
+                message = "No matching rows were deleted.";
+                return false;
+            }
+
+            File.WriteAllText(
+                ToAbsolutePath(dialogueAssetPath),
+                CreateCsvText(dialogueRows),
+                Encoding.UTF8);
+            File.WriteAllText(
+                ToAbsolutePath(textAssetPath),
+                CreateCsvText(textRows),
+                Encoding.UTF8);
+            AssetDatabase.ImportAsset(dialogueAssetPath);
+            AssetDatabase.ImportAsset(textAssetPath);
+            AssetDatabase.Refresh();
+
+            message =
+                $"Rows deleted. Dialogue: {dialogueDeleted}, Text: {textDeleted}.";
+            return true;
+        }
+
         internal static bool TryBuildRows(
             DialogueCsvSaveRequest request,
             IReadOnlyDictionary<string, int> dialogueHeaderMap,
@@ -374,6 +661,47 @@ namespace VirtualRescue.EditorTools.DialogueCsvAuthoring
             return ids;
         }
 
+        private static Dictionary<string, string> ReadTextById(
+            IReadOnlyList<string[]> rows,
+            IReadOnlyDictionary<string, int> headerMap,
+            string language)
+        {
+            Dictionary<string, string> textById =
+                new(StringComparer.Ordinal);
+            for (int rowIndex = 1; rowIndex < rows.Count; rowIndex++)
+            {
+                string[] row = rows[rowIndex];
+                string rowLanguage = GetCell(row, headerMap, "language");
+                if (!string.Equals(rowLanguage, language, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                string id = GetCell(row, headerMap, "id");
+                if (!string.IsNullOrWhiteSpace(id))
+                {
+                    textById[id] = GetCell(row, headerMap, "text");
+                }
+            }
+
+            return textById;
+        }
+
+        private static string GetCell(
+            IReadOnlyList<string> row,
+            IReadOnlyDictionary<string, int> headerMap,
+            string header)
+        {
+            if (!headerMap.TryGetValue(header, out int index) ||
+                index < 0 ||
+                index >= row.Count)
+            {
+                return string.Empty;
+            }
+
+            return row[index]?.Trim() ?? string.Empty;
+        }
+
         private static void SetCell(
             string[] cells,
             IReadOnlyDictionary<string, int> headerMap,
@@ -384,6 +712,79 @@ namespace VirtualRescue.EditorTools.DialogueCsvAuthoring
             {
                 cells[index] = value ?? string.Empty;
             }
+        }
+
+        private static string[] EnsureColumnCount(
+            string[] row,
+            int columnCount)
+        {
+            if (row.Length >= columnCount)
+            {
+                return row;
+            }
+
+            string[] expanded = new string[columnCount];
+            Array.Copy(row, expanded, row.Length);
+            return expanded;
+        }
+
+        private static int RemoveRowsById(
+            List<string[]> rows,
+            int idColumnIndex,
+            ISet<string> ids)
+        {
+            int deleted = 0;
+            for (int rowIndex = rows.Count - 1; rowIndex >= 1; rowIndex--)
+            {
+                string[] row = rows[rowIndex];
+                if (idColumnIndex >= row.Length)
+                {
+                    continue;
+                }
+
+                string id = row[idColumnIndex]?.Trim() ?? string.Empty;
+                if (!ids.Contains(id))
+                {
+                    continue;
+                }
+
+                rows.RemoveAt(rowIndex);
+                deleted++;
+            }
+
+            return deleted;
+        }
+
+        private static string CreateCsvText(IReadOnlyList<string[]> rows)
+        {
+            StringBuilder builder = new();
+            foreach (string[] row in rows)
+            {
+                builder.AppendLine(DialogueCsvParser.CreateRow(row));
+            }
+
+            return builder.ToString();
+        }
+
+        private static int CompareOrderThenId(
+            string leftOrder,
+            string leftId,
+            string rightOrder,
+            string rightId)
+        {
+            bool leftHasOrder = int.TryParse(leftOrder, out int left);
+            bool rightHasOrder = int.TryParse(rightOrder, out int right);
+            if (leftHasOrder && rightHasOrder && left != right)
+            {
+                return left.CompareTo(right);
+            }
+
+            if (leftHasOrder != rightHasOrder)
+            {
+                return leftHasOrder ? -1 : 1;
+            }
+
+            return string.Compare(leftId, rightId, StringComparison.Ordinal);
         }
 
         private static int GetColumnCount(
