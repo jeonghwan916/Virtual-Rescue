@@ -12,22 +12,39 @@ namespace VirtualRescue.Situations
 
         private void Update()
         {
-            if (!IsActive || _leverHeat == null)
+            if (_leverHeat == null)
             {
                 return;
             }
 
-            bool isEmissionOff = !_leverHeat.IsHeatOn;
-
-            if (isEmissionOff)
+            if (IsActive && !_leverHeat.IsHeatOn)
             {
                 StageClear();
+                return;
+            }
+
+            if (IsResolved && _leverHeat.IsHeatOn)
+            {
+                ReturnToActive();
             }
         }
 
         private void StageClear()
         {
             ResolveSituation();
+        }
+
+        private void ReturnToActive()
+        {
+            SituationDefinition definition = Definition;
+
+            if (definition == null)
+            {
+                return;
+            }
+
+            ResetSituation();
+            Activate(definition);
         }
     }
 }
