@@ -59,6 +59,40 @@ namespace VirtualRescue.Locations
                 return;
             }
 
+            PlayEntryDialogue();
+        }
+
+        public bool TryPlaySituationEntryDialogue()
+        {
+            if (!HasSituationDialogue)
+            {
+                return false;
+            }
+
+            if (_visitTracker == null)
+            {
+                FindVisitTracker();
+            }
+
+            if (_visitTracker == null)
+            {
+                Debug.LogWarning(
+                    $"{name}: RoomVisitTracker를 찾을 수 없습니다.",
+                    this);
+                return false;
+            }
+
+            if (_entryDialogueSuppressed || _hasPlayedEntryDialogue)
+            {
+                return false;
+            }
+
+            PlayEntryDialogue();
+            return true;
+        }
+
+        private void PlayEntryDialogue()
+        {
             _hasPlayedEntryDialogue = true;
             string dialogueId = HasSituationDialogue
                 ? _situationDialogueId

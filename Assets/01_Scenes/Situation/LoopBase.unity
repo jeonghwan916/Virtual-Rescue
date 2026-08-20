@@ -2737,7 +2737,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationSelector
   _candidates:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: e365494cf4ab0244b9b195c8dc6b223c, type: 2}
   _noSituationChance: 0.1
   _noSituationChanceReduction: 0.1
 --- !u!114 &2029193223
@@ -2919,6 +2919,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c84b9f50d27e4d45a6fd31b086df4712, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Locations.RoomSituationController
+  _level2DialogueRemainingTimeRatio: 0.75
   _discoveryTracker: {fileID: 2029193230}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

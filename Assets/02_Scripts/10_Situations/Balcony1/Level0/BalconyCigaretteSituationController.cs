@@ -7,9 +7,4 @@ public class BalconyCigaretteSituationController : SituationController
     {
         ResolveSituation();
     }
-
-    public void OnCigaretteExitedAshtray()
-    {
-        FailSituation();
-    }
 }

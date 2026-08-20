@@ -6,8 +6,16 @@ namespace VirtualRescue.Locations
     [DisallowMultipleComponent]
     public sealed class RoomSituationController : MonoBehaviour
     {
+        [Header("Level 2 Timed Dialogue")]
+        [SerializeField, Range(0f, 1f)]
+        [Tooltip("남은 제한시간 비율이 이 값 이하가 되면 상황 대사를 자동 재생합니다.")]
+        private float _level2DialogueRemainingTimeRatio = 0.75f;
+
         private RoomTrigger[] _roomTriggers;
         private bool _roomDialoguesSuppressed;
+        private RoomTrigger _situationRoomTrigger;
+        private SituationController _timedLevel2Controller;
+        private SituationDefinition _timedLevel2Definition;
 
         [SerializeField] private SituationDiscoveryTracker _discoveryTracker;
 
@@ -39,6 +47,9 @@ namespace VirtualRescue.Locations
         public void ResetDayState()
         {
             _roomDialoguesSuppressed = false;
+            _situationRoomTrigger = null;
+            _timedLevel2Controller = null;
+            _timedLevel2Definition = null;
 
             foreach (RoomTrigger roomTrigger in _roomTriggers)
             {
@@ -61,7 +72,9 @@ namespace VirtualRescue.Locations
             }
         }
 
-        public void Configure(SituationDefinition definition)
+        public void Configure(
+            SituationDefinition definition,
+            SituationController controller)
         {
             if (definition == null ||
                 definition.RoomLocation == RoomLocation.None)
@@ -80,6 +93,7 @@ namespace VirtualRescue.Locations
                 }
 
                 roomTrigger.ConfigureSituation(dialogueId, definition.Level);
+                _situationRoomTrigger ??= roomTrigger;
                 found = true;
             }
 
@@ -88,7 +102,39 @@ namespace VirtualRescue.Locations
                 Debug.LogWarning(
                     $"{name}: {definition.RoomLocation}에 해당하는 RoomTrigger를 찾을 수 없습니다.",
                     this);
+                return;
             }
+
+            if (definition.Level == SituationLevel.Level2 &&
+                definition.UsesTimeLimit &&
+                controller != null)
+            {
+                _timedLevel2Controller = controller;
+                _timedLevel2Definition = definition;
+            }
+        }
+
+        private void Update()
+        {
+            if (_roomDialoguesSuppressed ||
+                _situationRoomTrigger == null ||
+                _timedLevel2Controller == null ||
+                _timedLevel2Definition == null ||
+                !_timedLevel2Controller.IsActive)
+            {
+                return;
+            }
+
+            float dialogueTriggerTime =
+                _timedLevel2Definition.TimeLimitSeconds *
+                _level2DialogueRemainingTimeRatio;
+
+            if (_timedLevel2Controller.RemainingTime > dialogueTriggerTime)
+            {
+                return;
+            }
+
+            _situationRoomTrigger.TryPlaySituationEntryDialogue();
         }
 
         private static string GetSituationDialogueId(SituationLevel level)
@@ -121,6 +167,12 @@ namespace VirtualRescue.Locations
         {
             return situationLevel == SituationLevel.Level1 ||
                    situationLevel == SituationLevel.Level2;
+        }
+
+        private void OnValidate()
+        {
+            _level2DialogueRemainingTimeRatio = Mathf.Clamp01(
+                _level2DialogueRemainingTimeRatio);
         }
     }
 }

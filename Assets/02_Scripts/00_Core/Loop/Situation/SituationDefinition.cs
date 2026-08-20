@@ -31,6 +31,7 @@ namespace VirtualRescue.GameFlow
 
         [Header("Dialogue")]
         [SerializeField] private string _resolvedDialogueId = string.Empty;
+        [SerializeField] private string _warningDialogueId = string.Empty;
         [SerializeField] private string _failedDialogueId = string.Empty;
         [SerializeField] private string _beforeResolveCallingDialogueGroupId = string.Empty;
         [SerializeField] private string _afterResolveCallingDialogueGroupId = string.Empty;
@@ -49,6 +50,7 @@ namespace VirtualRescue.GameFlow
         public string SceneName => _sceneName;
         public RoomLocation RoomLocation => _roomTrigger;
         public string ResolvedDialogueId => _resolvedDialogueId;
+        public string WarningDialogueId => _warningDialogueId;
         public string FailedDialogueId => _failedDialogueId;
         public string BeforeResolveCallingDialogueGroupId =>
             _beforeResolveCallingDialogueGroupId;
@@ -72,6 +74,7 @@ namespace VirtualRescue.GameFlow
             _id = _id?.Trim() ?? string.Empty;
             _weight = Mathf.Max(1, _weight);
             _resolvedDialogueId = _resolvedDialogueId?.Trim() ?? string.Empty;
+            _warningDialogueId = _warningDialogueId?.Trim() ?? string.Empty;
             _failedDialogueId = _failedDialogueId?.Trim() ?? string.Empty;
             _beforeResolveCallingDialogueGroupId =
                 _beforeResolveCallingDialogueGroupId?.Trim() ?? string.Empty;

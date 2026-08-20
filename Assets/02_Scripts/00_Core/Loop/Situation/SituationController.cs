@@ -23,6 +23,7 @@ namespace VirtualRescue.GameFlow
 
         public event Action Activated;
         public event Action Resolved;
+        public event Action WarningRaised;
         public event Action Failed;
         public event Action ResetPerformed;
 
@@ -119,6 +120,17 @@ namespace VirtualRescue.GameFlow
             _remainingTime = 0f;
             OnFailed();
             Failed?.Invoke();
+            return true;
+        }
+
+        protected bool RaiseWarning()
+        {
+            if (_state != SituationState.Active)
+            {
+                return false;
+            }
+
+            WarningRaised?.Invoke();
             return true;
         }
 
