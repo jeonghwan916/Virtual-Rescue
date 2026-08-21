@@ -60,6 +60,10 @@ PrefabInstance:
       propertyPath: _fireLayer.m_Bits
       value: 8192
       objectReference: {fileID: 0}
+    - target: {fileID: 1544191355258087443, guid: 429f95d4478902040a1e859622865ea5, type: 3}
+      propertyPath: _contactOnlyFireLayer.m_Bits
+      value: 512
+      objectReference: {fileID: 0}
     - target: {fileID: 6933272229962621716, guid: 429f95d4478902040a1e859622865ea5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value:

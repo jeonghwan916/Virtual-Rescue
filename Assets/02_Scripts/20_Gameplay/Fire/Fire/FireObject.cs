@@ -50,6 +50,7 @@ public class FireObject : MonoBehaviour
 
     // 불이 꺼졌을때의 후속 동작이 필요하다면 여기 이벤트 구독하면 됨
     public event Action OnExtinguished;
+    public event Action<FireSuppressantType> SuppressantApplied;
     public event Action<FireSuppressantType> TemporarySuppressionLimitReached;
 
     // 기존 필드들 아래에 추가
@@ -122,6 +123,8 @@ public class FireObject : MonoBehaviour
             return;
         }
 
+        NotifySuppressantContact(suppressantType);
+
         if (IsTemporaryOnlySuppressant(suppressantType))
         {
             ApplyTemporarySuppression(suppressantType, deltaTime);
@@ -141,6 +144,17 @@ public class FireObject : MonoBehaviour
         }
 
         RefreshVisualStage();
+    }
+
+    public void NotifySuppressantContact(
+        FireSuppressantType suppressantType)
+    {
+        if (_isExtinguished)
+        {
+            return;
+        }
+
+        SuppressantApplied?.Invoke(suppressantType);
     }
 
     private void ApplyTemporarySuppression(

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace VirtualRescue.Effects
 {
@@ -7,6 +8,7 @@ namespace VirtualRescue.Effects
     public sealed class ScreenFader : MonoBehaviour
     {
         [SerializeField] private CanvasGroup _canvasGroup;
+        [SerializeField] private Graphic _fadeGraphic;
         [SerializeField] private bool _useUnscaledTime = true;
 
         private void Awake()
@@ -16,11 +18,17 @@ namespace VirtualRescue.Effects
                 _canvasGroup = GetComponent<CanvasGroup>();
             }
 
+            if (_fadeGraphic == null)
+            {
+                _fadeGraphic = GetComponentInChildren<Graphic>(true);
+            }
+
             SetAlpha(0f);
         }
 
         public IEnumerator FadeIn(float duration)
         {
+            SetColor(Color.black);
             SetFadeObjectActive(true);
             yield return Fade(1f, 0f, duration);
             SetFadeObjectActive(false);
@@ -28,8 +36,31 @@ namespace VirtualRescue.Effects
 
         public IEnumerator FadeOut(float duration)
         {
+            SetColor(Color.black);
             SetFadeObjectActive(true);
             yield return Fade(0f, 1f, duration);
+        }
+
+        public IEnumerator FlashWhite(
+            float duration,
+            int pulseCount,
+            float peakAlpha)
+        {
+            SetColor(Color.white);
+            SetFadeObjectActive(true);
+
+            int validPulseCount = Mathf.Max(1, pulseCount);
+            float halfPulseDuration = duration / (validPulseCount * 2f);
+            float validPeakAlpha = Mathf.Clamp01(peakAlpha);
+
+            for (int index = 0; index < validPulseCount; index++)
+            {
+                yield return Fade(0f, validPeakAlpha, halfPulseDuration);
+                yield return Fade(validPeakAlpha, 0f, halfPulseDuration);
+            }
+
+            SetColor(Color.black);
+            SetAlpha(0f);
         }
 
         public void ShowBlack()
@@ -72,6 +103,14 @@ namespace VirtualRescue.Effects
             _canvasGroup.alpha = alpha;
             _canvasGroup.blocksRaycasts = alpha > 0.01f;
             _canvasGroup.interactable = false;
+        }
+
+        private void SetColor(Color color)
+        {
+            if (_fadeGraphic != null)
+            {
+                _fadeGraphic.color = color;
+            }
         }
 
         private void SetFadeObjectActive(bool isActive)

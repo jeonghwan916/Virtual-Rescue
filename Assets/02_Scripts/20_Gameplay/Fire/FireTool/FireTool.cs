@@ -15,6 +15,7 @@ public abstract class FireTool : MonoBehaviour
     [Header("Suppressant")]
     [SerializeField] private FireSuppressantType _suppressantType =
         FireSuppressantType.GeneralPurpose;
+    [SerializeField] private LayerMask _contactOnlyFireLayer;
 
     [Header("Operation")]
     [SerializeField] private bool _isOperational = true;
@@ -138,13 +139,32 @@ public abstract class FireTool : MonoBehaviour
         if (!_isFiring)
             return;
 
-        if (Physics.Raycast(_rayOrigin.position, _rayOrigin.forward, out RaycastHit hit, _range, _fireLayer, QueryTriggerInteraction.Collide))
+        int detectionLayerMask =
+            _fireLayer.value | _contactOnlyFireLayer.value;
+
+        if (Physics.Raycast(
+                _rayOrigin.position,
+                _rayOrigin.forward,
+                out RaycastHit hit,
+                _range,
+                detectionLayerMask,
+                QueryTriggerInteraction.Collide))
         {
             FireObject fire = hit.collider.GetComponentInParent<FireObject>();
 
             if (fire != null)
             {
-                fire.TakeExtinguish(_suppressantType, Time.deltaTime);
+                int hitLayerMask = 1 << hit.collider.gameObject.layer;
+                bool canSuppress = (_fireLayer.value & hitLayerMask) != 0;
+
+                if (canSuppress)
+                {
+                    fire.TakeExtinguish(_suppressantType, Time.deltaTime);
+                }
+                else
+                {
+                    fire.NotifySuppressantContact(_suppressantType);
+                }
             }
         }
     }

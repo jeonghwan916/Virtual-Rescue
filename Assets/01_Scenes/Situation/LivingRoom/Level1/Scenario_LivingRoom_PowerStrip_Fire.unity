@@ -197,6 +197,17 @@ MonoBehaviour:
   _state: 0
   _remainingTime: 0
   _fireObject: {fileID: 1498086789}
+  _electrocutionAudioClip: {fileID: 8300000, guid: f4243d439bd918449923250132bb3363, type: 3}
+  _electrocutionEffectPrefab: {fileID: 6139668342317536862, guid: e73b1ab9ae7914e42af437994fc5eb90, type: 3}
+  _failureDelay: 1
+  _electrocutionVolumeScale: 2.5
+  _whiteFlashDuration: 0.55
+  _whiteFlashCount: 3
+  _whiteFlashPeakAlpha: 0.75
+  _electrocutionEffectOffset: {x: 0, y: 0, z: 0.6}
+  _electrocutionEffectScale: 0.8
+  _electrocutionEffectHorizontalSpacing: 0.24
+  _electrocutionEffectVerticalSpacing: 0.12
 --- !u!4 &1159630610
 Transform:
   m_ObjectHideFlags: 0
@@ -228,6 +239,14 @@ PrefabInstance:
     - target: {fileID: 1547152690847526177, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
       propertyPath: MaxDistance
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1798944727711228463, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
+      propertyPath: _temporaryOnlySuppressants.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1798944727711228463, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
+      propertyPath: '_temporaryOnlySuppressants.Array.data[0]'
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2802201682524127449, guid: 02c883944155cb14ab7cdbd26b1847f0, type: 3}
       propertyPath: m_Name
