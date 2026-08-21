@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
@@ -10,7 +11,7 @@ namespace VirtualRescue.Situations.HairStraightenerHazard
     public sealed class HairStraightenerHazardSituationController : SituationController
     {
         [Header("References")]
-        [SerializeField] private XRSocketInteractor _powerSocket;
+        [SerializeField] private List<XRSocketInteractor> _powerSockets = new();
         [SerializeField] private AudioSource _operatingAudioSource;
 
         [Header("Power Warning Visual")]
@@ -46,10 +47,10 @@ namespace VirtualRescue.Situations.HairStraightenerHazard
         {
             _hasObservedConnection = false;
 
-            if (_powerSocket == null)
+            if (!HasAssignedPowerSocket())
             {
                 Debug.LogError(
-                    "A hair straightener power socket must be assigned.",
+                    "At least one hair straightener power socket must be assigned.",
                     this);
                 return;
             }
@@ -71,7 +72,7 @@ namespace VirtualRescue.Situations.HairStraightenerHazard
             StopEvaluation();
             UnsubscribeSocketEvents();
             StopOperatingAudio();
-            ApplyPowerWarningVisual(_powerSocket != null && _powerSocket.hasSelection);
+            ApplyPowerWarningVisual(IsPowerConnected());
         }
 
         protected override void OnReset()
@@ -121,12 +122,12 @@ namespace VirtualRescue.Situations.HairStraightenerHazard
 
         private void EvaluatePowerState()
         {
-            if ((!IsActive && !IsResolved) || _powerSocket == null)
+            if ((!IsActive && !IsResolved) || !HasAssignedPowerSocket())
             {
                 return;
             }
 
-            if (_powerSocket.hasSelection)
+            if (IsPowerConnected())
             {
                 ApplyPowerWarningVisual(true);
 
@@ -242,21 +243,73 @@ namespace VirtualRescue.Situations.HairStraightenerHazard
 
         private void SubscribeSocketEvents()
         {
-            _powerSocket.selectEntered.RemoveListener(HandleSocketSelectionChanged);
-            _powerSocket.selectExited.RemoveListener(HandleSocketSelectionChanged);
-            _powerSocket.selectEntered.AddListener(HandleSocketSelectionChanged);
-            _powerSocket.selectExited.AddListener(HandleSocketSelectionChanged);
+            foreach (XRSocketInteractor powerSocket in _powerSockets)
+            {
+                if (powerSocket == null)
+                {
+                    continue;
+                }
+
+                powerSocket.selectEntered.RemoveListener(HandleSocketSelectionChanged);
+                powerSocket.selectExited.RemoveListener(HandleSocketSelectionChanged);
+                powerSocket.selectEntered.AddListener(HandleSocketSelectionChanged);
+                powerSocket.selectExited.AddListener(HandleSocketSelectionChanged);
+            }
         }
 
         private void UnsubscribeSocketEvents()
         {
-            if (_powerSocket == null)
+            if (_powerSockets == null)
             {
                 return;
             }
 
-            _powerSocket.selectEntered.RemoveListener(HandleSocketSelectionChanged);
-            _powerSocket.selectExited.RemoveListener(HandleSocketSelectionChanged);
+            foreach (XRSocketInteractor powerSocket in _powerSockets)
+            {
+                if (powerSocket == null)
+                {
+                    continue;
+                }
+
+                powerSocket.selectEntered.RemoveListener(HandleSocketSelectionChanged);
+                powerSocket.selectExited.RemoveListener(HandleSocketSelectionChanged);
+            }
+        }
+
+        private bool HasAssignedPowerSocket()
+        {
+            if (_powerSockets == null)
+            {
+                return false;
+            }
+
+            foreach (XRSocketInteractor powerSocket in _powerSockets)
+            {
+                if (powerSocket != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsPowerConnected()
+        {
+            if (_powerSockets == null)
+            {
+                return false;
+            }
+
+            foreach (XRSocketInteractor powerSocket in _powerSockets)
+            {
+                if (powerSocket != null && powerSocket.hasSelection)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void StopEvaluation()
