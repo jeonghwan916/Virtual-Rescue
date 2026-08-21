@@ -11,6 +11,8 @@ namespace VirtualRescue.Situations
 
         private void OnEnable()
         {
+            ElevatorTrigger.DoorOpeningStarted += HandleElevatorDoorOpeningStarted;
+
             if (_elevatorFailureSequence != null)
             {
                 _elevatorFailureSequence.Completed += HandleFailureSequenceCompleted;
@@ -19,6 +21,8 @@ namespace VirtualRescue.Situations
 
         private void OnDisable()
         {
+            ElevatorTrigger.DoorOpeningStarted -= HandleElevatorDoorOpeningStarted;
+
             if (_elevatorFailureSequence != null)
             {
                 _elevatorFailureSequence.Completed -= HandleFailureSequenceCompleted;
@@ -32,20 +36,6 @@ namespace VirtualRescue.Situations
                 return false;
             }
 
-            if (_elevatorFailureSequence == null)
-            {
-                Debug.LogError(
-                    "Elevator failure sequence is not assigned.",
-                    this);
-                return false;
-            }
-
-            if (!_elevatorFailureSequence.IsPlaying)
-            {
-                StopCountdown();
-                _elevatorFailureSequence.TryPlay();
-            }
-
             return true;
         }
 
@@ -57,6 +47,28 @@ namespace VirtualRescue.Situations
         private void HandleFailureSequenceCompleted()
         {
             FailSituation();
+        }
+
+        private void HandleElevatorDoorOpeningStarted()
+        {
+            if (!IsActive)
+            {
+                return;
+            }
+
+            if (_elevatorFailureSequence == null)
+            {
+                Debug.LogError(
+                    "Elevator failure sequence is not assigned.",
+                    this);
+                return;
+            }
+
+            if (!_elevatorFailureSequence.IsPlaying)
+            {
+                StopCountdown();
+                _elevatorFailureSequence.TryPlay();
+            }
         }
     }
 }

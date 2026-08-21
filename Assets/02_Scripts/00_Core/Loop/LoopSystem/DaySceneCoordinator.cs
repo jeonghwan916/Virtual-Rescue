@@ -79,7 +79,7 @@ public class DaySceneCoordinator : MonoBehaviour
         try
         {
             _screenFader?.ShowBlack();
-            _roomSituationController?.ResetDayState();
+            _roomSituationController?.PrepareDayEntryDialogues();
 
             bool homeLoaded = await _homeModuleLoader.LoadAsync(_homeLayout);
             if (!homeLoaded)
@@ -160,6 +160,7 @@ public class DaySceneCoordinator : MonoBehaviour
                 return;
             }
 
+            _roomSituationController?.ActivateDayEntryDialogues();
             ScheduleRadioBroadcast(currentDay);
         }
         catch (Exception exception)

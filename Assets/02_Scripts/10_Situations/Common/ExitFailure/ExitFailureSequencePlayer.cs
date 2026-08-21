@@ -8,10 +8,7 @@ namespace VirtualRescue.Situations.ExitFailure
     public sealed class ExitFailureSequencePlayer : MonoBehaviour
     {
         [Header("Effect")]
-        [SerializeField] private GameObject _effectPrefab;
-        [SerializeField] private Vector3 _effectOffset = new(0f, 0f, 0.6f);
-        [SerializeField] private Vector3 _effectEulerAngles;
-        [SerializeField, Min(0.01f)] private float _effectScale = 0.8f;
+        [SerializeField] private GameObject _effectObject;
 
         [Header("Audio")]
         [SerializeField] private AudioClip _audioClip;
@@ -21,11 +18,22 @@ namespace VirtualRescue.Situations.ExitFailure
         [SerializeField, Min(0f)] private float _failureDelay = 1f;
 
         private Coroutine _routine;
-        private GameObject _effectInstance;
+        private ParticleSystem[] _effectParticles = Array.Empty<ParticleSystem>();
 
         public event Action Completed;
 
         public bool IsPlaying => _routine != null;
+
+        private void Awake()
+        {
+            if (_effectObject != null)
+            {
+                _effectParticles =
+                    _effectObject.GetComponentsInChildren<ParticleSystem>(true);
+            }
+
+            StopEffect();
+        }
 
         public bool TryPlay()
         {
@@ -46,7 +54,7 @@ namespace VirtualRescue.Situations.ExitFailure
                 _routine = null;
             }
 
-            DestroyEffect();
+            StopEffect();
         }
 
         private IEnumerator PlayRoutine()
@@ -62,27 +70,18 @@ namespace VirtualRescue.Situations.ExitFailure
 
         private void PlayEffect()
         {
-            if (_effectPrefab == null)
+            if (_effectObject == null)
             {
-                Debug.LogWarning("Exit failure effect prefab is not assigned.", this);
+                Debug.LogWarning("Exit failure effect object is not assigned.", this);
                 return;
             }
 
-            Camera hmdCamera = Camera.main;
-            if (hmdCamera == null)
-            {
-                Debug.LogWarning(
-                    "The HMD camera was not found for the exit failure effect.",
-                    this);
-                return;
-            }
+            _effectObject.SetActive(true);
 
-            DestroyEffect();
-            _effectInstance = Instantiate(_effectPrefab, hmdCamera.transform);
-            _effectInstance.transform.localPosition = _effectOffset;
-            _effectInstance.transform.localRotation =
-                Quaternion.Euler(_effectEulerAngles);
-            _effectInstance.transform.localScale = Vector3.one * _effectScale;
+            foreach (ParticleSystem particle in _effectParticles)
+            {
+                particle.Play();
+            }
         }
 
         private void PlayAudio()
@@ -104,20 +103,19 @@ namespace VirtualRescue.Situations.ExitFailure
             xrAudioSource.PlayOneShot(_audioClip, _audioVolumeScale);
         }
 
-        private void DestroyEffect()
+        private void StopEffect()
         {
-            if (_effectInstance == null)
+            if (_effectObject == null)
             {
                 return;
             }
 
-            Destroy(_effectInstance);
-            _effectInstance = null;
-        }
+            foreach (ParticleSystem particle in _effectParticles)
+            {
+                particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
 
-        private void OnDestroy()
-        {
-            DestroyEffect();
+            _effectObject.SetActive(false);
         }
     }
 }
