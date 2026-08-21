@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9b63cae76bd4a88b288e457d16b3564, type: 3}
+  m_Name: SituationDefinition_EntireHouse_Smoke
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationDefinition
+  _id: entirehouse.smoke
+  _level: 2
+  _weight: 1
+  _minimumDay: 1
+  _sceneName: Scenario_EntireHouse_Smoke
+  _roomTrigger: 1
+  _resolvedDialogueId: 
+  _warningDialogueId: 
+  _failedDialogueId: 
+  _beforeResolveCallingDialogueGroupId: 
+  _afterResolveCallingDialogueGroupId: 
+  _level2CallingDialogueGroupId: EntireHouse_Smoke_Level2Calling
+  _usesTimeLimit: 1
+  _timeLimitSeconds: 60
+  _allowedExits: 01000000

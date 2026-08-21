@@ -16,6 +16,7 @@ namespace VirtualRescue.Locations
         private RoomTrigger _situationRoomTrigger;
         private SituationController _timedLevel2Controller;
         private SituationDefinition _timedLevel2Definition;
+        private bool _areDayEntryDialoguesPrepared;
 
         [SerializeField] private SituationDiscoveryTracker _discoveryTracker;
 
@@ -44,16 +45,40 @@ namespace VirtualRescue.Locations
             }
         }
 
-        public void ResetDayState()
+        public void PrepareDayEntryDialogues()
         {
             _roomDialoguesSuppressed = false;
             _situationRoomTrigger = null;
             _timedLevel2Controller = null;
             _timedLevel2Definition = null;
+            _areDayEntryDialoguesPrepared = true;
 
             foreach (RoomTrigger roomTrigger in _roomTriggers)
             {
-                roomTrigger.ResetDayState();
+                roomTrigger.PrepareDayEntryDialogue();
+            }
+        }
+
+        public void ActivateDayEntryDialogues()
+        {
+            if (!_areDayEntryDialoguesPrepared)
+            {
+                Debug.LogWarning(
+                    $"{name}: 날짜 진입 대사가 준비되기 전에 활성화가 요청되었습니다.",
+                    this);
+                return;
+            }
+
+            _areDayEntryDialoguesPrepared = false;
+
+            foreach (RoomTrigger roomTrigger in _roomTriggers)
+            {
+                roomTrigger.EnableDayEntryDialogue();
+            }
+
+            foreach (RoomTrigger roomTrigger in _roomTriggers)
+            {
+                roomTrigger.TryPlayCurrentRoomEntryDialogue();
             }
         }
 

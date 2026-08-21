@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using VirtualRescue.GameFlow;
 using VirtualRescue.Player;
@@ -17,6 +18,7 @@ namespace VirtualRescue.Locations
         public event Action<RoomTrigger, SituationLevel> SituationEntryDialoguePlayed;
 
         private RoomVisitTracker _visitTracker;
+        private readonly HashSet<Collider> _playerCollidersInside = new();
         private string _situationDialogueId;
         private SituationLevel? _situationLevel;
         private bool _hasPlayedEntryDialogue;
@@ -38,6 +40,8 @@ namespace VirtualRescue.Locations
             {
                 return;
             }
+
+            _playerCollidersInside.Add(other);
 
             if (_visitTracker == null)
             {
@@ -125,17 +129,56 @@ namespace VirtualRescue.Locations
             _entryDialogueSuppressed = true;
         }
 
-        public void ResetDayState()
+        public void PrepareDayEntryDialogue()
         {
             _hasPlayedEntryDialogue = false;
-            _entryDialogueSuppressed = false;
+            _entryDialogueSuppressed = true;
             _situationDialogueId = string.Empty;
             _situationLevel = null;
+        }
+
+        public void EnableDayEntryDialogue()
+        {
+            _entryDialogueSuppressed = false;
+        }
+
+        public bool TryPlayCurrentRoomEntryDialogue()
+        {
+            if (_playerCollidersInside.Count == 0 ||
+                _entryDialogueSuppressed ||
+                _hasPlayedEntryDialogue)
+            {
+                return false;
+            }
+
+            if (_visitTracker == null)
+            {
+                FindVisitTracker();
+            }
+
+            if (_visitTracker == null)
+            {
+                Debug.LogWarning(
+                    $"{name}: RoomVisitTracker를 찾을 수 없습니다.",
+                    this);
+                return false;
+            }
+
+            _visitTracker.Enter(Location);
+            PlayEntryDialogue();
+            return true;
         }
 
         private void OnTriggerExit(Collider other)
         {
             if (!IsPlayerCollider(other))
+            {
+                return;
+            }
+
+            _playerCollidersInside.Remove(other);
+
+            if (_playerCollidersInside.Count > 0)
             {
                 return;
             }

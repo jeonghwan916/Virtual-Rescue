@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using VirtualRescue.GameFlow;
@@ -6,6 +7,9 @@ public class ElevatorTrigger : MonoBehaviour
 { 
     private static readonly int ButtonPressedHash = Animator.StringToHash("ButtonPressed");
     private static readonly int EleavatorAnimHash = Animator.StringToHash("EleavatorAnim");
+    private const float DoorOpeningNormalizedTime = 3f / 7f;
+
+    public static event Action DoorOpeningStarted;
     
     [SerializeField] private ExitController _exitController;
     [SerializeField] private LayerMask handLayerMask;
@@ -15,8 +19,6 @@ public class ElevatorTrigger : MonoBehaviour
     [SerializeField] private AudioClip _elevatorButtonClickAudioClip;
     [SerializeField] private AudioClip _elevatorDingDongAudioClip;
     [SerializeField] private AudioClip _elevatorOpenAudioClip;
-    [SerializeField] private bool _isTrap;
-    [SerializeField] private ParticleSystem _fireParticle;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -77,6 +79,13 @@ public class ElevatorTrigger : MonoBehaviour
         {
             yield return null;
         }
+
+        while (_animator.GetCurrentAnimatorStateInfo(0).normalizedTime < DoorOpeningNormalizedTime)
+        {
+            yield return null;
+        }
+
+        DoorOpeningStarted?.Invoke();
 
         while (_animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
         {
