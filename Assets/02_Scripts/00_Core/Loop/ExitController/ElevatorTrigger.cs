@@ -15,8 +15,6 @@ public class ElevatorTrigger : MonoBehaviour
     [SerializeField] private AudioClip _elevatorButtonClickAudioClip;
     [SerializeField] private AudioClip _elevatorDingDongAudioClip;
     [SerializeField] private AudioClip _elevatorOpenAudioClip;
-    [SerializeField] private bool _isTrap;
-    [SerializeField] private ParticleSystem _fireParticle;
 
     private void OnTriggerEnter(Collider other)
     {

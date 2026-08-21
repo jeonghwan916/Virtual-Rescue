@@ -91,6 +91,12 @@ namespace VirtualRescue.GameFlow
                 return FailDay(definition);
             }
 
+            if (controller.IsActive &&
+                controller.TryConsumeExitAttempt(exitType))
+            {
+                return true;
+            }
+
             if (definition.Level == SituationLevel.Level2)
             {
                 if (!definition.IsExitAllowed(exitType))

@@ -93,6 +93,11 @@ namespace VirtualRescue.GameFlow
             return ResolveSituation();
         }
 
+        public virtual bool TryConsumeExitAttempt(ExitType exitType)
+        {
+            return false;
+        }
+
         protected bool ResolveSituation()
         {
             if (_state != SituationState.Active)
@@ -178,7 +183,7 @@ namespace VirtualRescue.GameFlow
             }
         }
 
-        private void StopCountdown()
+        protected void StopCountdown()
         {
             if (_countdownRoutine == null)
             {
