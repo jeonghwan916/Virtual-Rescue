@@ -36,20 +36,25 @@ namespace VirtualRescue.Situations.FireSuppression
                 _extinguishedHandlers.Add(subscribedFireObject, handler);
                 subscribedFireObject.OnExtinguished += handler;
             }
+
+            OnFireSuppressionActivated();
         }
 
         protected sealed override void OnResolved()
         {
+            OnFireSuppressionDeactivated();
             UnsubscribeFireEvents();
         }
 
         protected sealed override void OnFailed()
         {
+            OnFireSuppressionDeactivated();
             UnsubscribeFireEvents();
         }
 
         protected sealed override void OnReset()
         {
+            OnFireSuppressionDeactivated();
             UnsubscribeFireEvents();
             _activeFireObjects.Clear();
             _extinguishedFireObjects.Clear();
@@ -57,8 +62,17 @@ namespace VirtualRescue.Situations.FireSuppression
 
         protected abstract void PrepareActiveFireObjects(List<FireObject> activeFireObjects);
 
+        protected virtual void OnFireSuppressionActivated()
+        {
+        }
+
+        protected virtual void OnFireSuppressionDeactivated()
+        {
+        }
+
         private void OnDisable()
         {
+            OnFireSuppressionDeactivated();
             UnsubscribeFireEvents();
         }
 

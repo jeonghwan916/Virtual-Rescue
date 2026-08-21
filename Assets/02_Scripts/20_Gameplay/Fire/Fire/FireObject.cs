@@ -50,6 +50,7 @@ public class FireObject : MonoBehaviour
 
     // 불이 꺼졌을때의 후속 동작이 필요하다면 여기 이벤트 구독하면 됨
     public event Action OnExtinguished;
+    public event Action<FireSuppressantType> TemporarySuppressionLimitReached;
 
     // 기존 필드들 아래에 추가
     private AudioSource _audioSource;
@@ -123,7 +124,7 @@ public class FireObject : MonoBehaviour
 
         if (IsTemporaryOnlySuppressant(suppressantType))
         {
-            ApplyTemporarySuppression(deltaTime);
+            ApplyTemporarySuppression(suppressantType, deltaTime);
             return;
         }
 
@@ -142,15 +143,24 @@ public class FireObject : MonoBehaviour
         RefreshVisualStage();
     }
 
-    private void ApplyTemporarySuppression(float deltaTime)
+    private void ApplyTemporarySuppression(
+        FireSuppressantType suppressantType,
+        float deltaTime)
     {
         float maximumSuppressionTime = GetMaximumTemporarySuppressionTime();
+        float previousSuppressionTime = _temporarySuppressionTime;
 
         _temporarySuppressionTime = Mathf.Min(
             _temporarySuppressionTime + deltaTime,
             maximumSuppressionTime);
         _lastTemporarySuppressionTime = Time.time;
         RefreshVisualStage();
+
+        if (previousSuppressionTime < maximumSuppressionTime &&
+            _temporarySuppressionTime >= maximumSuppressionTime)
+        {
+            TemporarySuppressionLimitReached?.Invoke(suppressantType);
+        }
 
         if (_temporaryRecoveryRoutine == null)
         {
