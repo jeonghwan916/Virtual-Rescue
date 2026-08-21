@@ -29,6 +29,13 @@ namespace VirtualRescue.DialogueSystem
             public string text;
         }
 
+        [Serializable]
+        private class DialogueAudioBinding
+        {
+            public string dialogueId;
+            public AudioClip audioClip;
+        }
+
         [Header("CSV Data")]
         [Tooltip("로딩할 Dialogue.csv 파일 연결")]
         [SerializeField] private TextAsset _dialogueCsv;
@@ -42,6 +49,8 @@ namespace VirtualRescue.DialogueSystem
         [SerializeField] private bool _usePlayerAudioSource = true;
         [Tooltip("실행할 대사 음성 파일이 저장되어있는 경로. Resources 폴더의 하위 경로임")]
         [SerializeField] private string _audioBasePath = "Audio/Dialogue/KR";
+        [Tooltip("Resources 밖에 있는 대사 음성 파일을 대사 ID별로 직접 연결합니다.")]
+        [SerializeField] private DialogueAudioBinding[] _audioBindings;
 
         [Header("Subtitle UI")]
         [Tooltip("자막 파일 자체 GameObject. SubtitleFollwer 프리팹 그대로 연결하면 됨")]
@@ -68,6 +77,7 @@ namespace VirtualRescue.DialogueSystem
         private readonly Dictionary<string, List<DialogueEntry>> _dialoguesByGroup = new();
         private readonly Dictionary<string, string> _textById = new();
         private readonly Dictionary<string, Action> _callbackByKey = new();
+        private readonly Dictionary<string, AudioClip> _audioClipByDialogueId = new();
 
         private Coroutine _currentDialogueRoutine;
 
@@ -191,6 +201,7 @@ namespace VirtualRescue.DialogueSystem
             _dialogueById.Clear();
             _dialoguesByGroup.Clear();
             _textById.Clear();
+            LoadAudioBindings();
 
             TextAsset loadedDialogueCsv = _dialogueCsv != null
                 ? _dialogueCsv
@@ -233,7 +244,7 @@ namespace VirtualRescue.DialogueSystem
             ShowSubtitle(entry.speaker, subtitle);
             InvokeCallback(entry.callbackKey);
 
-            AudioClip clip = LoadAudioClip(entry.audioPath);
+            AudioClip clip = LoadAudioClip(entry);
             float audioDuration = 0f;
             if (clip != null && _audioSource != null)
             {
@@ -294,9 +305,15 @@ namespace VirtualRescue.DialogueSystem
             return string.Empty;
         }
 
-        // audioPath 값에 기본 오디오 경로를 붙여 AudioClip을 로드한다.
-        private AudioClip LoadAudioClip(string audioPath)
+        // 직접 연결된 음성을 우선 사용하고, 없으면 audioPath의 Resources 음성을 로드한다.
+        private AudioClip LoadAudioClip(DialogueEntry entry)
         {
+            if (_audioClipByDialogueId.TryGetValue(entry.id, out AudioClip directClip))
+            {
+                return directClip;
+            }
+
+            string audioPath = entry.audioPath;
             if (string.IsNullOrWhiteSpace(audioPath))
             {
                 return null;
@@ -311,6 +328,28 @@ namespace VirtualRescue.DialogueSystem
             }
 
             return clip;
+        }
+
+        private void LoadAudioBindings()
+        {
+            _audioClipByDialogueId.Clear();
+
+            if (_audioBindings == null)
+            {
+                return;
+            }
+
+            foreach (DialogueAudioBinding binding in _audioBindings)
+            {
+                if (binding == null ||
+                    string.IsNullOrWhiteSpace(binding.dialogueId) ||
+                    binding.audioClip == null)
+                {
+                    continue;
+                }
+
+                _audioClipByDialogueId[binding.dialogueId] = binding.audioClip;
+            }
         }
 
         // 화자와 대사 문자열을 UI에 표시하고 자막 오브젝트를 활성화한다.

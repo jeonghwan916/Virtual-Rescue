@@ -48,6 +48,87 @@ MonoBehaviour:
   dialogueTextCsv: {fileID: 4900000, guid: ee5afe3666fb07a4d98c3b5f886817ee, type: 3}
   audioSource: {fileID: 0}
   audioBasePath: Audio/Dialogue/KR
+  _audioBindings:
+  - dialogueId: Wrong_Call_01
+    audioClip: {fileID: 8300000, guid: 3185461b6422a13479e55374ff86e41f, type: 3}
+  - dialogueId: Wrong_Call_02
+    audioClip: {fileID: 8300000, guid: 9580d592ee31e2040a5d150486f01a31, type: 3}
+  - dialogueId: Wrong_Call_03
+    audioClip: {fileID: 8300000, guid: 7329c5722029f0640b6ea016d153a928, type: 3}
+  - dialogueId: Balcony_DescenderObservation_AfterResolve_01
+    audioClip: {fileID: 8300000, guid: 1f52e37cc68b75e42934c40046e8ddf2, type: 3}
+  - dialogueId: Balcony_DescenderObservation_AfterResolve_02
+    audioClip: {fileID: 8300000, guid: 0c719a4cfedfa3b42b93893e6878239a, type: 3}
+  - dialogueId: Balcony_DescenderObservation_AfterResolve_03
+    audioClip: {fileID: 8300000, guid: 572abf92e02265f4dbebde760a22bafe, type: 3}
+  - dialogueId: Kitchen_FireExtinguisherObservation_AfterResolve_01
+    audioClip: {fileID: 8300000, guid: cd38a78208f1c924c81a67c8f1aacbdb, type: 3}
+  - dialogueId: Kitchen_FireExtinguisherObservation_AfterResolve_02
+    audioClip: {fileID: 8300000, guid: c290caf45d92ee045b8d8fb1f0a78305, type: 3}
+  - dialogueId: Kitchen_FireExtinguisherObservation_AfterResolve_03
+    audioClip: {fileID: 8300000, guid: 6a24d5ff38031164c9a2a159f6b4d0d5, type: 3}
+  - dialogueId: Kitchen_OilFire_BeforeResolve_01
+    audioClip: {fileID: 8300000, guid: 90368284715de714d838bfa74fdce8ed, type: 3}
+  - dialogueId: Kitchen_OilFire_BeforeResolve_02
+    audioClip: {fileID: 8300000, guid: c8d1a38fa6f91de438b61ee8f9f536e9, type: 3}
+  - dialogueId: Kitchen_OilFire_BeforeResolve_03
+    audioClip: {fileID: 8300000, guid: 26d27f27c0a605b4084db91ba636a2fb, type: 3}
+  - dialogueId: Kitchen_OilFire_BeforeResolve_04
+    audioClip: {fileID: 8300000, guid: aed78662490b98e42973c68e815a0bbf, type: 3}
+  - dialogueId: LivingRoom_PowerStrip_Fire_BeforeResolve_01
+    audioClip: {fileID: 8300000, guid: b53ddb88acf91c04e8d690841fca54ca, type: 3}
+  - dialogueId: LivingRoom_PowerStrip_Fire_BeforeResolve_02
+    audioClip: {fileID: 8300000, guid: 2f5af71e163fa004f977c4b09b643407, type: 3}
+  - dialogueId: LivingRoom_PowerStrip_Fire_BeforeResolve_03
+    audioClip: {fileID: 8300000, guid: a518c78ff43d1014dbdd9e8a8a8d7787, type: 3}
+  - dialogueId: LivingRoom_PowerStrip_Fire_BeforeResolve_04
+    audioClip: {fileID: 8300000, guid: 77322d5c1f11a60479c167a69b74741a, type: 3}
+  - dialogueId: Entrance_FireSuppression_BeforeResolve_01
+    audioClip: {fileID: 8300000, guid: b6e70fdb534f78d4f84eb83d728190cc, type: 3}
+  - dialogueId: Entrance_FireSuppression_BeforeResolve_02
+    audioClip: {fileID: 8300000, guid: d22fc5742c7e7b14baa01778f1f6baa2, type: 3}
+  - dialogueId: Entrance_FireSuppression_BeforeResolve_03
+    audioClip: {fileID: 8300000, guid: dd2a4de0e6c02984082a95049cb43bf4, type: 3}
+  - dialogueId: Entrance_FireSuppression_BeforeResolve_04
+    audioClip: {fileID: 8300000, guid: e50df41b9f0dbac4e93d49ecc1d54e38, type: 3}
+  - dialogueId: EntireHouse_Alarm_Calling_01
+    audioClip: {fileID: 8300000, guid: e61f06903e0fad14880d0a96965b0581, type: 3}
+  - dialogueId: EntireHouse_Alarm_Calling_02
+    audioClip: {fileID: 8300000, guid: d3ac8d58ca016774cbe92fb6f42e7e5e, type: 3}
+  - dialogueId: EntireHouse_Alarm_Calling_03
+    audioClip: {fileID: 8300000, guid: 3ad102c7ae14f1d4a8b3ef7cbba820da, type: 3}
+  - dialogueId: Entrance_LightweightPartition_Escape_Calling_01
+    audioClip: {fileID: 8300000, guid: 4cc5fdded091e4649be1e91c0adc1509, type: 3}
+  - dialogueId: Entrance_LightweightPartition_Escape_Calling_02
+    audioClip: {fileID: 8300000, guid: a68396f9abcbbc944b0e6ec4dc125888, type: 3}
+  - dialogueId: Entrance_LightweightPartition_Escape_Calling_03
+    audioClip: {fileID: 8300000, guid: dc5ad97b71786a94986d107df175e9dd, type: 3}
+  - dialogueId: Entrance_LightweightPartition_Escape_Calling_04
+    audioClip: {fileID: 8300000, guid: 1cf6027b7207f9a4292dc33e59438246, type: 3}
+  - dialogueId: Kitchen_OilFire_AfterResolve_01
+    audioClip: {fileID: 8300000, guid: fe0e7109e4f00a1458cab9502bd10a2f, type: 3}
+  - dialogueId: Kitchen_OilFire_AfterResolve_02
+    audioClip: {fileID: 8300000, guid: f695d57ef4d05c547b9ab82efc619bbf, type: 3}
+  - dialogueId: Kitchen_OilFire_AfterResolve_03
+    audioClip: {fileID: 8300000, guid: d7f1785a32b587c4a9d2554ff60375a7, type: 3}
+  - dialogueId: Kitchen_OilFire_AfterResolve_04
+    audioClip: {fileID: 8300000, guid: 47e761ced9fa5184e8a2b02d810db919, type: 3}
+  - dialogueId: LivingRoom_PowerStrip_Fire_AfterResolve_01
+    audioClip: {fileID: 8300000, guid: fe0e7109e4f00a1458cab9502bd10a2f, type: 3}
+  - dialogueId: LivingRoom_PowerStrip_Fire_AfterResolve_02
+    audioClip: {fileID: 8300000, guid: f695d57ef4d05c547b9ab82efc619bbf, type: 3}
+  - dialogueId: LivingRoom_PowerStrip_Fire_AfterResolve_03
+    audioClip: {fileID: 8300000, guid: d7f1785a32b587c4a9d2554ff60375a7, type: 3}
+  - dialogueId: LivingRoom_PowerStrip_Fire_AfterResolve_04
+    audioClip: {fileID: 8300000, guid: 47e761ced9fa5184e8a2b02d810db919, type: 3}
+  - dialogueId: Entrance_FireSuppression_AfterResolve_01
+    audioClip: {fileID: 8300000, guid: fe0e7109e4f00a1458cab9502bd10a2f, type: 3}
+  - dialogueId: Entrance_FireSuppression_AfterResolve_02
+    audioClip: {fileID: 8300000, guid: f695d57ef4d05c547b9ab82efc619bbf, type: 3}
+  - dialogueId: Entrance_FireSuppression_AfterResolve_03
+    audioClip: {fileID: 8300000, guid: d7f1785a32b587c4a9d2554ff60375a7, type: 3}
+  - dialogueId: Entrance_FireSuppression_AfterResolve_04
+    audioClip: {fileID: 8300000, guid: 47e761ced9fa5184e8a2b02d810db919, type: 3}
   subtitleRoot: {fileID: 0}
   speakerText: {fileID: 0}
   dialogueText: {fileID: 0}
