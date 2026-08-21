@@ -5854,7 +5854,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 461189272813114538, guid: 9f0ccd7ef94592848a6487cee5a31b54, type: 3}
   m_PrefabInstance: {fileID: 55004193199609435}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &214890064132365068
+--- !u!1001 &111891984611879709
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -5862,55 +5862,55 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3943386606194102873, guid: eb6f34fadc0a9e6459e0c6aab3bf205a, type: 3}
+    - target: {fileID: 7539293801786836251, guid: f99d1cd5d8006d24791005fe42bab3de, type: 3}
+      propertyPath: m_Name
+      value: Fire_Extinguisher_k_New
+      objectReference: {fileID: 0}
+    - target: {fileID: 9009001342363689859, guid: f99d1cd5d8006d24791005fe42bab3de, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -1.533
       objectReference: {fileID: 0}
-    - target: {fileID: 3943386606194102873, guid: eb6f34fadc0a9e6459e0c6aab3bf205a, type: 3}
+    - target: {fileID: 9009001342363689859, guid: f99d1cd5d8006d24791005fe42bab3de, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.025
       objectReference: {fileID: 0}
-    - target: {fileID: 3943386606194102873, guid: eb6f34fadc0a9e6459e0c6aab3bf205a, type: 3}
+    - target: {fileID: 9009001342363689859, guid: f99d1cd5d8006d24791005fe42bab3de, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 1.434
       objectReference: {fileID: 0}
-    - target: {fileID: 3943386606194102873, guid: eb6f34fadc0a9e6459e0c6aab3bf205a, type: 3}
+    - target: {fileID: 9009001342363689859, guid: f99d1cd5d8006d24791005fe42bab3de, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
-    - target: {fileID: 3943386606194102873, guid: eb6f34fadc0a9e6459e0c6aab3bf205a, type: 3}
+    - target: {fileID: 9009001342363689859, guid: f99d1cd5d8006d24791005fe42bab3de, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3943386606194102873, guid: eb6f34fadc0a9e6459e0c6aab3bf205a, type: 3}
+    - target: {fileID: 9009001342363689859, guid: f99d1cd5d8006d24791005fe42bab3de, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.7071068
       objectReference: {fileID: 0}
-    - target: {fileID: 3943386606194102873, guid: eb6f34fadc0a9e6459e0c6aab3bf205a, type: 3}
+    - target: {fileID: 9009001342363689859, guid: f99d1cd5d8006d24791005fe42bab3de, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3943386606194102873, guid: eb6f34fadc0a9e6459e0c6aab3bf205a, type: 3}
+    - target: {fileID: 9009001342363689859, guid: f99d1cd5d8006d24791005fe42bab3de, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3943386606194102873, guid: eb6f34fadc0a9e6459e0c6aab3bf205a, type: 3}
+    - target: {fileID: 9009001342363689859, guid: f99d1cd5d8006d24791005fe42bab3de, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -90
       objectReference: {fileID: 0}
-    - target: {fileID: 3943386606194102873, guid: eb6f34fadc0a9e6459e0c6aab3bf205a, type: 3}
+    - target: {fileID: 9009001342363689859, guid: f99d1cd5d8006d24791005fe42bab3de, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4377189507532934157, guid: eb6f34fadc0a9e6459e0c6aab3bf205a, type: 3}
-      propertyPath: m_Name
-      value: FireExtinguisher_K
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: eb6f34fadc0a9e6459e0c6aab3bf205a, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: f99d1cd5d8006d24791005fe42bab3de, type: 3}
 --- !u!1001 &7101013034090442486
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6198,4 +6198,4 @@ SceneRoots:
   - {fileID: 1441112146}
   - {fileID: 572504724}
   - {fileID: 2001562270}
-  - {fileID: 214890064132365068}
+  - {fileID: 111891984611879709}
