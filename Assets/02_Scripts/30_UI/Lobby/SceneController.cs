@@ -32,6 +32,21 @@ namespace VirtualRescue.Lobby
 
         private Coroutine _loadRoutine;
 
+        private IEnumerator Start()
+        {
+            if (_screenFader == null)
+            {
+                _screenFader = FindScreenFader();
+            }
+
+            if (_screenFader == null)
+            {
+                yield break;
+            }
+
+            yield return _screenFader.FadeIn(_fadeDuration);
+        }
+
         public void SetSelectedScene(string sceneKey, int sceneBuildIndex)
         {
             SetSelectedScene(sceneKey, sceneBuildIndex, true);
