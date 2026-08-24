@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VirtualRescue.Effects;
 using VirtualRescue.GameFlow;
-using VirtualRescue.Loading;
 using VirtualRescue.Locations;
 using VirtualRescue.Player;
 
@@ -34,12 +33,10 @@ public class DaySceneCoordinator : MonoBehaviour
     [Header("Situation")]
     [SerializeField] private SituationSelector _situationSelector;
     [SerializeField] private SituationSceneLoader _situationSceneLoader;
-    [SerializeField] private SituationDefinition _endingSituationDefinition;
     [SerializeField] private RoomSituationController _roomSituationController;
 
-    [Header("Clear Transition")]
-    [SerializeField] private string _lobbySceneName = "LobbyScene";
-    [SerializeField] private string _loadingSceneName = "LoadingScene";
+    [Header("Ending Transition")]
+    [SerializeField] private string _endingSceneName = "EndingScene";
 
     private bool _isProcessing;
 
@@ -52,7 +49,6 @@ public class DaySceneCoordinator : MonoBehaviour
 
         _dayFlowController.DayStarted += HandleDayStarted;
         _dayFlowController.TransitionRequested += HandleTransitionRequested;
-        _dayFlowController.GameCleared += HandleGameCleared;
     }
 
     private void OnDisable()
@@ -64,7 +60,6 @@ public class DaySceneCoordinator : MonoBehaviour
 
         _dayFlowController.DayStarted -= HandleDayStarted;
         _dayFlowController.TransitionRequested -= HandleTransitionRequested;
-        _dayFlowController.GameCleared -= HandleGameCleared;
     }
 
     private async void HandleDayStarted(int currentDay)
@@ -96,30 +91,15 @@ public class DaySceneCoordinator : MonoBehaviour
 
             _playerRoot.ApplySpawn(_dayStartSpawnPoint);
 
-            bool isEndingDay = currentDay == DayRunState.ClearDay;
-            SituationDefinition selectedSituation;
+            bool selectionSucceeded = _situationSelector.TrySelect(
+                currentDay,
+                _dayFlowController.SeenSituationIds,
+                out SituationDefinition selectedSituation);
 
-            if (isEndingDay)
+            if (!selectionSucceeded)
             {
-                selectedSituation = _endingSituationDefinition;
-                if (selectedSituation == null)
-                {
-                    ReportError("Ending situation definition is not assigned.");
-                    return;
-                }
-            }
-            else
-            {
-                bool selectionSucceeded = _situationSelector.TrySelect(
-                    currentDay,
-                    _dayFlowController.SeenSituationIds,
-                    out selectedSituation);
-
-                if (!selectionSucceeded)
-                {
-                    ReportError(_situationSelector.LastError);
-                    return;
-                }
+                ReportError(_situationSelector.LastError);
+                return;
             }
 
             if (selectedSituation != null)
@@ -133,10 +113,7 @@ public class DaySceneCoordinator : MonoBehaviour
                     return;
                 }
 
-                bool registered = isEndingDay ||
-                    _dayFlowController.TryRegisterSituation(selectedSituation);
-
-                if (!registered)
+                if (!_dayFlowController.TryRegisterSituation(selectedSituation))
                 {
                     ReportError(
                         $"상황 ID를 등록하지 못했습니다: {selectedSituation.Id}");
@@ -183,52 +160,14 @@ public class DaySceneCoordinator : MonoBehaviour
         }
 
         _isProcessing = true;
-        bool unloaded = false;
+        bool shouldStartNextDay = false;
+        bool isEndingTransition = targetDay == DayRunState.ClearDay;
 
         try
         {
-            await RunFadeAsync(_screenFader?.FadeOut(_fadeOutDuration));
-
-            unloaded = await UnloadCurrentDayAsync();
-
-            if (unloaded)
+            if (isEndingTransition && string.IsNullOrWhiteSpace(_endingSceneName))
             {
-                Debug.Log(
-                    $"{reason}: {targetDay}일차로 전환합니다.",
-                    this);
-            }
-        }
-        catch (Exception exception)
-        {
-            ReportError(exception.Message);
-        }
-
-        // NotifyTransitionCompleted()가 즉시 다음 DayStarted를 발생시키므로
-        // 먼저 처리 잠금을 해제한다.
-        _isProcessing = false;
-
-        if (unloaded &&
-            !_dayFlowController.NotifyTransitionCompleted())
-        {
-            ReportError("다음 날을 시작하지 못했습니다.");
-        }
-    }
-
-    private async void HandleGameCleared()
-    {
-        if (_isProcessing)
-        {
-            return;
-        }
-
-        _isProcessing = true;
-
-        try
-        {
-            if (string.IsNullOrWhiteSpace(_lobbySceneName) ||
-                string.IsNullOrWhiteSpace(_loadingSceneName))
-            {
-                ReportError("Lobby scene name and loading scene name are required.");
+                ReportError("Ending scene name is required.");
                 return;
             }
 
@@ -239,20 +178,26 @@ public class DaySceneCoordinator : MonoBehaviour
                 return;
             }
 
-            LoadingRequest.Set(_lobbySceneName, -1, null);
-
-            AsyncOperation operation = SceneManager.LoadSceneAsync(
-                _loadingSceneName,
-                LoadSceneMode.Single);
-
-            if (operation == null)
+            if (isEndingTransition)
             {
-                LoadingRequest.Clear();
-                ReportError($"Failed to load loading scene: {_loadingSceneName}");
+                AsyncOperation operation = SceneManager.LoadSceneAsync(
+                    _endingSceneName,
+                    LoadSceneMode.Single);
+
+                if (operation == null)
+                {
+                    ReportError($"Failed to load ending scene: {_endingSceneName}");
+                    return;
+                }
+
+                await AwaitOperationAsync(operation);
                 return;
             }
 
-            await AwaitOperationAsync(operation);
+            Debug.Log(
+                $"{reason}: {targetDay}일차로 전환합니다.",
+                this);
+            shouldStartNextDay = true;
         }
         catch (Exception exception)
         {
@@ -260,7 +205,15 @@ public class DaySceneCoordinator : MonoBehaviour
         }
         finally
         {
+            // NotifyTransitionCompleted()가 즉시 다음 DayStarted를 발생시키므로
+            // 먼저 처리 잠금을 해제한다.
             _isProcessing = false;
+        }
+
+        if (shouldStartNextDay &&
+            !_dayFlowController.NotifyTransitionCompleted())
+        {
+            ReportError("다음 날을 시작하지 못했습니다.");
         }
     }
 
