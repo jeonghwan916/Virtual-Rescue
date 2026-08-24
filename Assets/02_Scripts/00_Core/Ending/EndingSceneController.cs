@@ -22,7 +22,9 @@ public class EndingSceneController : MonoBehaviour
 
     [Header("Ending")]
     [SerializeField] private AudioSource _endingAudioSource;
-    [SerializeField] private AudioClip _endingAudioClip;
+    [SerializeField] private AudioClip _endingMusicClip;
+    [SerializeField] private AudioSource _bgmSource;
+    [SerializeField] private float _bgmFadeOutDuration = 2f;
     [SerializeField] private float _holdSeconds = 2f;
     [SerializeField] private string _lobbySceneName = "LobbyScene";
     
@@ -31,6 +33,21 @@ public class EndingSceneController : MonoBehaviour
     private const float DoorOpeningNormalizedTime = 3f / 7f;
 
     private bool _isEnding;
+    private float _bgmInitialVolume;
+
+    [Header("Text")]
+    [SerializeField] private GameObject _titleObject;
+    [SerializeField] private GameObject _teamNameObject;
+    [SerializeField] private GameObject _teammateObject1;
+    [SerializeField] private GameObject _teammateObject2;
+    [SerializeField] private GameObject _teammateObject3;
+    
+    [Header("After Effects")]
+    [SerializeField] private AudioSource _sprinklerSource;
+    [SerializeField] private ParticleSystem _sprinklerEffect;
+    [SerializeField] private AudioSource _alarmSource;
+    [SerializeField] private ParticleSystem _smokeEffect;
+    
 
 
     private IEnumerator Start()
@@ -40,6 +57,7 @@ public class EndingSceneController : MonoBehaviour
             PersistentPlayerRoot.Instance.ApplySpawn(_playerSpawnPoint);
         }
 
+        PlayBgm();
         OpeningEleavator();
 
         ScreenFader screenFader = FindScreenFader();
@@ -138,16 +156,58 @@ public class EndingSceneController : MonoBehaviour
 
     private IEnumerator EndingRoutine()
     {
-        if (_endingAudioSource != null && _endingAudioClip != null)
+        // 플레이어 조작 막아버리기 : 컨트롤러를 통한 이동
+        
+        // 씬 시작부터 재생 중인 BGM을 페이드아웃한다.
+        if (_bgmSource != null)
         {
-            _endingAudioSource.PlayOneShot(_endingAudioClip);
+            StartCoroutine(FadeOutBgm());
         }
 
-        if (_holdSeconds > 0f)
+        // 엔딩 연출 음악은 BGM과 별도의 AudioSource에서 재생한다.
+        if (_endingAudioSource != null && _endingMusicClip != null)
         {
-            yield return new WaitForSecondsRealtime(_holdSeconds);
+            _endingAudioSource.PlayOneShot(_endingMusicClip);
         }
 
+        // 잠시 대기
+        if (_holdSeconds > 0f) { yield return new WaitForSecondsRealtime(_holdSeconds); }
+        
+        // 게임 제목 Text 띄우기
+        _titleObject.SetActive(true);
+        
+        if (_holdSeconds > 0f) { yield return new WaitForSecondsRealtime(_holdSeconds); }
+        
+        // 팀명 Text 띄우기
+        _titleObject.SetActive(false);
+        _teammateObject1.SetActive(true);
+        
+        if (_holdSeconds > 0f) { yield return new WaitForSecondsRealtime(_holdSeconds); }
+        
+        // 각자 역할 띄우기
+        _teammateObject1.SetActive(false);
+        _teammateObject2.SetActive(true);
+        
+        if (_sprinklerSource != null) _sprinklerSource.Play();
+        if (_sprinklerEffect != null) _sprinklerEffect.Play();
+        
+        if (_holdSeconds > 0f) { yield return new WaitForSecondsRealtime(_holdSeconds); }
+        
+        _teammateObject2.SetActive(false);
+        _teammateObject3.SetActive(true);
+        
+        if (_alarmSource != null) _alarmSource.Play();
+        
+        if (_holdSeconds > 0f) { yield return new WaitForSecondsRealtime(_holdSeconds); }
+        
+        _teammateObject3.SetActive(false);
+        _teamNameObject.SetActive(true);
+        
+        if (_smokeEffect != null) _smokeEffect.Play();
+        
+        if (_holdSeconds > 0f) { yield return new WaitForSecondsRealtime(_holdSeconds); }
+        
+        // 화면 암전
         ScreenFader screenFader = FindScreenFader();
         if (screenFader != null)
         {
@@ -174,6 +234,54 @@ public class EndingSceneController : MonoBehaviour
         }
 
         yield return operation;
+    }
+
+    private void PlayBgm()
+    {
+        if (_bgmSource == null)
+        {
+            return;
+        }
+
+        _bgmInitialVolume = _bgmSource.volume;
+
+        if (_bgmSource.clip == null)
+        {
+            return;
+        }
+
+        _bgmSource.loop = true;
+        _bgmSource.Play();
+    }
+
+    private IEnumerator FadeOutBgm()
+    {
+        if (_bgmSource == null || !_bgmSource.isPlaying)
+        {
+            yield break;
+        }
+
+        float startVolume = _bgmSource.volume;
+
+        if (_bgmFadeOutDuration > 0f)
+        {
+            float elapsed = 0f;
+            while (elapsed < _bgmFadeOutDuration && _bgmSource != null)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                _bgmSource.volume = Mathf.Lerp(
+                    startVolume,
+                    0f,
+                    Mathf.Clamp01(elapsed / _bgmFadeOutDuration));
+                yield return null;
+            }
+        }
+
+        if (_bgmSource != null)
+        {
+            _bgmSource.Stop();
+            _bgmSource.volume = _bgmInitialVolume;
+        }
     }
 
     private void ReportElevatorTimeout(string phase)
