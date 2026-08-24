@@ -2724,10 +2724,8 @@ MonoBehaviour:
   _radioStartDelay: 2
   _situationSelector: {fileID: 2029193222}
   _situationSceneLoader: {fileID: 2029193223}
-  _endingSituationDefinition: {fileID: 11400000, guid: 784d1f087f8bc0b4da5499452b96a9ae, type: 2}
   _roomSituationController: {fileID: 2147000002}
-  _lobbySceneName: LobbyScene
-  _loadingSceneName: LoadingScene
+  _endingSceneName: EndingScene
 --- !u!114 &2029193222
 MonoBehaviour:
   m_ObjectHideFlags: 0

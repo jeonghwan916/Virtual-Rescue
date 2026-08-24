@@ -12,6 +12,7 @@ namespace VirtualRescue.Lobby
         [SerializeField] private string _selectedSceneKey;
         [SerializeField] private int _selectedSceneBuildIndex = -1;
         [SerializeField] private bool _loadMainGameAdditiveScenes = true;
+        [SerializeField] private Transform _playerSpawnPoint;
         [SerializeField] private ScreenFader _screenFader;
         [SerializeField] private float _fadeDuration = 1f;
         [SerializeField] private string _loadingSceneName = "LoadingScene";
@@ -31,6 +32,25 @@ namespace VirtualRescue.Lobby
         };
 
         private Coroutine _loadRoutine;
+
+        private IEnumerator Start()
+        {
+            if (PersistentPlayerRoot.Instance != null && _playerSpawnPoint != null)
+            {
+                PersistentPlayerRoot.Instance.ApplySpawn(_playerSpawnPoint);
+            }
+
+            // Lobby 씬의 직렬화 참조는 중복 Player와 함께 파괴될 수 있으므로
+            // Awake 이후 살아남은 PersistentPlayer의 Fader를 다시 가져온다.
+            _screenFader = FindScreenFader();
+
+            if (_screenFader == null)
+            {
+                yield break;
+            }
+
+            yield return _screenFader.FadeIn(_fadeDuration);
+        }
 
         public void SetSelectedScene(string sceneKey, int sceneBuildIndex)
         {
