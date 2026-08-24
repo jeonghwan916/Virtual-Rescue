@@ -336,7 +336,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 5c6ca98732cf18d4696f60ab153a0eef, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -427,7 +427,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: e7b48a76dbe611d469761e4db59e6a69, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -1010,6 +1010,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2108599044956769989, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5040499814158158394, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
       propertyPath: m_Name
       value: PlayerPrefabs
@@ -1526,7 +1530,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 07c63b3d5fdc0984f84b16ab168781f7, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -1832,7 +1836,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 78f82a6d1ad2c804ba634355d9068904, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -1934,7 +1938,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6af4d9d4ebb12174ca1e1606592e72aa, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -2025,7 +2029,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: c82290ab8fa2d7b45bfff9df5de3b565, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -2116,7 +2120,7 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 574213406247649356, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: fe8ed6a31d3c38748a93829a95f060eb, type: 2}
     - target: {fileID: 1645244143292882927, guid: 2202cc4ff1a64ad42a21c05fdb678fa5, type: 3}
@@ -2738,6 +2742,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.GameFlow.SituationSelector
   _candidates:
   - {fileID: 11400000, guid: b46c7b0b94976784fb209eb0969bf1ac, type: 2}
+  - {fileID: 11400000, guid: e26beaf0a8f6d704e9c99d0f9939686d, type: 2}
+  - {fileID: 11400000, guid: e365494cf4ab0244b9b195c8dc6b223c, type: 2}
   _noSituationChance: 0.1
   _noSituationChanceReduction: 0.1
 --- !u!114 &2029193223
