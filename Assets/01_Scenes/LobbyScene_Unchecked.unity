@@ -119,6 +119,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &1542389 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2483867232326413644, guid: fccfe68fc5788c343af73505bfa56143, type: 3}
+  m_PrefabInstance: {fileID: 1928256733}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d6df3066bb7445fa2375a75b730d602, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions09.FireExitDoorController
 --- !u!1 &1761944
 GameObject:
   m_ObjectHideFlags: 0
@@ -1917,6 +1928,18 @@ PrefabInstance:
       value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 1397260742632349249, guid: e32102924927f3440a4cd4593e54d752, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.0017366001
+      objectReference: {fileID: 0}
+    - target: {fileID: 1397260742632349249, guid: e32102924927f3440a4cd4593e54d752, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.0017366001
+      objectReference: {fileID: 0}
+    - target: {fileID: 1397260742632349249, guid: e32102924927f3440a4cd4593e54d752, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.0017366001
+      objectReference: {fileID: 0}
+    - target: {fileID: 1397260742632349249, guid: e32102924927f3440a4cd4593e54d752, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -1926,19 +1949,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1397260742632349249, guid: e32102924927f3440a4cd4593e54d752, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.1924198
+      value: 3.076
       objectReference: {fileID: 0}
     - target: {fileID: 1397260742632349249, guid: e32102924927f3440a4cd4593e54d752, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1397260742632349249, guid: e32102924927f3440a4cd4593e54d752, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1397260742632349249, guid: e32102924927f3440a4cd4593e54d752, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1397260742632349249, guid: e32102924927f3440a4cd4593e54d752, type: 3}
       propertyPath: m_LocalRotation.z
@@ -1946,11 +1969,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1397260742632349249, guid: e32102924927f3440a4cd4593e54d752, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 5.0049877
+      value: -14.97
       objectReference: {fileID: 0}
     - target: {fileID: 1397260742632349249, guid: e32102924927f3440a4cd4593e54d752, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 2.41
+      value: 1.581
       objectReference: {fileID: 0}
     - target: {fileID: 1397260742632349249, guid: e32102924927f3440a4cd4593e54d752, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2038,6 +2061,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5006307748557478966, guid: e32102924927f3440a4cd4593e54d752, type: 3}
       propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6708402883908632221, guid: e32102924927f3440a4cd4593e54d752, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6779297491086919762, guid: e32102924927f3440a4cd4593e54d752, type: 3}
@@ -30849,6 +30876,73 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 503204259}
+--- !u!1 &1752244136
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1752244139}
+  - component: {fileID: 1752244138}
+  - component: {fileID: 1752244137}
+  m_Layer: 0
+  m_Name: RadioSettingZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1752244137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1752244136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21d40582a7c68cc459b518241c1a82ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Lobby.RadioSettingsZone
+  _settingsUI: {fileID: 1836367252}
+--- !u!65 &1752244138
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1752244136}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1752244139
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1752244136}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -15.196, y: 1.165, z: 2.894}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1760604158
 GameObject:
   m_ObjectHideFlags: 0
@@ -31115,6 +31209,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 2451325370662096886, guid: e160a4ab4b30c4d49a2ea8bddd476079, type: 3}
   m_PrefabInstance: {fileID: 1800416375}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1836367252 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6908521828670976414, guid: e32102924927f3440a4cd4593e54d752, type: 3}
+  m_PrefabInstance: {fileID: 156289109}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1837989194
 GameObject:
@@ -32784,7 +32883,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d9eca5dc63c33545bd865b374b0e667, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Lobby.BedGameStartTrigger
-  _sceneController: {fileID: 648278991}
+  _fadeOutDuration: 1
 --- !u!1001 &1969685508
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34371,6 +34470,53 @@ Transform:
   - {fileID: 772434132}
   m_Father: {fileID: 1212168940}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2103114151
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2103114153}
+  - component: {fileID: 2103114152}
+  m_Layer: 0
+  m_Name: LobbyDoorRoles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2103114152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2103114151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4cf5c20000e3e0429463b9d11dd3ec6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Lobby.LobbyDoorRoleController
+  _blockedDoor: {fileID: 1542389}
+  _exitDoor: {fileID: 2147390846}
+  _quitDelay: 0.75
+--- !u!4 &2103114153
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2103114151}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -14.4831, y: 1.36563, z: 4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2110324057
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34639,6 +34785,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3228732078903554645, guid: 33a19cc03b9760e409ee6bca0f8befee, type: 3}
   m_PrefabInstance: {fileID: 2145931966}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2147390846 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2483867232326413644, guid: fccfe68fc5788c343af73505bfa56143, type: 3}
+  m_PrefabInstance: {fileID: 1102660892}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d6df3066bb7445fa2375a75b730d602, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Missions09.FireExitDoorController
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -34653,3 +34810,5 @@ SceneRoots:
   - {fileID: 1654357630}
   - {fileID: 1930400183}
   - {fileID: 648278992}
+  - {fileID: 1752244139}
+  - {fileID: 2103114153}

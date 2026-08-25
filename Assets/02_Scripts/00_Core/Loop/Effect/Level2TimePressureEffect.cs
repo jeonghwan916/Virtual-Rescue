@@ -20,30 +20,17 @@ namespace VirtualRescue.Effects
         private SituationController _boundController;
         private SituationDefinition _boundDefinition;
         private VignetteController _vignetteController;
+        private bool _isSubscribed;
         private bool _coughStarted;
 
         private void OnEnable()
         {
-            if (_dayFlowController == null)
-            {
-                return;
-            }
-
-            _dayFlowController.StateChanged += HandleDayFlowStateChanged;
-
-            if (_dayFlowController.CurrentState == DayFlowState.Playing)
-            {
-                BindCurrentSituation();
-            }
+            SubscribeToDayFlow();
         }
 
         private void OnDisable()
         {
-            if (_dayFlowController != null)
-            {
-                _dayFlowController.StateChanged -= HandleDayFlowStateChanged;
-            }
-
+            UnsubscribeFromDayFlow();
             ResetEffect();
         }
 
@@ -56,9 +43,13 @@ namespace VirtualRescue.Effects
                 return;
             }
 
+            float timeLimit = Mathf.Max(
+                0.01f,
+                _boundDefinition.TimeLimitSeconds);
+
             float progress = 1f - Mathf.Clamp01(
                 _boundController.RemainingTime /
-                _boundDefinition.TimeLimitSeconds);
+                timeLimit);
 
             float apertureSize = Mathf.Lerp(
                 1f,
@@ -71,6 +62,67 @@ namespace VirtualRescue.Effects
             {
                 StartCoughAudio();
             }
+        }
+
+        public void BindSceneDependencies(
+            DayFlowController dayFlowController,
+            SituationSceneLoader situationSceneLoader)
+        {
+            UnsubscribeFromDayFlow();
+            ResetEffect();
+
+            _dayFlowController = dayFlowController;
+            _situationSceneLoader = situationSceneLoader;
+
+            SubscribeToDayFlow();
+        }
+
+        public void UnbindSceneDependencies(
+            DayFlowController owner)
+        {
+            if (!ReferenceEquals(_dayFlowController, owner))
+            {
+                return;
+            }
+
+            UnsubscribeFromDayFlow();
+            ResetEffect();
+
+            _dayFlowController = null;
+            _situationSceneLoader = null;
+        }
+
+        private void SubscribeToDayFlow()
+        {
+            if (_isSubscribed ||
+                !isActiveAndEnabled ||
+                _dayFlowController == null)
+            {
+                return;
+            }
+
+            _dayFlowController.StateChanged += HandleDayFlowStateChanged;
+            _isSubscribed = true;
+
+            if (_dayFlowController.CurrentState == DayFlowState.Playing)
+            {
+                BindCurrentSituation();
+            }
+        }
+
+        private void UnsubscribeFromDayFlow()
+        {
+            if (!_isSubscribed)
+            {
+                return;
+            }
+
+            if (_dayFlowController != null)
+            {
+                _dayFlowController.StateChanged -= HandleDayFlowStateChanged;
+            }
+
+            _isSubscribed = false;
         }
 
         private void HandleDayFlowStateChanged(DayFlowState state)

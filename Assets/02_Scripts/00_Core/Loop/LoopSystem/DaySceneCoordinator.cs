@@ -38,6 +38,8 @@ public class DaySceneCoordinator : MonoBehaviour
     [Header("Ending Transition")]
     [SerializeField] private string _endingSceneName = "EndingScene";
 
+    private Level2TimePressureEffect _level2TimePressureEffect;
+    private bool _sceneReadyNotified;
     private bool _isProcessing;
 
     private void OnEnable()
@@ -62,6 +64,15 @@ public class DaySceneCoordinator : MonoBehaviour
         _dayFlowController.TransitionRequested -= HandleTransitionRequested;
     }
 
+    private void OnDestroy()
+    {
+        if (_level2TimePressureEffect != null)
+        {
+            _level2TimePressureEffect.UnbindSceneDependencies(
+                _dayFlowController);
+        }
+    }
+
     private async void HandleDayStarted(int currentDay)
     {
         if (_isProcessing)
@@ -73,7 +84,13 @@ public class DaySceneCoordinator : MonoBehaviour
 
         try
         {
+            if (!TryResolvePlayerDependencies())
+            {
+                return;
+            }
+
             _screenFader?.ShowBlack();
+            _playerRoot.ApplySpawn(_dayStartSpawnPoint);
             _roomSituationController?.PrepareDayEntryDialogues();
 
             bool homeLoaded = await _homeModuleLoader.LoadAsync(_homeLayout);
@@ -82,14 +99,6 @@ public class DaySceneCoordinator : MonoBehaviour
                 ReportError(_homeModuleLoader.LastError);
                 return;
             }
-
-            if (_playerRoot == null || _dayStartSpawnPoint == null)
-            {
-                ReportError("플레이어 또는 하루 시작 위치가 설정되지 않았습니다.");
-                return;
-            }
-
-            _playerRoot.ApplySpawn(_dayStartSpawnPoint);
 
             bool selectionSucceeded = _situationSelector.TrySelect(
                 currentDay,
@@ -129,6 +138,8 @@ public class DaySceneCoordinator : MonoBehaviour
                 selectedSituation,
                 _situationSceneLoader.CurrentController);
 
+            NotifySceneReadyOnce();
+
             await RunFadeAsync(_screenFader?.FadeIn(_fadeInDuration));
 
             if (!_dayFlowController.NotifyHomeLoaded())
@@ -148,6 +159,80 @@ public class DaySceneCoordinator : MonoBehaviour
         {
             _isProcessing = false;
         }
+    }
+
+    private bool TryResolvePlayerDependencies()
+    {
+        PersistentPlayerRoot persistentPlayer =
+            PersistentPlayerRoot.Instance;
+
+        if (persistentPlayer == null)
+        {
+            ReportError("PersistentPlayerRoot를 찾을 수 없습니다.");
+            return false;
+        }
+
+        if (_dayStartSpawnPoint == null)
+        {
+            ReportError("PlayerSpawnPoint가 설정되지 않았습니다.");
+            return false;
+        }
+
+        _playerRoot = persistentPlayer;
+        _screenFader =
+            _playerRoot.GetComponentInChildren<ScreenFader>(true);
+
+        if (_screenFader == null)
+        {
+            Debug.LogWarning(
+                $"{nameof(DaySceneCoordinator)}: " +
+                "Persistent Player에서 ScreenFader를 찾을 수 없습니다. " +
+                "Fade 없이 계속합니다.",
+                this);
+        }
+
+        _level2TimePressureEffect =
+            _playerRoot.GetComponentInChildren<Level2TimePressureEffect>(true);
+
+        if (_level2TimePressureEffect == null)
+        {
+            Debug.LogWarning(
+                $"{nameof(DaySceneCoordinator)}: " +
+                "Persistent Player에서 Level2TimePressureEffect를 " +
+                "찾을 수 없습니다.",
+                this);
+        }
+        else
+        {
+            _level2TimePressureEffect.BindSceneDependencies(
+                _dayFlowController,
+                _situationSceneLoader);
+        }
+
+        return true;
+    }
+
+    private void NotifySceneReadyOnce()
+    {
+        if (_sceneReadyNotified)
+        {
+            return;
+        }
+
+        PlayerReferenceHub playerReferenceHub =
+            PlayerReferenceHub.Instance;
+
+        if (playerReferenceHub == null)
+        {
+            Debug.LogWarning(
+                $"{nameof(DaySceneCoordinator)}: " +
+                "PlayerReferenceHub를 찾을 수 없습니다.",
+                this);
+            return;
+        }
+
+        playerReferenceHub.NotifySceneReady();
+        _sceneReadyNotified = true;
     }
 
     private async void HandleTransitionRequested(
@@ -302,5 +387,4 @@ public class DaySceneCoordinator : MonoBehaviour
     {
         Debug.LogError($"DaySceneCoordinator: {message}", this);
     }
-
 }
