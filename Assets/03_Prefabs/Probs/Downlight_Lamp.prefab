@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &7862915810715117965
 Transform:
@@ -44,9 +44,9 @@ Light:
   serializedVersion: 12
   m_Type: 0
   m_Color: {r: 0.7735849, g: 0.726139, b: 0.6884419, a: 1}
-  m_Intensity: 3.8
-  m_Range: 3.9735994
-  m_SpotAngle: 130
+  m_Intensity: 6
+  m_Range: 6
+  m_SpotAngle: 170
   m_InnerSpotAngle: 0
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
@@ -89,7 +89,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 1e-45, y: 0, z: 1, w: 1}
+  m_BoundingSphereOverride: {x: 0.0078125, y: 0, z: 0.0078125, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
@@ -179,6 +179,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -5743350618785959237, guid: 33a2084f7d997b342906743eebf7ac57, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -450435477336378351, guid: 33a2084f7d997b342906743eebf7ac57, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -186,6 +190,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 33a2084f7d997b342906743eebf7ac57, type: 3}
       propertyPath: m_Name
       value: Downlight_Lamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 33a2084f7d997b342906743eebf7ac57, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3907091372267947420, guid: 33a2084f7d997b342906743eebf7ac57, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
