@@ -2721,7 +2721,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &54009402
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13392,6 +13392,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7119009532430906508, guid: 34266b25921572a468f7182ba532b021, type: 3}
       insertIndex: -1
       addedObject: {fileID: 284084126}
+    - targetCorrespondingSourceObject: {fileID: 3907091372267947420, guid: 34266b25921572a468f7182ba532b021, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1480426686}
   m_SourcePrefab: {fileID: 100100000, guid: 34266b25921572a468f7182ba532b021, type: 3}
 --- !u!1 &284084122 stripped
 GameObject:
@@ -69894,6 +69897,33 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5799459384240928098, guid: e5e3f50da533d5d47aadb127d27cce39, type: 3}
   m_PrefabInstance: {fileID: 1478381454}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1480426685 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3907091372267947420, guid: 34266b25921572a468f7182ba532b021, type: 3}
+  m_PrefabInstance: {fileID: 284084121}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &1480426686
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480426685}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 1637526288758671210, guid: 34266b25921572a468f7182ba532b021, type: 3}
 --- !u!1001 &1480695692
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -101840,9 +101870,10 @@ SceneRoots:
   - {fileID: 1012320033}
   - {fileID: 401100094}
   - {fileID: 1974725584}
+  - {fileID: 54009405}
+  - {fileID: 1246385487}
   - {fileID: 883305901}
   - {fileID: 1849141608}
-  - {fileID: 1246385487}
   - {fileID: 719513969}
   - {fileID: 471365438}
   - {fileID: 346778366}
@@ -101861,7 +101892,6 @@ SceneRoots:
   - {fileID: 1495055715}
   - {fileID: 14517725}
   - {fileID: 2066078845}
-  - {fileID: 54009405}
   - {fileID: 928893118}
   - {fileID: 11498887}
   - {fileID: 278728455}
