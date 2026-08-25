@@ -15,10 +15,6 @@ public class MenuFollowerController : MonoBehaviour
     [SerializeField] private Button _closeButton;
     [SerializeField] private GameObject _menuFollowerPanel;
     [SerializeField] private GameObject _settingUI;
-    [SerializeField] private NearFarInteractor _leftNearFarInteractor;
-    [SerializeField] private NearFarInteractor _rightNearFarInteractor;
-    [SerializeField] private GameObject _leftLineVisual;
-    [SerializeField] private GameObject _rightLineVisual;
     [SerializeField] private string _leftControllerXButtonPath = "<XRController>{LeftHand}/{PrimaryButton}";
     [SerializeField] private string _lobbySceneName = "LobbyScene_Unchecked";
     [SerializeField] private float _fadeDuration = 1f;
@@ -155,14 +151,23 @@ public class MenuFollowerController : MonoBehaviour
 
     private void ApplyMenuInteraction(bool isOpen)
     {
+        PlayerReferenceHub referenceHub = PlayerReferenceHub.Instance;
+        if (referenceHub == null)
+        {
+            Debug.LogWarning(
+                $"{nameof(MenuFollowerController)} could not find {nameof(PlayerReferenceHub)}.",
+                this);
+            return;
+        }
+
         float farDistance = isOpen
             ? MenuOpenFarDistance
             : MenuClosedFarDistance;
 
-        SetFarDistance(_leftNearFarInteractor, farDistance);
-        SetFarDistance(_rightNearFarInteractor, farDistance);
-        SetActive(_leftLineVisual, isOpen);
-        SetActive(_rightLineVisual, isOpen);
+        SetFarDistance(referenceHub.LeftNearFarInteractor, farDistance);
+        SetFarDistance(referenceHub.RightNearFarInteractor, farDistance);
+        SetActive(referenceHub.LeftLineVisual, isOpen);
+        SetActive(referenceHub.RightLineVisual, isOpen);
     }
 
     private static void SetFarDistance(NearFarInteractor interactor, float distance)
