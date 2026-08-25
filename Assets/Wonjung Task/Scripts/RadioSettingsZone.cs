@@ -32,6 +32,11 @@ namespace VirtualRescue.Lobby
             _settingsUI.SetActive(false);
         }
 
+        private void Start()
+        {
+            SetFarInteractionState(false);
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             PersistentPlayerRoot player =
@@ -43,8 +48,14 @@ namespace VirtualRescue.Lobby
                 return;
             }
 
-            _playerColliders.Add(other);
+            bool isFirstPlayerCollider = _playerColliders.Count == 0;
+            if (!_playerColliders.Add(other) || !isFirstPlayerCollider)
+            {
+                return;
+            }
+
             _settingsUI.SetActive(true);
+            SetFarInteractionState(true);
         }
 
         private void OnTriggerExit(Collider other)
@@ -57,6 +68,7 @@ namespace VirtualRescue.Lobby
             if (_playerColliders.Count == 0 && _settingsUI != null)
             {
                 _settingsUI.SetActive(false);
+                SetFarInteractionState(false);
             }
         }
 
@@ -67,6 +79,16 @@ namespace VirtualRescue.Lobby
             if (_settingsUI != null)
             {
                 _settingsUI.SetActive(false);
+            }
+
+            SetFarInteractionState(false);
+        }
+
+        private static void SetFarInteractionState(bool isExtended)
+        {
+            if (PlayerReferenceHub.Instance != null)
+            {
+                PlayerReferenceHub.Instance.SetFarInteractionState(isExtended);
             }
         }
     }

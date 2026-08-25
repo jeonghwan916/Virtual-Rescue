@@ -2,10 +2,14 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using UnityEngine.XR.Interaction.Toolkit.Interactors.Casters;
 using VirtualRescue.Effects;
 
 public class PlayerReferenceHub : MonoBehaviour
 {
+    private const float ExtendedFarDistance = 10f;
+    private const float DefaultFarDistance = 0.2f;
+
     public static PlayerReferenceHub Instance { get; private set; }
     public event Action SceneReady;
 
@@ -25,6 +29,18 @@ public class PlayerReferenceHub : MonoBehaviour
     public NearFarInteractor RightNearFarInteractor => _rightNearFarInteractor;
     public GameObject LeftLineVisual => _leftLineVisual;
     public GameObject RightLineVisual => _rightLineVisual;
+
+    public void SetFarInteractionState(bool isExtended)
+    {
+        float distance = isExtended
+            ? ExtendedFarDistance
+            : DefaultFarDistance;
+
+        SetFarDistance(_leftNearFarInteractor, distance);
+        SetFarDistance(_rightNearFarInteractor, distance);
+        SetActive(_leftLineVisual, isExtended);
+        SetActive(_rightLineVisual, isExtended);
+    }
 
     public void NotifySceneReady()
     {
@@ -71,6 +87,23 @@ public class PlayerReferenceHub : MonoBehaviour
         if (_leftLineVisual == null || _rightLineVisual == null)
         {
             Debug.LogWarning($"{nameof(PlayerReferenceHub)}: LineVisual references are missing.", this);
+        }
+    }
+
+    private static void SetFarDistance(NearFarInteractor interactor, float distance)
+    {
+        if (interactor != null &&
+            interactor.farInteractionCaster is CurveInteractionCaster caster)
+        {
+            caster.castDistance = distance;
+        }
+    }
+
+    private static void SetActive(GameObject target, bool isActive)
+    {
+        if (target != null)
+        {
+            target.SetActive(isActive);
         }
     }
 }

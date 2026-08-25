@@ -3,8 +3,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.XR.Interaction.Toolkit.Interactors;
-using UnityEngine.XR.Interaction.Toolkit.Interactors.Casters;
 using VirtualRescue.Effects;
 using VirtualRescue.Player;
 
@@ -19,9 +17,6 @@ public class MenuFollowerController : MonoBehaviour
     [SerializeField] private string _lobbySceneName = "LobbyScene_Unchecked";
     [SerializeField] private float _fadeDuration = 1f;
     [SerializeField] private bool _hideOnStart = true;
-
-    private const float MenuOpenFarDistance = 10f;
-    private const float MenuClosedFarDistance = 0.2f;
 
     private Coroutine _returnRoutine;
 
@@ -160,23 +155,7 @@ public class MenuFollowerController : MonoBehaviour
             return;
         }
 
-        float farDistance = isOpen
-            ? MenuOpenFarDistance
-            : MenuClosedFarDistance;
-
-        SetFarDistance(referenceHub.LeftNearFarInteractor, farDistance);
-        SetFarDistance(referenceHub.RightNearFarInteractor, farDistance);
-        SetActive(referenceHub.LeftLineVisual, isOpen);
-        SetActive(referenceHub.RightLineVisual, isOpen);
-    }
-
-    private static void SetFarDistance(NearFarInteractor interactor, float distance)
-    {
-        if (interactor != null &&
-            interactor.farInteractionCaster is CurveInteractionCaster caster)
-        {
-            caster.castDistance = distance;
-        }
+        referenceHub.SetFarInteractionState(isOpen);
     }
 
     private static void SetActive(GameObject target, bool isActive)
