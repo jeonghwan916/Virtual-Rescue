@@ -1,5 +1,5 @@
 using System.Collections;
-using UnityEngine;s
+using UnityEngine;
 using VirtualRescue.Missions09;
 
 namespace VirtualRescue.Lobby

@@ -6,7 +6,6 @@ using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using UnityEngine.XR.Interaction.Toolkit.Interactors.Casters;
 using VirtualRescue.Effects;
-using VirtualRescue.Loading;
 using VirtualRescue.Player;
 
 public class MenuFollowerController : MonoBehaviour
@@ -21,8 +20,7 @@ public class MenuFollowerController : MonoBehaviour
     [SerializeField] private GameObject _leftLineVisual;
     [SerializeField] private GameObject _rightLineVisual;
     [SerializeField] private string _leftControllerXButtonPath = "<XRController>{LeftHand}/{PrimaryButton}";
-    [SerializeField] private string _lobbySceneName = "BuildTest_Lobby";
-    [SerializeField] private string _loadingSceneName = "LoadingScene";
+    [SerializeField] private string _lobbySceneName = "LobbyScene_Unchecked";
     [SerializeField] private float _fadeDuration = 1f;
     [SerializeField] private bool _hideOnStart = true;
 
@@ -116,19 +114,16 @@ public class MenuFollowerController : MonoBehaviour
 
     private IEnumerator ReturnToLobbyRoutine()
     {
-        LoadingRequest.Set(_lobbySceneName, -1, null);
-
         ScreenFader screenFader = FindScreenFader();
         if (screenFader != null)
         {
             yield return screenFader.FadeOut(_fadeDuration);
         }
 
-        AsyncOperation loadingOperation = SceneManager.LoadSceneAsync(_loadingSceneName, LoadSceneMode.Single);
+        AsyncOperation loadingOperation = SceneManager.LoadSceneAsync(_lobbySceneName, LoadSceneMode.Single);
         if (loadingOperation == null)
         {
-            Debug.LogWarning($"Failed to load loading scene: {_loadingSceneName}", this);
-            LoadingRequest.Clear();
+            Debug.LogWarning($"Failed to load lobby scene: {_lobbySceneName}", this);
             _returnRoutine = null;
             yield break;
         }
