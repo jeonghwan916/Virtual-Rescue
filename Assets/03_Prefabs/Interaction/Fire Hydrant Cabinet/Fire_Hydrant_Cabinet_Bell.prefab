@@ -1444,7 +1444,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.4634}
+  m_AnchoredPosition: {x: -0.001, y: 0.4634}
   m_SizeDelta: {x: 58.8831, y: 92.0493}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &6394939237517260640
@@ -2279,21 +2279,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'S
-
-    H
-
-    J'
+  m_text: "\uC18C\n\n\uD654\n\n\uC804"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7999f72aa63c1f54b947515166ca72fd, type: 2}
+  m_sharedMaterial: {fileID: 5137553765892669104, guid: 7999f72aa63c1f54b947515166ca72fd, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4279328634
-  m_fontColor: {r: 0.47798735, g: 0.37441826, b: 0.06763965, a: 1}
+    rgba: 4278940567
+  m_fontColor: {r: 0.59119487, g: 0.45016858, b: 0.042759325, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2310,8 +2306,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
-  m_fontSizeBase: 16
+  m_fontSize: 8
+  m_fontSizeBase: 8
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
