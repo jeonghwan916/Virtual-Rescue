@@ -2758,6 +2758,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2032235527}
+  - component: {fileID: 910000000000010002}
   m_Layer: 0
   m_Name: PlayerSpawnPoint
   m_TagString: Untagged
@@ -2780,6 +2781,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910000000000010002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032235526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1057a1b6e9dc4f2aababb2222d76f947, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Player.PlayerSpawnPoint
+  _onlyApplyWhenSceneIsActive: 1
 --- !u!114 &2072853462 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6234876887465106227, guid: 072a7f146e99c3b48b18885651eddd84, type: 3}
