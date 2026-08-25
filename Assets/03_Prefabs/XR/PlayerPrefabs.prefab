@@ -53,7 +53,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8723471911666071147
 Transform:
   m_ObjectHideFlags: 0
@@ -1184,7 +1184,7 @@ MonoBehaviour:
   m_RaycastUIDocumentTriggerInteraction: 1
   m_TargetNumCurveSegments: 1
   m_HitDetectionType: 2
-  m_CastDistance: 10
+  m_CastDistance: 0.2
   m_SphereCastRadius: 0.1
   m_ConeCastAngle: 6
   m_LiveConeCastDebugVisuals: 0
@@ -1733,7 +1733,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3786920789593830285
 Transform:
   m_ObjectHideFlags: 0
@@ -2207,7 +2207,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2812958176033446449
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2316,6 +2316,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VirtualRescue.Effects.ScreenFader
   _canvasGroup: {fileID: 63541371448437958}
+  _fadeGraphic: {fileID: 0}
   _useUnscaledTime: 1
 --- !u!1 &2209198761940339095
 GameObject:
@@ -4470,7 +4471,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5226784675386186924
 Transform:
   m_ObjectHideFlags: 0
@@ -4557,7 +4558,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4002190145503373295
 Transform:
   m_ObjectHideFlags: 0
@@ -6160,7 +6161,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2716127442314555367
 Transform:
   m_ObjectHideFlags: 0
@@ -6282,7 +6283,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Mediator: {fileID: 3260219586565625818}
   m_TransformationPriority: 0
-  m_TurnAmount: 45
+  m_TurnAmount: 30
   m_DebounceTime: 0.5
   m_EnableTurnLeftRight: 1
   m_EnableTurnAround: 1
@@ -9140,7 +9141,7 @@ MonoBehaviour:
   m_RaycastUIDocumentTriggerInteraction: 1
   m_TargetNumCurveSegments: 1
   m_HitDetectionType: 2
-  m_CastDistance: 10
+  m_CastDistance: 0.2
   m_SphereCastRadius: 0.1
   m_ConeCastAngle: 6
   m_LiveConeCastDebugVisuals: 0

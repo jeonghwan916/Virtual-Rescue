@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using UnityEngine.XR.Interaction.Toolkit.Interactors.Casters;
 using VirtualRescue.Effects;
 using VirtualRescue.Loading;
 using VirtualRescue.Player;
@@ -12,11 +14,20 @@ public class MenuFollowerController : MonoBehaviour
     [SerializeField] private Button _returnToLobbyButton;
     [SerializeField] private Button _settingButton;
     [SerializeField] private Button _closeButton;
+    [SerializeField] private GameObject _menuFollowerPanel;
+    [SerializeField] private GameObject _settingUI;
+    [SerializeField] private NearFarInteractor _leftNearFarInteractor;
+    [SerializeField] private NearFarInteractor _rightNearFarInteractor;
+    [SerializeField] private GameObject _leftLineVisual;
+    [SerializeField] private GameObject _rightLineVisual;
     [SerializeField] private string _leftControllerXButtonPath = "<XRController>{LeftHand}/{PrimaryButton}";
     [SerializeField] private string _lobbySceneName = "BuildTest_Lobby";
     [SerializeField] private string _loadingSceneName = "LoadingScene";
     [SerializeField] private float _fadeDuration = 1f;
     [SerializeField] private bool _hideOnStart = true;
+
+    private const float MenuOpenFarDistance = 10f;
+    private const float MenuClosedFarDistance = 0.2f;
 
     private Coroutine _returnRoutine;
 
@@ -33,7 +44,15 @@ public class MenuFollowerController : MonoBehaviour
         if (_hideOnStart)
         {
             Hide();
+            return;
         }
+
+        ApplyMenuInteraction(true);
+    }
+
+    private void OnDisable()
+    {
+        ApplyMenuInteraction(false);
     }
 
     public void Show()
@@ -43,7 +62,7 @@ public class MenuFollowerController : MonoBehaviour
             return;
         }
 
-        gameObject.SetActive(true);
+        SetMenuOpen(true);
     }
 
     public void Toggle()
@@ -53,7 +72,7 @@ public class MenuFollowerController : MonoBehaviour
             return;
         }
 
-        gameObject.SetActive(!gameObject.activeSelf);
+        SetMenuOpen(!gameObject.activeSelf);
     }
 
     public void Close()
@@ -74,6 +93,25 @@ public class MenuFollowerController : MonoBehaviour
 
     public void OpenSetting()
     {
+        if (_returnRoutine != null)
+        {
+            return;
+        }
+
+        SetActive(_menuFollowerPanel, false);
+        SetActive(_settingUI, true);
+    }
+
+    public void CloseSetting()
+    {
+        if (_returnRoutine != null)
+        {
+            return;
+        }
+
+        SetActive(_settingUI, false);
+        SetActive(_menuFollowerPanel, true);
+        ApplyMenuInteraction(true);
     }
 
     private IEnumerator ReturnToLobbyRoutine()
@@ -100,7 +138,53 @@ public class MenuFollowerController : MonoBehaviour
 
     private void Hide()
     {
+        SetMenuOpen(false);
+    }
+
+    private void SetMenuOpen(bool isOpen)
+    {
+        ApplyMenuInteraction(isOpen);
+
+        if (isOpen)
+        {
+            gameObject.SetActive(true);
+            SetActive(_menuFollowerPanel, true);
+            SetActive(_settingUI, false);
+            return;
+        }
+
+        SetActive(_menuFollowerPanel, false);
+        SetActive(_settingUI, false);
         gameObject.SetActive(false);
+    }
+
+    private void ApplyMenuInteraction(bool isOpen)
+    {
+        float farDistance = isOpen
+            ? MenuOpenFarDistance
+            : MenuClosedFarDistance;
+
+        SetFarDistance(_leftNearFarInteractor, farDistance);
+        SetFarDistance(_rightNearFarInteractor, farDistance);
+        SetActive(_leftLineVisual, isOpen);
+        SetActive(_rightLineVisual, isOpen);
+    }
+
+    private static void SetFarDistance(NearFarInteractor interactor, float distance)
+    {
+        if (interactor != null &&
+            interactor.farInteractionCaster is CurveInteractionCaster caster)
+        {
+            caster.castDistance = distance;
+        }
+    }
+
+    private static void SetActive(GameObject target, bool isActive)
+    {
+        if (target != null)
+        {
+            target.SetActive(isActive);
+        }
     }
 
     private void BindButton(Button button, UnityEngine.Events.UnityAction action)

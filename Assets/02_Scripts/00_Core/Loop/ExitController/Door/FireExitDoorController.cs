@@ -49,6 +49,8 @@ namespace VirtualRescue.Missions09
         [SerializeField] private bool _isTrapped;
         [SerializeField] private GameObject _hazeEffect;
         [SerializeField] private GameObject _fireEffect;
+        [SerializeField] private GameObject _smokeEffect;
+        [SerializeField] private GameObject _blastEffect;
         
         [Header("Audio Source")]
         [SerializeField] private AudioSource _audioSource;
@@ -279,15 +281,13 @@ namespace VirtualRescue.Missions09
         {
             _isTrapped = isTrapped;
 
-            if (_hazeEffect != null)
-            {
-                _hazeEffect.SetActive(_isTrapped);
-            }
+            if (_hazeEffect != null) _hazeEffect.SetActive(_isTrapped);
+            
+            if (_smokeEffect != null) _smokeEffect.SetActive(_isTrapped);
 
-            if (_fireEffect != null)
-            {
-                _fireEffect.SetActive(false);
-            }
+            if (_fireEffect != null) _fireEffect.SetActive(false);
+            
+            if (_blastEffect != null)  _blastEffect.SetActive(false);
         }
 
         private void UpdateDriverTracking(Transform driver)
@@ -482,15 +482,11 @@ namespace VirtualRescue.Missions09
 
         public void ShowFire()
         {
-            if (_fireEffect != null)
-            {
-                _fireEffect.SetActive(true);
-            }
+            if (_fireEffect != null) _fireEffect.SetActive(true);
 
-            if (_audioSource != null && _fireSFX != null)
-            {
-                _audioSource.PlayOneShot(_fireSFX);
-            }
+            if (_blastEffect != null) _blastEffect.SetActive(true);
+            
+            if (_audioSource != null && _fireSFX != null) _audioSource.PlayOneShot(_fireSFX);
         }
 
         private void ApplyInitialTrapState()

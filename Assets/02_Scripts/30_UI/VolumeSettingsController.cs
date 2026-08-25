@@ -11,6 +11,7 @@ namespace VirtualRescue.UI
         [SerializeField] private Button _saveButton;
         [SerializeField] private Button _cancelButton;
 
+        private MenuFollowerController _menuController;
         private float _savedVolume;
         private bool _hasLoadedSavedVolume;
 
@@ -25,6 +26,11 @@ namespace VirtualRescue.UI
 
         private void OnEnable()
         {
+            if (_menuController == null)
+            {
+                _menuController = GetComponentInParent<MenuFollowerController>(true);
+            }
+
             if (!HasRequiredReferences())
             {
                 Debug.LogWarning("Volume setting UI references are missing.", this);
@@ -96,12 +102,26 @@ namespace VirtualRescue.UI
             PlayerPrefs.Save();
 
             ApplyVolume(_savedVolume);
+
+            if (_menuController != null)
+            {
+                _menuController.Close();
+                return;
+            }
+
             ClosePanel();
         }
 
         private void CancelVolume()
         {
             ApplySavedVolumeToSlider();
+
+            if (_menuController != null)
+            {
+                _menuController.CloseSetting();
+                return;
+            }
+
             ClosePanel();
         }
 

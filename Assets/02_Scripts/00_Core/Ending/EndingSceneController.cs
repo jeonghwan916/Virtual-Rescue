@@ -44,7 +44,7 @@ public class EndingSceneController : MonoBehaviour
     
     [Header("After Effects")]
     [SerializeField] private AudioSource _sprinklerSource;
-    [SerializeField] private ParticleSystem _sprinklerEffect;
+    [SerializeField] private GameObject _sprinklerEffects;
     [SerializeField] private AudioSource _alarmSource;
     [SerializeField] private ParticleSystem _smokeEffect;
     
@@ -189,7 +189,15 @@ public class EndingSceneController : MonoBehaviour
         _teammateObject2.SetActive(true);
         
         if (_sprinklerSource != null) _sprinklerSource.Play();
-        if (_sprinklerEffect != null) _sprinklerEffect.Play();
+        if (_sprinklerEffects != null)
+        {
+            for (int i = 0; i < _sprinklerEffects.transform.childCount; i++)
+            {
+                ParticleSystem sprinklerParticleSystem =  _sprinklerEffects.transform.GetChild(i).GetComponent<ParticleSystem>();
+                sprinklerParticleSystem.Play();
+            }
+        }
+        if (_smokeEffect != null) _smokeEffect.Play();
         
         if (_holdSeconds > 0f) { yield return new WaitForSecondsRealtime(_holdSeconds); }
         
@@ -202,8 +210,6 @@ public class EndingSceneController : MonoBehaviour
         
         _teammateObject3.SetActive(false);
         _teamNameObject.SetActive(true);
-        
-        if (_smokeEffect != null) _smokeEffect.Play();
         
         if (_holdSeconds > 0f) { yield return new WaitForSecondsRealtime(_holdSeconds); }
         
