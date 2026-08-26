@@ -189,6 +189,8 @@ public class EndingSceneController : MonoBehaviour
         _teammateObject2.SetActive(true);
         
         if (_sprinklerSource != null) _sprinklerSource.Play();
+        
+        /*
         if (_sprinklerEffects != null)
         {
             for (int i = 0; i < _sprinklerEffects.transform.childCount; i++)
@@ -197,6 +199,8 @@ public class EndingSceneController : MonoBehaviour
                 sprinklerParticleSystem.Play();
             }
         }
+        */
+        
         if (_smokeEffect != null) _smokeEffect.Play();
         
         if (_holdSeconds > 0f) { yield return new WaitForSecondsRealtime(_holdSeconds); }
