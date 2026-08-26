@@ -7131,7 +7131,7 @@ MonoBehaviour:
   _elevatorAudioSource: {fileID: 508085745}
   _elevatorButtonClickAudioClip: {fileID: 8300000, guid: 49eae3ee93779e9409457b412f83170d, type: 3}
   _elevatorDingDongAudioClip: {fileID: 8300000, guid: 7d540192ccd48954f82ab9d1eb70b7cb, type: 3}
-  _elevatorOpenAudioClip: {fileID: 0}
+  _elevatorOpenAudioClip: {fileID: 8300000, guid: 78c607d0ddcf3a045887a0b23c3aac03, type: 3}
 --- !u!114 &508085743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20373,6 +20373,10 @@ PrefabInstance:
     - target: {fileID: 688802483966605398, guid: 9558e5205e472bb46bccf0a7ea826ee3, type: 3}
       propertyPath: m_Name
       value: FireHydrantCabinet_withHose
+      objectReference: {fileID: 0}
+    - target: {fileID: 1408502046907927373, guid: 9558e5205e472bb46bccf0a7ea826ee3, type: 3}
+      propertyPath: Loop
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7861321354189579375, guid: 9558e5205e472bb46bccf0a7ea826ee3, type: 3}
       propertyPath: m_LocalPosition.z

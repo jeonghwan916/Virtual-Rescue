@@ -138,7 +138,7 @@ public class EndingSceneController : MonoBehaviour
             yield return null;
         }
 
-        //_eleavatorAudioSrc.PlayOneShot(_eleavatorOpeningClip);
+        _eleavatorAudioSrc.PlayOneShot(_eleavatorOpeningClip);
 
         elapsed = 0f;
         while (_eleavatorAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
