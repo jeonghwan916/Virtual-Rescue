@@ -86,7 +86,8 @@ public class ElevatorTrigger : MonoBehaviour
         }
 
         DoorOpeningStarted?.Invoke();
-
+        _elevatorAudioSource.PlayOneShot(_elevatorOpenAudioClip);
+        
         while (_animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
         {
             yield return null;

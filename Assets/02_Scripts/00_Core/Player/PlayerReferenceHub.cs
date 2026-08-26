@@ -1,10 +1,15 @@
 using System;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using UnityEngine.XR.Interaction.Toolkit.Interactors.Casters;
 using VirtualRescue.Effects;
 
 public class PlayerReferenceHub : MonoBehaviour
 {
+    private const float ExtendedFarDistance = 10f;
+    private const float DefaultFarDistance = 0.2f;
+
     public static PlayerReferenceHub Instance { get; private set; }
     public event Action SceneReady;
 
@@ -12,10 +17,30 @@ public class PlayerReferenceHub : MonoBehaviour
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private VignetteController _vignetteController;
     [SerializeField] private Transform _playerTransform;
+    [SerializeField] private NearFarInteractor _leftNearFarInteractor;
+    [SerializeField] private NearFarInteractor _rightNearFarInteractor;
+    [SerializeField] private GameObject _leftLineVisual;
+    [SerializeField] private GameObject _rightLineVisual;
     
     public AudioSource XrAudioSource => _audioSource;
     public VignetteController VignetteController => _vignetteController;
     public Transform PlayerTransform => _playerTransform;
+    public NearFarInteractor LeftNearFarInteractor => _leftNearFarInteractor;
+    public NearFarInteractor RightNearFarInteractor => _rightNearFarInteractor;
+    public GameObject LeftLineVisual => _leftLineVisual;
+    public GameObject RightLineVisual => _rightLineVisual;
+
+    public void SetFarInteractionState(bool isExtended)
+    {
+        float distance = isExtended
+            ? ExtendedFarDistance
+            : DefaultFarDistance;
+
+        SetFarDistance(_leftNearFarInteractor, distance);
+        SetFarDistance(_rightNearFarInteractor, distance);
+        SetActive(_leftLineVisual, isExtended);
+        SetActive(_rightLineVisual, isExtended);
+    }
 
     public void NotifySceneReady()
     {
@@ -52,6 +77,33 @@ public class PlayerReferenceHub : MonoBehaviour
         if (_vignetteController == null)
         {
             Debug.LogWarning($"{nameof(PlayerReferenceHub)}: VignetteController is not assigned.", this);
+        }
+
+        if (_leftNearFarInteractor == null || _rightNearFarInteractor == null)
+        {
+            Debug.LogWarning($"{nameof(PlayerReferenceHub)}: Near-Far Interactor references are missing.", this);
+        }
+
+        if (_leftLineVisual == null || _rightLineVisual == null)
+        {
+            Debug.LogWarning($"{nameof(PlayerReferenceHub)}: LineVisual references are missing.", this);
+        }
+    }
+
+    private static void SetFarDistance(NearFarInteractor interactor, float distance)
+    {
+        if (interactor != null &&
+            interactor.farInteractionCaster is CurveInteractionCaster caster)
+        {
+            caster.castDistance = distance;
+        }
+    }
+
+    private static void SetActive(GameObject target, bool isActive)
+    {
+        if (target != null)
+        {
+            target.SetActive(isActive);
         }
     }
 }

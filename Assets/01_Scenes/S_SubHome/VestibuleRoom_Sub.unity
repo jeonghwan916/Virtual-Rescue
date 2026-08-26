@@ -8,8 +8,8 @@ OcclusionCullingSettings:
     smallestOccluder: 5
     smallestHole: 0.25
     backfaceThreshold: 100
-  m_SceneGUID: 00000000000000000000000000000000
-  m_OcclusionCullingData: {fileID: 0}
+  m_SceneGUID: e0bba783cc2d7ed42a91e9664f3c33c1
+  m_OcclusionCullingData: {fileID: 36300000, guid: fac93f52dd58dd34da4856a04d4d1575, type: 2}
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
@@ -133,7 +133,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 5
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &521774345
 Transform:
@@ -173,7 +173,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5845557941774294338, guid: 05980c0f108ee0b48b6f5789a21ab200, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 5
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 6508905798362187768, guid: 05980c0f108ee0b48b6f5789a21ab200, type: 3}
       propertyPath: m_LocalPosition.x
@@ -283,7 +283,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6849773654558260055, guid: db33d25094d109346b90b5f2c993c8ba, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 5
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -313,7 +313,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4711570724937965335, guid: 9b022d150377c304792420f31941d0b3, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 5
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5343815833564923309, guid: 9b022d150377c304792420f31941d0b3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -383,7 +383,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8113386213630548666, guid: 7e2106ef1068bf84688510cc18d86bc2, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 5
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 8922573602036924416, guid: 7e2106ef1068bf84688510cc18d86bc2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -453,7 +453,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4771706819940889618, guid: 2dadf8897227a1a4fac8ad82271f3850, type: 3}
       propertyPath: m_StaticEditorFlags
-      value: 5
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5292664965978844840, guid: 2dadf8897227a1a4fac8ad82271f3850, type: 3}
       propertyPath: m_LocalPosition.x

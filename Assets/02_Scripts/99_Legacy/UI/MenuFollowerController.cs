@@ -3,10 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.XR.Interaction.Toolkit.Interactors;
-using UnityEngine.XR.Interaction.Toolkit.Interactors.Casters;
 using VirtualRescue.Effects;
-using VirtualRescue.Loading;
 using VirtualRescue.Player;
 
 public class MenuFollowerController : MonoBehaviour
@@ -16,18 +13,10 @@ public class MenuFollowerController : MonoBehaviour
     [SerializeField] private Button _closeButton;
     [SerializeField] private GameObject _menuFollowerPanel;
     [SerializeField] private GameObject _settingUI;
-    [SerializeField] private NearFarInteractor _leftNearFarInteractor;
-    [SerializeField] private NearFarInteractor _rightNearFarInteractor;
-    [SerializeField] private GameObject _leftLineVisual;
-    [SerializeField] private GameObject _rightLineVisual;
     [SerializeField] private string _leftControllerXButtonPath = "<XRController>{LeftHand}/{PrimaryButton}";
-    [SerializeField] private string _lobbySceneName = "BuildTest_Lobby";
-    [SerializeField] private string _loadingSceneName = "LoadingScene";
+    [SerializeField] private string _lobbySceneName = "LobbyScene_Unchecked";
     [SerializeField] private float _fadeDuration = 1f;
     [SerializeField] private bool _hideOnStart = true;
-
-    private const float MenuOpenFarDistance = 10f;
-    private const float MenuClosedFarDistance = 0.2f;
 
     private Coroutine _returnRoutine;
 
@@ -116,19 +105,16 @@ public class MenuFollowerController : MonoBehaviour
 
     private IEnumerator ReturnToLobbyRoutine()
     {
-        LoadingRequest.Set(_lobbySceneName, -1, null);
-
         ScreenFader screenFader = FindScreenFader();
         if (screenFader != null)
         {
             yield return screenFader.FadeOut(_fadeDuration);
         }
 
-        AsyncOperation loadingOperation = SceneManager.LoadSceneAsync(_loadingSceneName, LoadSceneMode.Single);
+        AsyncOperation loadingOperation = SceneManager.LoadSceneAsync(_lobbySceneName, LoadSceneMode.Single);
         if (loadingOperation == null)
         {
-            Debug.LogWarning($"Failed to load loading scene: {_loadingSceneName}", this);
-            LoadingRequest.Clear();
+            Debug.LogWarning($"Failed to load lobby scene: {_lobbySceneName}", this);
             _returnRoutine = null;
             yield break;
         }
@@ -160,23 +146,16 @@ public class MenuFollowerController : MonoBehaviour
 
     private void ApplyMenuInteraction(bool isOpen)
     {
-        float farDistance = isOpen
-            ? MenuOpenFarDistance
-            : MenuClosedFarDistance;
-
-        SetFarDistance(_leftNearFarInteractor, farDistance);
-        SetFarDistance(_rightNearFarInteractor, farDistance);
-        SetActive(_leftLineVisual, isOpen);
-        SetActive(_rightLineVisual, isOpen);
-    }
-
-    private static void SetFarDistance(NearFarInteractor interactor, float distance)
-    {
-        if (interactor != null &&
-            interactor.farInteractionCaster is CurveInteractionCaster caster)
+        PlayerReferenceHub referenceHub = PlayerReferenceHub.Instance;
+        if (referenceHub == null)
         {
-            caster.castDistance = distance;
+            Debug.LogWarning(
+                $"{nameof(MenuFollowerController)} could not find {nameof(PlayerReferenceHub)}.",
+                this);
+            return;
         }
+
+        referenceHub.SetFarInteractionState(isOpen);
     }
 
     private static void SetActive(GameObject target, bool isActive)

@@ -5014,6 +5014,10 @@ MonoBehaviour:
   _audioSource: {fileID: 7884228769781634763}
   _vignetteController: {fileID: 2256658240131441154}
   _playerTransform: {fileID: 5532992026282289034}
+  _leftNearFarInteractor: {fileID: 9088340339070147509}
+  _rightNearFarInteractor: {fileID: 6234876887465106227}
+  _leftLineVisual: {fileID: 4868720019813405630}
+  _rightLineVisual: {fileID: 1854877330034122204}
 --- !u!114 &5627994260387438629
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5067,7 +5071,7 @@ SkinnedMeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5078464982010922456}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -5769,7 +5773,7 @@ SkinnedMeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5895437395355161405}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
