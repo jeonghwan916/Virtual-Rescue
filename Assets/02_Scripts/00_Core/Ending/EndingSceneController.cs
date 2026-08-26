@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.VFX;
 using VirtualRescue.Effects;
 using VirtualRescue.Player;
 
@@ -46,7 +47,7 @@ public class EndingSceneController : MonoBehaviour
     [SerializeField] private AudioSource _sprinklerSource;
     [SerializeField] private GameObject _sprinklerEffects;
     [SerializeField] private AudioSource _alarmSource;
-    [SerializeField] private ParticleSystem _smokeEffect;
+    [SerializeField] private VisualEffect _smokeEffect;
     
 
 
@@ -68,6 +69,21 @@ public class EndingSceneController : MonoBehaviour
 
         screenFader.ShowBlack();
         yield return screenFader.FadeIn(_fadeInDuration);
+        
+        if (_sprinklerEffects != null)
+        {
+            for (int i = 0; i < _sprinklerEffects.transform.childCount; i++)
+            {
+                VisualEffect sprinklerVFX =  _sprinklerEffects.transform.GetChild(i).GetComponent<VisualEffect>();
+                sprinklerVFX.Stop();
+            }
+        }
+        
+        if (_smokeEffect != null)
+        {
+            _smokeEffect.gameObject.SetActive(false);
+            _smokeEffect.Stop();
+        }
     }
 
     public bool RequestEnding()
@@ -190,23 +206,26 @@ public class EndingSceneController : MonoBehaviour
         
         if (_sprinklerSource != null) _sprinklerSource.Play();
         
-        /*
+        
         if (_sprinklerEffects != null)
         {
             for (int i = 0; i < _sprinklerEffects.transform.childCount; i++)
             {
-                ParticleSystem sprinklerParticleSystem =  _sprinklerEffects.transform.GetChild(i).GetComponent<ParticleSystem>();
-                sprinklerParticleSystem.Play();
+                VisualEffect sprinklerVFX =  _sprinklerEffects.transform.GetChild(i).GetComponent<VisualEffect>();
+                sprinklerVFX.Play();
             }
         }
-        */
-        
-        if (_smokeEffect != null) _smokeEffect.Play();
         
         if (_holdSeconds > 0f) { yield return new WaitForSecondsRealtime(_holdSeconds); }
         
         _teammateObject2.SetActive(false);
         _teammateObject3.SetActive(true);
+        
+        if (_smokeEffect != null)
+        {
+            _smokeEffect.gameObject.SetActive(true);
+            _smokeEffect.Play();
+        }
         
         if (_alarmSource != null) _alarmSource.Play();
         
