@@ -248,6 +248,7 @@ namespace VirtualRescue.DialogueSystem
             float audioDuration = 0f;
             if (clip != null && _audioSource != null)
             {
+                _audioSource.loop = false;
                 _audioSource.clip = clip;
                 _audioSource.Play();
                 audioDuration = clip.length;

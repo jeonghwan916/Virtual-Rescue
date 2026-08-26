@@ -388,7 +388,7 @@ namespace VirtualRescue.GameFlow
                 return PlayThenExit(WrongCallGroupId);
             }
 
-            return PlayThenExit(definition.Level2CallingDialogueGroupId);
+            return PlayOnly(definition.Level2CallingDialogueGroupId, false);
         }
 
         private bool HasDiscoveredCurrentSituation()

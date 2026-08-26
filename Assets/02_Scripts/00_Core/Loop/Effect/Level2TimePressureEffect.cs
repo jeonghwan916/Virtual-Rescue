@@ -223,6 +223,7 @@ namespace VirtualRescue.Effects
             if (_coughAudioSource != null)
             {
                 _coughAudioSource.Stop();
+                _coughAudioSource.loop = false;
             }
 
             _coughStarted = false;

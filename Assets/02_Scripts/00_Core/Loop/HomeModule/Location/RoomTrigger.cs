@@ -131,6 +131,7 @@ namespace VirtualRescue.Locations
 
         public void PrepareDayEntryDialogue()
         {
+            _playerCollidersInside.Clear();
             _hasPlayedEntryDialogue = false;
             _entryDialogueSuppressed = true;
             _situationDialogueId = string.Empty;

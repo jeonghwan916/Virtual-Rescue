@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Locomotion.Gravity;
 
 namespace VirtualRescue.Player
 {
@@ -58,15 +59,46 @@ namespace VirtualRescue.Player
             }
 
             Transform xrOrigin = FindChildTransform(transform, _xrOriginName);
-            if (xrOrigin == null)
+            Quaternion rootRotation = spawnTransform.rotation;
+            Vector3 rootPosition = spawnTransform.position;
+
+            if (xrOrigin != null)
             {
-                transform.SetPositionAndRotation(spawnTransform.position, spawnTransform.rotation);
-                return;
+                rootRotation =
+                    spawnTransform.rotation * Quaternion.Inverse(xrOrigin.localRotation);
+                rootPosition =
+                    spawnTransform.position - rootRotation * xrOrigin.localPosition;
             }
 
-            Quaternion rootRotation = spawnTransform.rotation * Quaternion.Inverse(xrOrigin.localRotation);
-            Vector3 rootPosition = spawnTransform.position - rootRotation * xrOrigin.localPosition;
-            transform.SetPositionAndRotation(rootPosition, rootRotation);
+            GravityProvider gravityProvider =
+                GetComponentInChildren<GravityProvider>(true);
+            CharacterController characterController =
+                GetComponentInChildren<CharacterController>(true);
+            bool wasControllerEnabled =
+                characterController != null && characterController.enabled;
+
+            gravityProvider?.ResetFallForce();
+
+            if (wasControllerEnabled)
+            {
+                characterController.enabled = false;
+            }
+
+            try
+            {
+                transform.SetPositionAndRotation(rootPosition, rootRotation);
+                Physics.SyncTransforms();
+            }
+            finally
+            {
+                if (wasControllerEnabled)
+                {
+                    characterController.enabled = true;
+                    Physics.SyncTransforms();
+                }
+
+                gravityProvider?.ResetFallForce();
+            }
         }
 
         private static Transform FindChildTransform(Transform root, string transformName)

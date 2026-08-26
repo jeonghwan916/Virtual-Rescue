@@ -2585,6 +2585,7 @@ MonoBehaviour:
   _fadeOutDuration: 1
   _radioController: {fileID: 1953336289}
   _radioStartDelay: 2
+  _dialogueManager: {fileID: 1979127967}
   _situationSelector: {fileID: 2029193222}
   _situationSceneLoader: {fileID: 2029193223}
   _roomSituationController: {fileID: 2147000002}
@@ -3047,7 +3048,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2032235526}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1057a1b6e9dc4f2aababb2222d76f947, type: 3}
   m_Name: 

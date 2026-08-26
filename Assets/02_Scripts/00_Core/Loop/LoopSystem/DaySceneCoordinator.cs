@@ -3,6 +3,8 @@ using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.XR.Interaction.Toolkit.Locomotion.Gravity;
+using VirtualRescue.DialogueSystem;
 using VirtualRescue.Effects;
 using VirtualRescue.GameFlow;
 using VirtualRescue.Locations;
@@ -30,6 +32,9 @@ public class DaySceneCoordinator : MonoBehaviour
     [SerializeField] private RadioController _radioController;
     [SerializeField] private float _radioStartDelay = 2f;
 
+    [Header("Dialogue")]
+    [SerializeField] private DialogueManager _dialogueManager;
+
     [Header("Situation")]
     [SerializeField] private SituationSelector _situationSelector;
     [SerializeField] private SituationSceneLoader _situationSceneLoader;
@@ -39,6 +44,9 @@ public class DaySceneCoordinator : MonoBehaviour
     [SerializeField] private string _endingSceneName = "EndingScene";
 
     private Level2TimePressureEffect _level2TimePressureEffect;
+    private GravityProvider _playerGravityProvider;
+    private bool _gravityWasEnabled;
+    private bool _isPlayerGravitySuspended;
     private bool _sceneReadyNotified;
     private bool _isProcessing;
 
@@ -66,6 +74,8 @@ public class DaySceneCoordinator : MonoBehaviour
 
     private void OnDestroy()
     {
+        RestorePlayerGravity();
+
         if (_level2TimePressureEffect != null)
         {
             _level2TimePressureEffect.UnbindSceneDependencies(
@@ -90,7 +100,7 @@ public class DaySceneCoordinator : MonoBehaviour
             }
 
             _screenFader?.ShowBlack();
-            _playerRoot.ApplySpawn(_dayStartSpawnPoint);
+            SuspendPlayerGravity();
             _roomSituationController?.PrepareDayEntryDialogues();
 
             bool homeLoaded = await _homeModuleLoader.LoadAsync(_homeLayout);
@@ -99,6 +109,9 @@ public class DaySceneCoordinator : MonoBehaviour
                 ReportError(_homeModuleLoader.LastError);
                 return;
             }
+
+            _playerRoot.ApplySpawn(_dayStartSpawnPoint);
+            RestorePlayerGravity();
 
             bool selectionSucceeded = _situationSelector.TrySelect(
                 currentDay,
@@ -157,6 +170,7 @@ public class DaySceneCoordinator : MonoBehaviour
         }
         finally
         {
+            RestorePlayerGravity();
             _isProcessing = false;
         }
     }
@@ -245,6 +259,7 @@ public class DaySceneCoordinator : MonoBehaviour
         }
 
         _isProcessing = true;
+        _dialogueManager?.Stop();
         bool shouldStartNextDay = false;
         bool isEndingTransition = targetDay == DayRunState.ClearDay;
 
@@ -254,6 +269,11 @@ public class DaySceneCoordinator : MonoBehaviour
             {
                 ReportError("Ending scene name is required.");
                 return;
+            }
+
+            if (!isEndingTransition)
+            {
+                SuspendPlayerGravity();
             }
 
             await RunFadeAsync(_screenFader?.FadeOut(_fadeOutDuration));
@@ -290,6 +310,11 @@ public class DaySceneCoordinator : MonoBehaviour
         }
         finally
         {
+            if (!shouldStartNextDay)
+            {
+                RestorePlayerGravity();
+            }
+
             // NotifyTransitionCompleted()가 즉시 다음 DayStarted를 발생시키므로
             // 먼저 처리 잠금을 해제한다.
             _isProcessing = false;
@@ -298,8 +323,55 @@ public class DaySceneCoordinator : MonoBehaviour
         if (shouldStartNextDay &&
             !_dayFlowController.NotifyTransitionCompleted())
         {
+            RestorePlayerGravity();
             ReportError("다음 날을 시작하지 못했습니다.");
         }
+    }
+
+    private void SuspendPlayerGravity()
+    {
+        if (_isPlayerGravitySuspended)
+        {
+            return;
+        }
+
+        PersistentPlayerRoot playerRoot =
+            _playerRoot != null ? _playerRoot : PersistentPlayerRoot.Instance;
+
+        if (playerRoot == null)
+        {
+            return;
+        }
+
+        _playerGravityProvider =
+            playerRoot.GetComponentInChildren<GravityProvider>(true);
+
+        if (_playerGravityProvider == null)
+        {
+            return;
+        }
+
+        _gravityWasEnabled = _playerGravityProvider.useGravity;
+        _playerGravityProvider.useGravity = false;
+        _playerGravityProvider.ResetFallForce();
+        _isPlayerGravitySuspended = true;
+    }
+
+    private void RestorePlayerGravity()
+    {
+        if (!_isPlayerGravitySuspended)
+        {
+            return;
+        }
+
+        if (_playerGravityProvider != null)
+        {
+            _playerGravityProvider.ResetFallForce();
+            _playerGravityProvider.useGravity = _gravityWasEnabled;
+        }
+
+        _playerGravityProvider = null;
+        _isPlayerGravitySuspended = false;
     }
 
     private async Task<bool> UnloadCurrentDayAsync()
