@@ -57,13 +57,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 805435305988781160}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.0842, z: -0.10111286}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4563361222149688146}
-  m_Father: {fileID: 9009001342363689859}
+  m_Father: {fileID: 5539866942881765363}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1650832722567030467
 GameObject:
@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 8529376139045962345}
   - component: {fileID: 9085188636905941176}
   m_Layer: 0
-  m_Name: Fire_Extinguisher_k_New
+  m_Name: Fire_Extinguisher_K_New
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -241,7 +241,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2846131233792921624}
   - {fileID: 4199656004318678033}
   - {fileID: 5539866942881765363}
   m_Father: {fileID: 0}
@@ -674,6 +673,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6806663022212674511}
+  - {fileID: 2846131233792921624}
   m_Father: {fileID: 9009001342363689859}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &4587483499045858031
@@ -1499,6 +1499,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1318827604493162215, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
       propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5335925073716761241, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7531308009844027268, guid: 8935033923c39204997ac28ea4e6eb63, type: 3}
