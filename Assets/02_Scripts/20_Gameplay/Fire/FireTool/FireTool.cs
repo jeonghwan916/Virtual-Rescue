@@ -4,6 +4,10 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public abstract class FireTool : MonoBehaviour
 {
+    private const float OriginOverlapRadius = 0.01f;
+    private const float OriginContainmentTolerance = 0.001f;
+    private readonly Collider[] _originOverlapResults = new Collider[8];
+
     [Header("Particle")]
     [SerializeField] private ParticleSystem _smokeParticle;
 
@@ -142,6 +146,11 @@ public abstract class FireTool : MonoBehaviour
         int detectionLayerMask =
             _fireLayer.value | _contactOnlyFireLayer.value;
 
+        if (TrySuppressContainingFire(detectionLayerMask, Time.deltaTime))
+        {
+            return;
+        }
+
         if (Physics.Raycast(
                 _rayOrigin.position,
                 _rayOrigin.forward,
@@ -150,23 +159,89 @@ public abstract class FireTool : MonoBehaviour
                 detectionLayerMask,
                 QueryTriggerInteraction.Collide))
         {
-            FireObject fire = hit.collider.GetComponentInParent<FireObject>();
-
-            if (fire != null)
-            {
-                int hitLayerMask = 1 << hit.collider.gameObject.layer;
-                bool canSuppress = (_fireLayer.value & hitLayerMask) != 0;
-
-                if (canSuppress)
-                {
-                    fire.TakeExtinguish(_suppressantType, Time.deltaTime);
-                }
-                else
-                {
-                    fire.NotifySuppressantContact(_suppressantType);
-                }
-            }
+            TryApplySuppressant(hit.collider, Time.deltaTime);
         }
+    }
+
+    private bool TrySuppressContainingFire(
+        int detectionLayerMask,
+        float deltaTime)
+    {
+        Vector3 originPosition = _rayOrigin.position;
+        int overlapCount = Physics.OverlapSphereNonAlloc(
+            originPosition,
+            OriginOverlapRadius,
+            _originOverlapResults,
+            detectionLayerMask,
+            QueryTriggerInteraction.Collide);
+
+        Collider closestCollider = null;
+        float closestSqrDistance = float.PositiveInfinity;
+        float containmentToleranceSqr =
+            OriginContainmentTolerance * OriginContainmentTolerance;
+
+        for (int index = 0; index < overlapCount; index++)
+        {
+            Collider candidate = _originOverlapResults[index];
+
+            if (candidate == null ||
+                candidate.GetComponentInParent<FireObject>() == null)
+            {
+                continue;
+            }
+
+            Vector3 closestPoint = candidate.ClosestPoint(originPosition);
+
+            if ((closestPoint - originPosition).sqrMagnitude >
+                containmentToleranceSqr)
+            {
+                continue;
+            }
+
+            float sqrDistance =
+                (candidate.bounds.center - originPosition).sqrMagnitude;
+
+            if (sqrDistance >= closestSqrDistance)
+            {
+                continue;
+            }
+
+            closestCollider = candidate;
+            closestSqrDistance = sqrDistance;
+        }
+
+        return TryApplySuppressant(closestCollider, deltaTime);
+    }
+
+    private bool TryApplySuppressant(Collider targetCollider, float deltaTime)
+    {
+        if (targetCollider == null)
+        {
+            return false;
+        }
+
+        FireObject fire = targetCollider.GetComponentInParent<FireObject>();
+
+        if (fire == null)
+        {
+            return false;
+        }
+
+        int hitLayerMask = 1 << targetCollider.gameObject.layer;
+
+        if ((_fireLayer.value & hitLayerMask) != 0)
+        {
+            fire.TakeExtinguish(_suppressantType, deltaTime);
+            return true;
+        }
+
+        if ((_contactOnlyFireLayer.value & hitLayerMask) != 0)
+        {
+            fire.NotifySuppressantContact(_suppressantType);
+            return true;
+        }
+
+        return false;
     }
 
     private void OnDrawGizmosSelected()
