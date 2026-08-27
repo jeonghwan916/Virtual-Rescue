@@ -6,6 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(XRSimpleInteractable))]
+[DefaultExecutionOrder(XRInteractionUpdateOrder.k_Interactables - 1)]
 public sealed class SimpleHingedDoorController : MonoBehaviour
 {
     private enum DoorState
@@ -71,11 +72,29 @@ public sealed class SimpleHingedDoorController : MonoBehaviour
             _doorInteractable = GetComponent<XRSimpleInteractable>();
         }
 
+        ConfigureDoorInteractableColliders();
+
         _closedLocalRotation = transform.localRotation;
         _currentAngle = 0f;
         _state = DoorState.Closed;
         ApplyRotation();
         ValidateReferences();
+    }
+
+    private void ConfigureDoorInteractableColliders()
+    {
+        if (_doorInteractable == null || _doorInteractable.colliders.Count > 0)
+        {
+            return;
+        }
+
+        foreach (Collider childCollider in GetComponentsInChildren<Collider>(true))
+        {
+            if (childCollider.GetComponentInParent<SimpleHingedDoorHandle>() == null)
+            {
+                _doorInteractable.colliders.Add(childCollider);
+            }
+        }
     }
 
     private void OnEnable()
