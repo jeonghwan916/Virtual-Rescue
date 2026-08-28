@@ -15,7 +15,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!224 &5295085945027368786
 RectTransform:
@@ -76,7 +76,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!224 &5579502973569127686
 RectTransform:
@@ -205,6 +205,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8975391009038384169, guid: 633af7770e98c624c857e7dd7d6acbd0, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 633af7770e98c624c857e7dd7d6acbd0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -248,6 +252,22 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 633af7770e98c624c857e7dd7d6acbd0, type: 3}
       propertyPath: m_Name
       value: Emergency_Descending_Life_Box
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 633af7770e98c624c857e7dd7d6acbd0, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 1188256223936568184, guid: 633af7770e98c624c857e7dd7d6acbd0, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6824746026288583490, guid: 633af7770e98c624c857e7dd7d6acbd0, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8655916560179723109, guid: 633af7770e98c624c857e7dd7d6acbd0, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
